@@ -27,6 +27,6 @@ public class FlagSystemB extends EntityProcessorSystem {
     }
 
     @Override
-    public void process(int entity) {
+    public void process(int entity, float delta) {
     }
 }

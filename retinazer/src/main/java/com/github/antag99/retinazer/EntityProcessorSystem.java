@@ -49,17 +49,21 @@ public abstract class EntityProcessorSystem extends EntitySystem {
     }
 
     @Override
-    public final void update() {
-        processEntities();
+    public final void update(float delta) {
+        processEntities(delta);
     }
 
-    protected void processEntities() {
+    protected void processEntities(float delta) {
         IntArray indices = getEntities().getIndices();
         int[] items = indices.items;
         for (int i = 0, n = indices.size; i < n; i++) {
-            process(items[i]);
+            process(items[i], delta);
         }
     }
 
-    protected abstract void process(int entity);
+    /**
+     * Process single entity in the family
+     * @param delta time in seconds since last update
+     */
+    protected abstract void process(int entity, float delta);
 }

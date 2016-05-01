@@ -43,7 +43,7 @@ public class EngineTest {
         }
 
         @Override
-        protected final void update() {
+        protected final void update(float delta) {
             updatedSystems.add(this);
         }
     }
@@ -51,14 +51,14 @@ public class EngineTest {
     @Test
     public void testEngine() {
         Engine engine = new Engine(new EngineConfig());
-        engine.update();
-        engine.update();
-        engine.update();
-        engine.update();
-        engine.update();
-        engine.update();
-        engine.update();
-        engine.update();
+        engine.update(0f);
+        engine.update(0f);
+        engine.update(0f);
+        engine.update(0f);
+        engine.update(0f);
+        engine.update(0f);
+        engine.update(0f);
+        engine.update(0f);
     }
 
     @Test
@@ -110,7 +110,7 @@ public class EngineTest {
                 entitySystemE,
                 entitySystemD), initializedSystems);
         initializedSystems.clear();
-        engine.update();
+        engine.update(0f);
         assertEquals(Array.with(entitySystemC,
                 entitySystemA,
                 entitySystemB,
@@ -165,7 +165,7 @@ public class EngineTest {
         mFlagB.create(entity7);
         mFlagC.create(entity7);
 
-        engine.update();
+        engine.update(0f);
 
         assertEquals(
                 asSet(entity0, entity1, entity2, entity3, entity4, entity5, entity6, entity7),

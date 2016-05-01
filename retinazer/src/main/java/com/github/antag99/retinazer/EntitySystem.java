@@ -47,7 +47,8 @@ public abstract class EntitySystem {
 
     /**
      * Updates this system. If you override this method, mark it {@code final}.
+     * @param delta time in seconds since last update
      */
-    protected void update() {
+    protected void update(float delta) {
     }
 }

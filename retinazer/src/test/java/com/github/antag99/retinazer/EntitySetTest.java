@@ -64,7 +64,7 @@ public class EntitySetTest {
         int entity2 = engine.createEntity();
         int entity3 = engine.createEntity();
         int entity4 = engine.createEntity();
-        engine.update();
+        engine.update(0f);
         assertTrue(Arrays.equals(engine.getEntities().getIndices().toArray(),
                 new int[] { entity0, entity1, entity2, entity3, entity4 }));
         assertTrue(Arrays.equals(engine.getFamily(

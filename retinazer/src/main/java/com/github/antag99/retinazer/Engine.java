@@ -122,8 +122,9 @@ public final class Engine {
     /**
      * Updates all systems, interleaved by inserting/removing entities to/from
      * entity sets.
+     * @param delta time in seconds since last update
      */
-    public void update() {
+    public void update(float delta) {
         if (update) {
             throw new IllegalStateException("Cannot nest calls to update()");
         }
@@ -133,7 +134,7 @@ public final class Engine {
         flush();
 
         for (EntitySystem system : systems) {
-            system.update();
+            system.update(delta);
 
             flush();
         }

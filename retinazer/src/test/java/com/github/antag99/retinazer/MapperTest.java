@@ -39,11 +39,11 @@ public class MapperTest {
         Mapper<FlagComponentA> mFlagA = engine.getMapper(FlagComponentA.class);
         int entity = engine.createEntity();
         mFlagA.remove(entity); // nothing should happen
-        engine.update();
+        engine.update(0f);
         mFlagA.create(entity);
         mFlagA.remove(entity);
         mFlagA.remove(entity);
-        engine.update();
+        engine.update(0f);
     }
 
     @Test(expected = IllegalArgumentException.class)
