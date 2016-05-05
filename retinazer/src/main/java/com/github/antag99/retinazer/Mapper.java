@@ -203,7 +203,7 @@ public final class Mapper<T extends Component> {
             //Version for standard components
             for (int i = 0; i < removeCount; i++) {
                 final int entity = remove.get(i);
-                components.set(entity, null);
+                components.remove(entity);
                 componentsMask.clear(entity);
                 removeMask.clear(entity);
             }
@@ -212,10 +212,9 @@ public final class Mapper<T extends Component> {
             for (int i = 0; i < removeCount; i++) {
                 final int entity = remove.get(i);
 
-                final T component = components.get(entity);
+                final T component = components.remove(entity);
                 if(component != null) pool.free(component);
 
-                components.set(entity, null);
                 componentsMask.clear(entity);
                 removeMask.clear(entity);
             }
