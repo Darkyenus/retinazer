@@ -22,6 +22,8 @@
 package com.github.antag99.retinazer;
 
 import com.badlogic.gdx.utils.IntArray;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.ReflectionPool;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Constructor;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
@@ -36,38 +38,49 @@ import com.github.antag99.retinazer.util.Mask;
  */
 public final class Mapper<T extends Component> {
     /** The engine instance this mapper is tied to */
-    Engine engine;
+    private final Engine engine;
     /** The component type */
-    Class<T> type;
+    final Class<T> type;
     /** Unique index for the component type */
-    int typeIndex;
+    final int typeIndex;
     /** Zero-arg constructor for the component */
-    Constructor constructor;
+    private final Constructor constructor;
+    /** Pool of components this mapper maps or null if my component type is not poolable. */
+    private final Pool<T> componentPool;
+
     /** Stores components */
-    Bag<T> components = new Bag<T>();
+    final Bag<T> components = new Bag<T>();
     /** Mask of current components */
-    Mask componentsMask = new Mask();
+    final Mask componentsMask = new Mask();
 
     /** Indices of components to be removed later */
-    IntArray remove = new IntArray();
+    final IntArray remove = new IntArray();
     /** Amount of components that will be removed */
     int removeCount = 0;
     /** Mask of components to be removed later */
-    Mask removeQueueMask = new Mask();
+    final Mask removeQueueMask = new Mask();
     /** Mask of components that will be removed */
-    Mask removeMask = new Mask();
+    final Mask removeMask = new Mask();
 
     Mapper(Engine engine, Class<T> type, int typeIndex) {
         this.engine = engine;
         this.type = type;
         this.typeIndex = typeIndex;
+        Constructor constructor;
         try {
-            this.constructor = ClassReflection.getConstructor(type);
-            this.constructor.setAccessible(true);
+            constructor = ClassReflection.getConstructor(type);
+            constructor.setAccessible(true);
         } catch (ReflectionException ex) {
             if (ex.getCause() instanceof RuntimeException)
                 throw (RuntimeException) ex.getCause();
-            this.constructor = null;
+            constructor = null;
+        }
+        this.constructor = constructor;
+        if(Component.Pooled.class.isAssignableFrom(type)){
+            assert constructor != null : "Pooled component MUST have no-arg constructor! ("+type+")";
+            componentPool = new ReflectionPool<T>(type);
+        } else {
+            componentPool = null;
         }
     }
 
@@ -103,6 +116,13 @@ public final class Mapper<T extends Component> {
      * @return the created component.
      */
     public T create(int entity) {
+        final Pool<T> pool = this.componentPool;
+        if(pool != null){
+            final T component = pool.obtain();
+            add(entity, component);
+            return component;
+        }
+
         if (constructor == null) {
             throw new RetinazerException("Component type " + type.getName()
                     + " does not expose a zero-argument constructor");
@@ -128,6 +148,9 @@ public final class Mapper<T extends Component> {
      * the next call to {@link Engine#flush()}. Note that it is <b>not</b>
      * permitted to replace an existing component; {@link #remove(int)} must
      * be called first (and bear in mind that removals are delayed).
+     *
+     * NOTE: For pooled components, use {@link #create(int)} instead.
+     * Manually added instances will otherwise end up in the pool.
      *
      * @param entity
      *            the index of the entity.
@@ -166,5 +189,39 @@ public final class Mapper<T extends Component> {
         engine.dirty = true;
         remove.add(entity);
         removeQueueMask.set(entity);
+    }
+
+    void flushComponentRemoval() {
+        final Bag<T> components = this.components;
+        final IntArray remove = this.remove;
+        final Mask componentsMask = this.componentsMask;
+        final Mask removeMask = this.removeMask;
+        final int removeCount = this.removeCount;
+
+        final Pool<T> pool = this.componentPool;
+        if(pool == null){
+            //Version for standard components
+            for (int i = 0; i < removeCount; i++) {
+                final int entity = remove.get(i);
+                components.set(entity, null);
+                componentsMask.clear(entity);
+                removeMask.clear(entity);
+            }
+        } else {
+            //Version for pooled components
+            for (int i = 0; i < removeCount; i++) {
+                final int entity = remove.get(i);
+
+                final T component = components.get(entity);
+                if(component != null) pool.free(component);
+
+                components.set(entity, null);
+                componentsMask.clear(entity);
+                removeMask.clear(entity);
+            }
+        }
+
+        if (removeCount > 0)
+            remove.removeRange(0, removeCount - 1);
     }
 }

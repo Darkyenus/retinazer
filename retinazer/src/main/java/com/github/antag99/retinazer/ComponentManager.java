@@ -143,19 +143,8 @@ final class ComponentManager {
     }
 
     void applyComponentChanges() {
-        for (int i = 0, n = array.length; i < n; ++i) {
-            @SuppressWarnings("unchecked")
-            Mapper<Component> mapper = (Mapper<Component>) array[i];
-            Bag<Component> components = mapper.components;
-            int nn = mapper.removeCount;
-            for (int ii = 0; ii < nn; ii++) {
-                int entity = mapper.remove.get(ii);
-                components.set(entity, null);
-                mapper.componentsMask.clear(entity);
-                mapper.removeMask.clear(entity);
-            }
-            if (nn > 0)
-                mapper.remove.removeRange(0, nn - 1);
+        for (Mapper<?> mapper : array) {
+            mapper.flushComponentRemoval();
         }
     }
 }

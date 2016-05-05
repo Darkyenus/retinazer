@@ -26,4 +26,11 @@ package com.github.antag99.retinazer;
  * declare them {@code final}.
  */
 public interface Component {
+    /**
+     * These components are pooled by their Mapper and are reused.
+     * They MUST have no-arg constructor.
+     *
+     * Pooled components may additionally implement {@link com.badlogic.gdx.utils.Pool.Poolable} for resetting.
+     */
+    interface Pooled extends Component {}
 }
