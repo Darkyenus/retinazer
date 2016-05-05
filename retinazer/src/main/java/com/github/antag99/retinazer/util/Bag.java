@@ -48,9 +48,7 @@ public final class Bag<E> {
 
     @SuppressWarnings("unchecked")
     public E get(int index) {
-        if (index < 0) {
-            throw new IndexOutOfBoundsException("index < 0: " + index);
-        }
+        final Object[] buffer = this.buffer;
 
         if (index >= buffer.length) {
             return null;
@@ -60,9 +58,7 @@ public final class Bag<E> {
     }
 
     public void set(int index, E value) {
-        if (index < 0) {
-            throw new IndexOutOfBoundsException("index < 0: " + index);
-        }
+        Object[] buffer = this.buffer;
 
         if (index >= buffer.length) {
             if (value == null) {
@@ -71,10 +67,23 @@ public final class Bag<E> {
             int newCapacity = Bag.nextPowerOfTwo(index + 1);
             Object[] newBuffer = new Object[newCapacity];
             System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
-            this.buffer = newBuffer;
+            this.buffer = buffer = newBuffer;
         }
 
         buffer[index] = value;
+    }
+
+    @SuppressWarnings("unchecked")
+    public E remove(int index) {
+        final Object[] buffer = this.buffer;
+
+        if (index >= buffer.length) {
+            return null;
+        }
+
+        final E result = (E) buffer[index];
+        buffer[index] = null;
+        return result;
     }
 
     public void clear() {
