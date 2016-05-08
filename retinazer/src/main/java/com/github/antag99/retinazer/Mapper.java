@@ -40,7 +40,7 @@ public final class Mapper<T extends Component> {
     /** The engine instance this mapper is tied to */
     private final Engine engine;
     /** The component type */
-    final Class<T> type;
+    public final Class<T> type;
     /** Unique index for the component type */
     final int typeIndex;
     /** Zero-arg constructor for the component */
@@ -116,30 +116,9 @@ public final class Mapper<T extends Component> {
      * @return the created component.
      */
     public T create(int entity) {
-        final Pool<T> pool = this.componentPool;
-        if(pool != null){
-            final T component = pool.obtain();
-            add(entity, component);
-            return component;
-        }
-
-        if (constructor == null) {
-            throw new RetinazerException("Component type " + type.getName()
-                    + " does not expose a zero-argument constructor");
-        }
-
-        try {
-            @SuppressWarnings("unchecked")
-            T instance = (T) constructor.newInstance();
-            add(entity, instance);
-            return instance;
-        } catch (ReflectionException ex) {
-            // GWT compatibility hack - no InvocationTargetException emulation
-            if ("java.lang.reflect.InvocationTargetException".equals(
-                    ex.getCause().getClass().getName()))
-                throw Internal.sneakyThrow(ex.getCause().getCause());
-            throw new AssertionError(ex);
-        }
+        final T component = createComponent();
+        add(entity, component);
+        return component;
     }
 
     /**
@@ -222,5 +201,48 @@ public final class Mapper<T extends Component> {
 
         if (removeCount > 0)
             remove.removeRange(0, removeCount - 1);
+    }
+
+    /** @return true if components of this Mapper are pooled */
+    public boolean isPooled() {
+        return componentPool != null;
+    }
+
+    /** Returns a component instance which is safe to keep around, outside of the entity system.
+     * No guarantees are placed on which data does the component obtain.
+     * Component must have no-arg constructor for this to work. */
+    public T createComponent(){
+        final Pool<T> pool = this.componentPool;
+        if(pool != null){
+            return pool.obtain();
+        }
+
+        if (constructor == null) {
+            throw new RetinazerException("Component type " + type.getName()
+                    + " does not expose a zero-argument constructor");
+        }
+
+        try {
+            @SuppressWarnings("unchecked")
+            T instance = (T) constructor.newInstance();
+            return instance;
+        } catch (ReflectionException ex) {
+            // GWT compatibility hack - no InvocationTargetException emulation
+            if ("java.lang.reflect.InvocationTargetException".equals(
+                    ex.getCause().getClass().getName()))
+                throw Internal.sneakyThrow(ex.getCause().getCause());
+            throw new AssertionError(ex);
+        }
+    }
+
+    /** Should be called on components created by {@link #createComponent()} which do not participate in
+     * entity system and are no longer needed.
+     * For pooled components, this returns them into the pool.
+     * For non-pooled components this is a no-op, which can be safely omitted. */
+    public void destroyComponent(T component){
+        final Pool<T> pool = this.componentPool;
+        if(pool != null){
+            pool.free(component);
+        }
     }
 }
