@@ -296,4 +296,14 @@ public final class Engine {
     public <T extends Component> Mapper<T> getMapper(Class<T> componentType) {
         return componentManager.getMapper(componentType);
     }
+
+    /**
+     * Get all mappers created so far.
+     * Do not modify or keep the array.
+     *
+     * @return array of all mappers
+     */
+    public Mapper<?>[] getMappers(){
+        return componentManager.array;
+    }
 }
