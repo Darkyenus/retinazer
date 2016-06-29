@@ -8,7 +8,6 @@ import com.github.antag99.retinazer.util.Mask;
 
 public class EntityProcessorSystemTest {
     public static final class TestEntityProcessorSystem extends EntityProcessorSystem {
-        @SkipWire
         public EntitySet processedEntities = new EntitySet();
 
         public TestEntityProcessorSystem() {

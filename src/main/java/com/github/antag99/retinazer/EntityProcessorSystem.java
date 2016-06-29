@@ -24,9 +24,7 @@ package com.github.antag99.retinazer;
 import com.badlogic.gdx.utils.IntArray;
 
 public abstract class EntityProcessorSystem extends EntitySystem {
-    @SkipWire
     private FamilyConfig family;
-    @SkipWire
     private EntitySet entities;
 
     public EntityProcessorSystem(FamilyConfig family) {

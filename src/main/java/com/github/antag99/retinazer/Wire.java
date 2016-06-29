@@ -28,15 +28,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation that makes fields eligible for wiring. This can be applied either
- * to a whole class or to a single field. The {@link SkipWire} annotation can be
- * used to revert the effect of {@link Wire}. If a field is not handled by any
- * {@link WireResolver}, an exception is thrown. Always annotate fields that
- * should not be handled with {@link SkipWire}.
+ * Annotation that makes fields eligible for wiring. This can be applied to a single field.
+ * If a wired field is not handled by any {@link WireResolver}, an exception is thrown.
+ * Attempting to wire a static field results in an exception.
  *
  * @see WireResolver
  */
-@Target({ ElementType.TYPE, ElementType.FIELD })
+@Target({ ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Wire {

@@ -33,56 +33,43 @@ final class WireCache {
     private final WireResolver[] wireResolvers;
 
     public WireCache(Engine engine, Class<?> type, WireResolver[] wireResolvers) {
-        List<Field> fields = new ArrayList<>();
+        final List<Field> fields = new ArrayList<>();
 
-        List<Class<?>> hierarchy = new ArrayList<>();
-        for (Class<?> current = type; current != Object.class; current = current.getSuperclass())
-            hierarchy.add(current);
-
-        boolean inheritWire = false;
-
-        for (int i = hierarchy.size() - 1; i >= 0; i--) {
-            Class<?> cls = hierarchy.get(i);
-            boolean classWire = inheritWire;
-            classWire |= ClassReflection.getDeclaredAnnotation(cls, Wire.class) != null;
-            classWire &= ClassReflection.getDeclaredAnnotation(cls, SkipWire.class) == null;
-
-            for (Field field : ClassReflection.getDeclaredFields(cls)) {
+        for (Class<?> current = type; current != Object.class; current = current.getSuperclass()){
+            for (Field field : ClassReflection.getDeclaredFields(current)) {
                 field.setAccessible(true);
 
-                if (field.isStatic())
+                if (field.getDeclaredAnnotation(Wire.class) == null) {
                     continue;
-
-                if (field.isSynthetic())
-                    continue;
-
-                boolean fieldWire = classWire;
-                fieldWire |= field.getDeclaredAnnotation(Wire.class) != null;
-                fieldWire &= field.getDeclaredAnnotation(SkipWire.class) == null;
-
-                if (fieldWire) {
-                    fields.add(field);
                 }
-            }
 
-            inheritWire = classWire;
+
+                if (field.isStatic()){
+                    throw new RetinazerException("Static fields can not be wired ("+current.getName()+"#"+field.getName()+")");
+                }
+
+                if (field.isSynthetic()) {
+                    continue;
+                }
+
+                fields.add(field);
+            }
         }
 
         this.engine = engine;
-        this.fields = fields.toArray(new Field[0]);
+        this.fields = fields.toArray(new Field[fields.size()]);
         this.wireResolvers = wireResolvers;
     }
 
     public void wire(Object object) {
-        final Field[] fields = this.fields;
         final WireResolver[] wireResolvers = this.wireResolvers;
 
-        iterate: for (int i = 0; i < fields.length; i++) {
-            final Field field = fields[i];
-            for (int ii = 0; ii < wireResolvers.length; ii++) {
+        fields:
+        for (final Field field : fields) {
+            for (WireResolver wireResolver : wireResolvers) {
                 try {
-                    if (wireResolvers[ii].wire(engine, object, field)) {
-                        continue iterate;
+                    if (wireResolver.wire(engine, object, field)) {
+                        continue fields;
                     }
                 } catch (Throwable ex) {
                     throw Internal.sneakyThrow(ex);

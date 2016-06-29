@@ -293,15 +293,14 @@ public class EngineTest {
         new Engine(new EngineConfig()).wire(consumer);
     }
 
-    @Wire
     public static class ExampleSystem extends EntitySystem {
-        public Engine engine;
-        public FlagSystemA flagSystemA;
-        public FlagSystemB flagSystemB;
-        public FlagSystemC flagSystemC;
-        public Mapper<FlagComponentA> mFlagA;
-        public Mapper<FlagComponentB> mFlagB;
-        public Mapper<FlagComponentC> mFlagC;
+        public @Wire Engine engine;
+        public @Wire FlagSystemA flagSystemA;
+        public @Wire FlagSystemB flagSystemB;
+        public @Wire FlagSystemC flagSystemC;
+        public @Wire Mapper<FlagComponentA> mFlagA;
+        public @Wire Mapper<FlagComponentB> mFlagB;
+        public @Wire Mapper<FlagComponentC> mFlagC;
     }
 
     @Test
