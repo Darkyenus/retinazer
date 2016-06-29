@@ -99,11 +99,11 @@ public class EngineTest {
         };
 
         Engine engine = new Engine(new EngineConfig()
-                .addSystem(entitySystemA, Priority.DEFAULT)
-                .addSystem(entitySystemB, Priority.DEFAULT)
-                .addSystem(entitySystemC, Priority.HIGH)
-                .addSystem(entitySystemD, Priority.LOWEST)
-                .addSystem(entitySystemE, Priority.DEFAULT));
+                .addSystem(entitySystemA, Order.DEFAULT)
+                .addSystem(entitySystemB, Order.DEFAULT)
+                .addSystem(entitySystemC, Order.EARLY)
+                .addSystem(entitySystemD, Order.LATEST)
+                .addSystem(entitySystemE, Order.DEFAULT));
         assertEquals(Array.with(entitySystemC,
                 entitySystemA,
                 entitySystemB,

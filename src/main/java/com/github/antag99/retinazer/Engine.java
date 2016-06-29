@@ -70,7 +70,7 @@ public final class Engine {
         systemRegistrations.sort(new Comparator<EntitySystemRegistration>() {
             @Override
             public int compare(EntitySystemRegistration o1, EntitySystemRegistration o2) {
-                return o1.priority.ordinal() - o2.priority.ordinal();
+                return o1.order.ordinal() - o2.order.ordinal();
             }
         });
 

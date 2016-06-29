@@ -22,16 +22,14 @@
 package com.github.antag99.retinazer;
 
 /**
- * Possible priorities for entity systems, systems with higher priority are
- * executed before systems with lower priority. Higher priority constants are
- * before lower priority constants.
+ * Possible priorities for entity systems.
  */
-public enum Priority {
-    HIGHEST,
-    HIGHER,
-    HIGH,
+public enum Order {
+    EARLIEST,
+    EARLIER,
+    EARLY,
     DEFAULT,
-    LOW,
-    LOWER,
-    LOWEST;
+    LATE,
+    LATER,
+    LATEST
 }

@@ -31,11 +31,11 @@ import com.badlogic.gdx.utils.Array;
 public final class EngineConfig {
     static final class EntitySystemRegistration {
         final EntitySystem system;
-        final Priority priority;
+        final Order order;
 
-        EntitySystemRegistration(EntitySystem system, Priority priority) {
+        EntitySystemRegistration(EntitySystem system, Order order) {
             this.system = system;
-            this.priority = priority;
+            this.order = order;
         }
     }
 
@@ -58,7 +58,7 @@ public final class EngineConfig {
      * @return {@code this} for chaining.
      */
     public EngineConfig addSystem(EntitySystem system) {
-        return addSystem(system, Priority.DEFAULT);
+        return addSystem(system, Order.DEFAULT);
     }
 
     /**
@@ -66,13 +66,13 @@ public final class EngineConfig {
      *
      * @param system
      *            system to register.
-     * @param priority
-     *            priority of the system.
+     * @param order
+     *            order of the system.
      * @return {@code this} for chaining.
      */
-    public EngineConfig addSystem(EntitySystem system, Priority priority) {
+    public EngineConfig addSystem(EntitySystem system, Order order) {
         Objects.requireNonNull(system, "system cannot be null");
-        Objects.requireNonNull(priority, "priority cannot be null");
+        Objects.requireNonNull(order, "order cannot be null");
         Class<? extends EntitySystem> systemType = system.getClass();
 
         for (int i = 0, n = systems.size; i < n; i++) {
@@ -82,7 +82,7 @@ public final class EngineConfig {
             }
         }
 
-        systems.add(new EntitySystemRegistration(system, priority));
+        systems.add(new EntitySystemRegistration(system, order));
         return this;
     }
 
