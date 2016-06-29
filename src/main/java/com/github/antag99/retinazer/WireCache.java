@@ -78,7 +78,7 @@ final class WireCache {
 
             throw new RetinazerException("Failed to wire field " +
                     field.getName() + " of " +
-                    field.getDeclaringClass().getName() + "; no resolver");
+                    field.getDeclaringClass().getName() + " of type "+field.getType().getName()+"; no resolver");
         }
     }
 
