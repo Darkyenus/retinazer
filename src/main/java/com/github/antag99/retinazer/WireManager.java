@@ -30,11 +30,4 @@ final class WireManager {
         getCache(object.getClass()).wire(object);
     }
 
-    public void unwire(Object object) {
-        if (object == null) {
-            throw new NullPointerException("object must not be null");
-        }
-
-        getCache(object.getClass()).unwire(object);
-    }
 }

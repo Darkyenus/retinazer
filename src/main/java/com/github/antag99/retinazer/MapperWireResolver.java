@@ -41,12 +41,4 @@ public final class MapperWireResolver implements WireResolver {
         return false;
     }
 
-    @Override
-    public boolean unwire(Engine engine, Object object, Field field) throws Throwable {
-        if (getType(field) != null) {
-            field.set(object, null);
-            return true;
-        }
-        return false;
-    }
 }

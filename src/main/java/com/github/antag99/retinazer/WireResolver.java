@@ -40,16 +40,6 @@ public interface WireResolver {
      * @return Whether this resolver handled the given field.
      * @throws Throwable If an unexpected error occurred.
      */
-    public boolean wire(Engine engine, Object object, Field field) throws Throwable;
+    boolean wire(Engine engine, Object object, Field field) throws Throwable;
 
-    /**
-     * Un-wires the field of the given object.
-     *
-     * @param engine The engine instance.
-     * @param object The object to wire.
-     * @param field The field of the object.
-     * @return Whether this resolver handled the given field.
-     * @throws Throwable If an unexpected error occurred.
-     */
-    public boolean unwire(Engine engine, Object object, Field field) throws Throwable;
 }

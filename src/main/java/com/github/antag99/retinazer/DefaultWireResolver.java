@@ -39,14 +39,4 @@ public final class DefaultWireResolver implements WireResolver {
         return true;
     }
 
-    @Override
-    public boolean unwire(Engine engine, Object object, Field field) throws Throwable {
-        Class<?> type = field.getType();
-        if (type == Engine.class || ClassReflection.isAssignableFrom(EntitySystem.class, type)) {
-            field.set(object, null);
-        } else {
-            return false;
-        }
-        return true;
-    }
 }

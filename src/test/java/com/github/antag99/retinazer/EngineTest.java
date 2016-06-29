@@ -302,8 +302,6 @@ public class EngineTest {
         public Mapper<FlagComponentA> mFlagA;
         public Mapper<FlagComponentB> mFlagB;
         public Mapper<FlagComponentC> mFlagC;
-        // public Mapper<? extends Component> mBad;
-        // public Mapper<? extends Component> mWorse;
     }
 
     @Test
@@ -324,23 +322,5 @@ public class EngineTest {
         assertSame(engine.getMapper(FlagComponentA.class), system.mFlagA);
         assertSame(engine.getMapper(FlagComponentB.class), system.mFlagB);
         assertSame(engine.getMapper(FlagComponentC.class), system.mFlagC);
-        // assertSame(null, system.mBad);
-        // assertSame(null, system.mWorse);
-        engine.unwire(system);
-        assertSame(null, system.flagSystemA);
-        assertSame(null, system.flagSystemB);
-        assertSame(null, system.flagSystemC);
-        assertSame(null, system.mFlagA);
-        assertSame(null, system.mFlagB);
-        assertSame(null, system.mFlagC);
-        // assertSame(null, system.mBad);
-        // assertSame(null, system.mWorse);
-        engine.wire(system);
-        assertSame(engine, system.engine);
-        assertSame(flagSystemA, system.flagSystemA);
-        assertSame(flagSystemB, system.flagSystemB);
-        assertSame(flagSystemC, system.flagSystemC);
-        // assertSame(null, system.mBad);
-        // assertSame(null, system.mWorse);
     }
 }

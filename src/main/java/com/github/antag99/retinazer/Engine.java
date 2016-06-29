@@ -107,10 +107,6 @@ public final class Engine {
         wireManager.wire(object);
     }
 
-    public void unwire(Object object) {
-        wireManager.unwire(object);
-    }
-
     public void addEntityListener(EntityListener entityListener) {
         getFamily(new FamilyConfig()).addListener(entityListener);
     }

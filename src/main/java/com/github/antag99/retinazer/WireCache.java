@@ -95,25 +95,4 @@ final class WireCache {
         }
     }
 
-    public void unwire(Object object) {
-        final Field[] fields = this.fields;
-        final WireResolver[] wireResolvers = this.wireResolvers;
-
-        iterate: for (int i = 0; i < fields.length; i++) {
-            final Field field = fields[i];
-            for (int ii = 0; ii < wireResolvers.length; ii++) {
-                try {
-                    if (wireResolvers[ii].unwire(engine, object, field)) {
-                        continue iterate;
-                    }
-                } catch (Throwable ex) {
-                    throw Internal.sneakyThrow(ex);
-                }
-            }
-
-            throw new RetinazerException("Failed to unwire field " +
-                    field.getName() + " of " +
-                    field.getDeclaringClass().getName() + "; no resolver");
-        }
-    }
 }
