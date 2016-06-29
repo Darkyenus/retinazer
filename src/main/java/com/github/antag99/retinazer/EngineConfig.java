@@ -24,6 +24,8 @@ package com.github.antag99.retinazer;
 import java.util.Objects;
 
 import com.badlogic.gdx.utils.Array;
+import com.github.antag99.retinazer.resolvers.DefaultWireResolver;
+import com.github.antag99.retinazer.resolvers.MapperWireResolver;
 
 /**
  * Stores configuration for an {@link Engine} instance.

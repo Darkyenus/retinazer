@@ -19,9 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package com.github.antag99.retinazer;
+package com.github.antag99.retinazer.resolvers;
 
 import com.badlogic.gdx.utils.reflect.Field;
+import com.github.antag99.retinazer.Component;
+import com.github.antag99.retinazer.Engine;
+import com.github.antag99.retinazer.Mapper;
+import com.github.antag99.retinazer.WireResolver;
 
 public final class MapperWireResolver implements WireResolver {
     @SuppressWarnings("unchecked")

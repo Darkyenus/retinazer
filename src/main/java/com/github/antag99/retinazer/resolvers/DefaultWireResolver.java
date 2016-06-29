@@ -19,10 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package com.github.antag99.retinazer;
+package com.github.antag99.retinazer.resolvers;
 
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Field;
+import com.github.antag99.retinazer.Engine;
+import com.github.antag99.retinazer.EntitySystem;
+import com.github.antag99.retinazer.WireResolver;
 
 public final class DefaultWireResolver implements WireResolver {
     @Override
