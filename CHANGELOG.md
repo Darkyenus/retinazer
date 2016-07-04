@@ -1,6 +1,10 @@
 ## Changelog
 
-# Version 0.2.2 (released 2017-1-30 by Darkyen)
+# Version 0.2.3-SNAPSHOT
+- `ensureCapacity(int)` for all `Bag` implementations
+- Fix: `Bag.set(int)` no longer treats the `0` value specially
+
+# Version 0.2.2
 - Add `Component` pooling support, just implement `Pooled` interface on your components
 - Remove overly defensive behavior in some places, including altering of unnecessarily complex and defensive API
 - Migrate build to `sbt` (no intention of using Scala)
@@ -14,6 +18,8 @@
 - Greatly simplify `EntitySet` API, replacing it with modifiable `EntitySet` and non-modifiable (but not immutable) `EntitySetView`
 - Inline `EntityProcessorSystem.processEntities`
 - Lots of minor source cleanups
+
+# Forked by Jan Polák
 
 # Version 0.2.1 (released 2015-10-30)
 - Fix: `OutOfMemoryError` due to never-reset inserted component list
