@@ -36,7 +36,6 @@ public final class Engine {
 
     private final EntitySystem[] systems;
     private final ObjectMap<Class<? extends EntitySystem>, EntitySystem> systemsByType;
-    private final ObjectMap.Values<EntitySystem> systemsView;
 
     final EntityManager entityManager;
     final ComponentManager componentManager;
@@ -57,9 +56,9 @@ public final class Engine {
      *            configuration for this Engine.
      */
     public Engine(EngineConfig config) {
-        entityManager = new EntityManager(this, config);
+        entityManager = new EntityManager(this);
         componentManager = new ComponentManager(this, config);
-        familyManager = new FamilyManager(this, config);
+        familyManager = new FamilyManager(this);
         wireManager = new WireManager(this, config);
 
         Array<EntitySystemRegistration> systemRegistrations = new Array<>();
@@ -84,12 +83,6 @@ public final class Engine {
 
         this.systems = systems;
         this.systemsByType = systemsByType;
-        this.systemsView = new ObjectMap.Values<EntitySystem>(systemsByType) {
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        };
 
         for (EntitySystem system : systems)
             wire(system);
@@ -266,18 +259,18 @@ public final class Engine {
         if (system == null && !optional) {
             throw new IllegalArgumentException("System not registered: " + systemType.getName());
         } else {
-            return (T) system;
+            return system;
         }
     }
 
     /**
      * Gets the systems registered during configuration of the engine.
+     * Do not modify returned value.
      *
      * @return all systems registered during configuration of the engine.
      */
-    public Iterable<EntitySystem> getSystems() {
-        systemsView.reset();
-        return systemsView;
+    public EntitySystem[] getSystems() {
+        return systems;
     }
 
     /**

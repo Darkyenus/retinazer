@@ -27,10 +27,12 @@ import com.github.antag99.retinazer.util.Bag;
 import com.github.antag99.retinazer.util.Mask;
 
 final class FamilyManager {
-    private static class Key {
+
+    private static final class Key {
         ObjectSet<Class<? extends Component>> components = null;
         ObjectSet<Class<? extends Component>> excludedComponents = null;
 
+        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
         @Override
         public boolean equals(Object obj) {
             if (obj == null)
@@ -49,16 +51,12 @@ final class FamilyManager {
         }
     }
 
-    private ObjectIntMap<Key> familyIndices = new ObjectIntMap<>();
-    private Bag<Family> families = new Bag<>();
-    private Engine engine;
-    private Key lookup = new Key();
+    private final ObjectIntMap<Key> familyIndices = new ObjectIntMap<>();
+    private final Bag<Family> families = new Bag<>();
+    private final Engine engine;
     private EntitySet entities;
-    private EntitySet argument = new EntitySet();
-    private Mask tmpMask = new Mask();
-    private Mask tmpMatchedEntities = new Mask();
 
-    public FamilyManager(Engine engine, EngineConfig config) {
+    public FamilyManager(Engine engine) {
         this.engine = engine;
     }
 
@@ -69,10 +67,17 @@ final class FamilyManager {
         return entities;
     }
 
+    private final Key getFamily_lookup = new Key();
+
+    /**
+     *  @return existing or new family conforming to given configuration
+     */
     public Family getFamily(FamilyConfig config) {
+        final Key lookup = this.getFamily_lookup;
         lookup.components = config.components;
         lookup.excludedComponents = config.excludedComponents;
-        int index = familyIndices.get(lookup, familyIndices.size);
+        final int index = familyIndices.get(lookup, familyIndices.size);
+
         if (index == familyIndices.size) {
             int i;
             int[] components = new int[config.components.size];
@@ -112,19 +117,24 @@ final class FamilyManager {
         return families.get(index);
     }
 
+    private final Mask updateFamilyMembership_tmpMask = new Mask();
+    private final Mask updateFamilyMembership_tmpMatchedEntities = new Mask();
+    private final EntitySet updateFamilyMembership_argument = new EntitySet();
+
     /**
      * Updates family membership for all entities. This will insert/remove entities
      * to/from family sets.
      */
-
     void updateFamilyMembership() {
         Mapper<?>[] mappers = engine.componentManager.array;
 
-        Mask tmpMask = this.tmpMask;
-        Mask tmpMatchedEntities = this.tmpMatchedEntities;
+        final Mask tmpMask = this.updateFamilyMembership_tmpMask;
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        final Mask tmpMatchedEntities = this.updateFamilyMembership_tmpMatchedEntities;
 
         for (int i = 0, n = familyIndices.size; i < n; i++) {
             Family family = families.get(i);
+            assert family != null;
             EntitySet entities = family.entities;
 
             Mask matchedEntities = tmpMatchedEntities.set(engine.entityManager.entities);
@@ -155,8 +165,11 @@ final class FamilyManager {
             entities.edit().removeEntities(family.removeEntities);
         }
 
+        final EntitySet argument = this.updateFamilyMembership_argument;
+
         for (int i = 0, n = familyIndices.size; i < n; i++) {
             Family family = families.get(i);
+            assert family != null;
 
             if (!family.insertEntities.isEmpty()) {
                 argument.edit().addEntities(family.insertEntities);

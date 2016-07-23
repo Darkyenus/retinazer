@@ -30,7 +30,7 @@ final class EntityManager {
     Mask removeQueue = new Mask();
     Mask remove = new Mask();
 
-    public EntityManager(Engine engine, EngineConfig config) {
+    public EntityManager(Engine engine) {
         this.engine = engine;
     }
 
