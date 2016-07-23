@@ -27,6 +27,9 @@ import com.github.antag99.retinazer.Engine;
 import com.github.antag99.retinazer.EntitySystem;
 import com.github.antag99.retinazer.WireResolver;
 
+/**
+ * Wires Engine and EntitySystems registered in the engine.
+ */
 public final class DefaultWireResolver implements WireResolver {
     @Override
     @SuppressWarnings("unchecked")

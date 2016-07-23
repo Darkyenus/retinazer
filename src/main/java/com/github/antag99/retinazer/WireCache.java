@@ -37,12 +37,9 @@ final class WireCache {
 
         for (Class<?> current = type; current != Object.class; current = current.getSuperclass()){
             for (Field field : ClassReflection.getDeclaredFields(current)) {
-                field.setAccessible(true);
-
                 if (field.getDeclaredAnnotation(Wire.class) == null) {
                     continue;
                 }
-
 
                 if (field.isStatic()){
                     throw new RetinazerException("Static fields can not be wired ("+current.getName()+"#"+field.getName()+")");
@@ -52,6 +49,7 @@ final class WireCache {
                     continue;
                 }
 
+                field.setAccessible(true);
                 fields.add(field);
             }
         }

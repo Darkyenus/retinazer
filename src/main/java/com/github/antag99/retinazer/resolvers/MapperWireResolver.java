@@ -27,6 +27,9 @@ import com.github.antag99.retinazer.Engine;
 import com.github.antag99.retinazer.Mapper;
 import com.github.antag99.retinazer.WireResolver;
 
+/**
+ * Wires {@link Mapper} instances by generic parameter.
+ */
 public final class MapperWireResolver implements WireResolver {
     @SuppressWarnings("unchecked")
     private Class<? extends Component> getType(Field field) {
