@@ -25,7 +25,7 @@ import com.badlogic.gdx.utils.IntArray;
 
 public abstract class EntityProcessorSystem extends EntitySystem {
     private FamilyConfig family;
-    private EntitySet entities;
+    private EntitySetView entities;
 
     public EntityProcessorSystem(FamilyConfig family) {
         this.family = family;
@@ -38,7 +38,7 @@ public abstract class EntityProcessorSystem extends EntitySystem {
         entities = engine.getFamily(getFamily()).getEntities();
     }
 
-    public final EntitySet getEntities() {
+    public final EntitySetView getEntities() {
         return entities;
     }
 

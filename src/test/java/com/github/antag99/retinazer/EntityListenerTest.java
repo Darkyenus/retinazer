@@ -23,41 +23,40 @@ package com.github.antag99.retinazer;
 
 import static org.junit.Assert.assertEquals;
 
+import com.github.antag99.retinazer.util.Mask;
 import org.junit.Test;
 
 public class EntityListenerTest {
     private static class EntityListenerMock implements EntityListener {
-        private EntitySet insertedEntities = new EntitySet();
-        private EntitySet removedEntities = new EntitySet();
+        private final EntitySet insertedEntities = new EntitySet();
+        private final EntitySet removedEntities = new EntitySet();
 
         @Override
-        public void inserted(EntitySet entities) {
-            if (insertedEntities.size() != 0)
-                throw new AssertionError();
-            this.insertedEntities = new EntitySet(entities);
+        public void inserted(EntitySetView entities) {
+            assertEquals("Insertion without verification", 0, insertedEntities.size());
+            insertedEntities.addEntities(entities.getMask());
         }
 
         @Override
-        public void removed(EntitySet entities) {
-            if (removedEntities.size() != 0)
-                throw new AssertionError();
-            this.removedEntities = new EntitySet(entities);
+        public void removed(EntitySetView entities) {
+            assertEquals("Removal without verification", 0, removedEntities.size());
+            removedEntities.addEntities(entities.getMask());
         }
 
         public void verifyInserted(int... entities) {
-            EntitySet set = new EntitySet();
+            final Mask shouldBePresent = new Mask();
             for (int e : entities)
-                set.edit().addEntity(e);
-            assertEquals(set, insertedEntities);
-            insertedEntities = new EntitySet();
+                shouldBePresent.set(e);
+            assertEquals("Insert verification failed", shouldBePresent, insertedEntities.getMask());
+            insertedEntities.clear();
         }
 
         public void verifyRemoved(int... entities) {
-            EntitySet set = new EntitySet();
+            final Mask shouldBePresent = new Mask();
             for (int e : entities)
-                set.edit().addEntity(e);
-            assertEquals(set, removedEntities);
-            removedEntities = new EntitySet();
+                shouldBePresent.set(e);
+            assertEquals("Remove verification failed", shouldBePresent, removedEntities.getMask());
+            removedEntities.clear();
         }
     }
 
@@ -101,7 +100,7 @@ public class EntityListenerTest {
         listenerC.verifyInserted();
         listenerC.verifyRemoved();
         engine.update(0f);
-        listenerB.verifyInserted(entity);
+        listenerB.verifyInserted(entity);//
         listenerB.verifyRemoved();
         listenerC.verifyInserted();
         listenerC.verifyRemoved();

@@ -26,39 +26,26 @@ import com.github.antag99.retinazer.util.Mask;
 
 public final class EntitySet {
 
-    private final EntitySetContent content;
+    private final Mask entities = new Mask();
+    private final IntArray indices = new IntArray();
+    private boolean indicesDirty = false;
 
-    private final EntitySetEdit edit;
-
-    private final EntitySet view;
+    private final EntitySetView view;
 
     public EntitySet() {
-        this.content = new EntitySetContent();
-        this.edit = new EntitySetEdit(content);
-        this.view = new EntitySet(content);
+        this.view = new EntitySetView(this);
     }
 
-    public EntitySet(EntitySet set) {
+    public EntitySet(EntitySet copyEntities) {
         this();
-
-        edit().addEntities(set.getMask());
+        this.entities.set(copyEntities.entities);
+        this.indicesDirty = true;
     }
 
-    /**
-     * Creates an unmodifiable view of the given content.
-     */
-    private EntitySet(EntitySetContent content) {
-        this.content = content;
-        this.edit = null;
-        this.view = this;
-    }
-
-    public EntitySetEdit edit() {
-        if (edit == null) {
-            throw new RetinazerException("Cannot modify the entities of this set");
-        }
-
-        return edit;
+    public EntitySet(EntitySetView copyEntities) {
+        this();
+        this.entities.set(copyEntities.getMask());
+        this.indicesDirty = true;
     }
 
     /**
@@ -66,7 +53,7 @@ public final class EntitySet {
      *
      * @return Unmodifiable view of this entity set.
      */
-    public EntitySet view() {
+    public EntitySetView view() {
         return view;
     }
 
@@ -78,7 +65,41 @@ public final class EntitySet {
      * @return whether this set contains the given entity.
      */
     public boolean contains(int entity) {
-        return content.entities.get(entity);
+        return this.entities.get(entity);
+    }
+
+    public void addEntity(int entity) {
+        if (!this.entities.get(entity)) {
+            this.indicesDirty = true;
+            this.entities.set(entity);
+        }
+    }
+
+    public void addEntities(Mask entities) {
+        if (!this.entities.isSupersetOf(entities)) {
+            this.indicesDirty = true;
+            this.entities.or(entities);
+        }
+    }
+
+    public void removeEntity(int entity) {
+        if (this.entities.get(entity)) {
+            this.indicesDirty = true;
+            this.entities.clear(entity);
+        }
+    }
+
+    public void removeEntities(Mask entities) {
+        if (this.entities.intersects(entities)) {
+            this.indicesDirty = true;
+            this.entities.andNot(entities);
+        }
+    }
+
+    public void clear() {
+        this.entities.clear();
+        this.indices.clear();
+        this.indicesDirty = false;
     }
 
     /**
@@ -88,7 +109,7 @@ public final class EntitySet {
      * @return the entities contained in this set.
      */
     public Mask getMask() {
-        return content.entities;
+        return this.entities;
     }
 
     /**
@@ -99,16 +120,16 @@ public final class EntitySet {
      * @return the indices of all entities in this set.
      */
     public IntArray getIndices() {
-        if (content.indicesDirty) {
-            content.indices.clear();
-            content.entities.getIndices(content.indices);
-            content.indicesDirty = false;
+        if (indicesDirty) {
+            indices.clear();
+            entities.getIndices(indices);
+            indicesDirty = false;
         }
-        return content.indices;
+        return indices;
     }
 
     public int size() {
-        return content.indicesDirty ? content.entities.cardinality() : content.indices.size;
+        return indicesDirty ? entities.cardinality() : indices.size;
     }
 
     public boolean isEmpty() {
@@ -117,14 +138,12 @@ public final class EntitySet {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof EntitySet))
-            return false;
-        return ((EntitySet) obj).content.entities.equals(content.entities);
+        return obj instanceof EntitySet && ((EntitySet) obj).entities.equals(entities);
     }
 
     @Override
     public int hashCode() {
-        return content.entities.hashCode();
+        return entities.hashCode();
     }
 
     @Override

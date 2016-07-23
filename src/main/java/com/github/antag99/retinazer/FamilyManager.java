@@ -54,13 +54,13 @@ final class FamilyManager {
     private final ObjectIntMap<Key> familyIndices = new ObjectIntMap<>();
     private final Bag<Family> families = new Bag<>();
     private final Engine engine;
-    private EntitySet entities;
+    private EntitySetView entities;
 
     public FamilyManager(Engine engine) {
         this.engine = engine;
     }
 
-    public EntitySet getEntities() {
+    public EntitySetView getEntities() {
         if (entities == null) {
             entities = getFamily(new FamilyConfig()).getEntities();
         }
@@ -111,7 +111,7 @@ final class FamilyManager {
             }
 
             // No notifications to dispatch here
-            family.entities.edit().addEntities(matchedEntities);
+            family.entities.addEntities(matchedEntities);
         }
 
         return families.get(index);
@@ -158,11 +158,11 @@ final class FamilyManager {
 
             family.insertEntities.set(matchedEntities);
             family.insertEntities.andNot(entities.getMask());
-            entities.edit().addEntities(family.insertEntities);
+            entities.addEntities(family.insertEntities);
 
             family.removeEntities.set(entities.getMask());
             family.removeEntities.andNot(matchedEntities);
-            entities.edit().removeEntities(family.removeEntities);
+            entities.removeEntities(family.removeEntities);
         }
 
         final EntitySet argument = this.updateFamilyMembership_argument;
@@ -172,19 +172,19 @@ final class FamilyManager {
             assert family != null;
 
             if (!family.insertEntities.isEmpty()) {
-                argument.edit().addEntities(family.insertEntities);
+                argument.addEntities(family.insertEntities);
                 for (EntityListener listener : family.listeners) {
                     listener.inserted(argument.view());
                 }
-                argument.edit().clear();
+                argument.clear();
             }
 
             if (!family.removeEntities.isEmpty()) {
-                argument.edit().addEntities(family.removeEntities);
+                argument.addEntities(family.removeEntities);
                 for (EntityListener listener : family.listeners) {
                     listener.removed(argument.view());
                 }
-                argument.edit().clear();
+                argument.clear();
             }
         }
     }

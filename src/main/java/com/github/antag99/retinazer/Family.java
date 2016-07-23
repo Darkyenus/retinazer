@@ -84,7 +84,7 @@ public final class Family {
         }
     }
 
-    public EntitySet getEntities() {
+    public EntitySetView getEntities() {
         return entities.view();
     }
 
@@ -98,17 +98,17 @@ public final class Family {
         return this == obj;
     }
 
-    public static final FamilyConfig create() {
+    public static FamilyConfig create() {
         return new FamilyConfig();
     }
 
     @SafeVarargs
-    public static final FamilyConfig with(Class<? extends Component>... componentTypes) {
+    public static FamilyConfig with(Class<? extends Component>... componentTypes) {
         return new FamilyConfig().with(componentTypes);
     }
 
     @SafeVarargs
-    public static final FamilyConfig exclude(Class<? extends Component>... componentTypes) {
+    public static FamilyConfig exclude(Class<? extends Component>... componentTypes) {
         return new FamilyConfig().exclude(componentTypes);
     }
 }

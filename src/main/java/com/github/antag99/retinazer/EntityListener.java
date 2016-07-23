@@ -32,7 +32,7 @@ public interface EntityListener {
      * @param entities
      *            the entities that were inserted.
      */
-    public void inserted(EntitySet entities);
+    void inserted(EntitySetView entities);
 
     /**
      * Called when entities are removed.
@@ -40,5 +40,5 @@ public interface EntityListener {
      * @param entities
      *            the entities that were removed.
      */
-    public void removed(EntitySet entities);
+    void removed(EntitySetView entities);
 }

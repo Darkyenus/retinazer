@@ -245,4 +245,9 @@ public final class Mapper<T extends Component> {
             pool.free(component);
         }
     }
+
+    @Override
+    public String toString() {
+        return type.getSimpleName()+" Mapper";
+    }
 }

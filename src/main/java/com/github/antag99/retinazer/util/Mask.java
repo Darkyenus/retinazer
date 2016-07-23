@@ -24,6 +24,7 @@ package com.github.antag99.retinazer.util;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
+@SuppressWarnings("unused")
 public final class Mask implements Poolable {
     private long[] words = new long[0];
 
@@ -75,7 +76,7 @@ public final class Mask implements Poolable {
         long[] otherWords = other.words;
         int commonWords = Math.min(words.length, otherWords.length);
 
-        for (int i = 0, n = commonWords; i < n; i++) {
+        for (int i = 0; i < commonWords; i++) {
             words[i] |= otherWords[i];
         }
     }
@@ -97,7 +98,7 @@ public final class Mask implements Poolable {
         long[] otherWords = other.words;
         int commonWords = Math.min(words.length, otherWords.length);
 
-        for (int i = 0, n = commonWords; i < n; i++) {
+        for (int i = 0; i < commonWords; i++) {
             words[i] ^= otherWords[i];
         }
     }
@@ -116,7 +117,7 @@ public final class Mask implements Poolable {
             words[i] = 0;
         }
 
-        for (int i = 0, n = commonWords; i < n; i++) {
+        for (int i = 0; i < commonWords; i++) {
             words[i] &= otherWords[i];
         }
     }
@@ -251,7 +252,7 @@ public final class Mask implements Poolable {
         for (int i = commonWords, n = otherWords.length; i < n; i++)
             if (otherWords[i] != 0)
                 return false;
-        for (int i = 0, n = commonWords; i < n; i++)
+        for (int i = 0; i < commonWords; i++)
             if ((words[i] & otherWords[i]) != otherWords[i])
                 return false;
         return true;
@@ -277,7 +278,7 @@ public final class Mask implements Poolable {
         final long[] words = this.words;
         final long[] otherWords = other.words;
         final int commonWords = Math.min(words.length, otherWords.length);
-        for (int i = 0, n = commonWords; i < n; i++)
+        for (int i = 0; i < commonWords; i++)
             if ((words[i] & otherWords[i]) != 0)
                 return true;
         return false;
@@ -289,10 +290,8 @@ public final class Mask implements Poolable {
      * @return The number of set bits in this mask.
      */
     public int cardinality() {
-        final long[] words = this.words;
         int cardinality = 0;
-        for (int i = 0, n = words.length; i < n; i++)
-            cardinality += Long.bitCount(words[i]);
+        for (long word : this.words) cardinality += Long.bitCount(word);
         return cardinality;
     }
 
@@ -329,7 +328,7 @@ public final class Mask implements Poolable {
         int count = cardinality();
         out.ensureCapacity(count);
         int[] items = out.items;
-        for (int i = 0, b = nextSetBit(0), n = count; i < n; i++, b = nextSetBit(b + 1)) {
+        for (int i = 0, b = nextSetBit(0); i < count; i++, b = nextSetBit(b + 1)) {
             items[offset + i] = b;
         }
         out.size += count;
@@ -372,9 +371,8 @@ public final class Mask implements Poolable {
     }
 
     public boolean isEmpty() {
-        final long[] words = this.words;
-        for (int i = 0; i < words.length; i++) {
-            if (words[i] != 0L) {
+        for (long word : this.words) {
+            if (word != 0L) {
                 return false;
             }
         }

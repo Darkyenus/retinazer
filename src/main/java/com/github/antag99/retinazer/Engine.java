@@ -202,9 +202,9 @@ public final class Engine {
     /**
      * Gets all entities added to this engine.
      *
-     * @return {@link EntitySet} containing all entities added to this engine
+     * @return {@link EntitySetView} containing all entities added to this engine
      */
-    public EntitySet getEntities() {
+    public EntitySetView getEntities() {
         return familyManager.getEntities();
     }
 
