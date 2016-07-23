@@ -1,6 +1,18 @@
 ## Changelog
 
 # Version 0.2.2-SNAPSHOT
+- Add `Component` pooling support, just implement `Pooled` interface on your components
+- Remove overly defensive behavior in some places, including altering of unnecessarily complex and defensive API
+- Migrate build to `sbt` (no intention of using Scala)
+- Remove support for GWT
+- Rename `Priority` enum to `Order`, with more intuitive naming
+- Simplify Wire system by removing `SkipWire` and requiring explicit `Wire` annotation on fields
+    - Remove `unwire` functionality
+- Add convenience classes
+    - `SimpleWireResolver`
+    - `EntityListenerAdapter`
+- Greatly simplify `EntitySet` API, replacing it with modifiable `EntitySet` and non-modifiable (but not immutable) `EntitySetView`
+- Lots of minor source cleanups
 
 # Version 0.2.1 (released 2015-10-30)
 - Fix: `OutOfMemoryError` due to never-reset inserted component list
