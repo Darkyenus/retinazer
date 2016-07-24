@@ -12,6 +12,7 @@
     - `SimpleWireResolver`
     - `EntityListenerAdapter`
 - Greatly simplify `EntitySet` API, replacing it with modifiable `EntitySet` and non-modifiable (but not immutable) `EntitySetView`
+- Inline `EntityProcessorSystem.processEntities`
 - Lots of minor source cleanups
 
 # Version 0.2.1 (released 2015-10-30)
