@@ -27,6 +27,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.antag99.retinazer.EngineConfig.EntitySystemRegistration;
+import com.github.antag99.retinazer.util.Mask;
 
 /**
  * Engine is the core class of retinazer; it manages all active entities,
@@ -37,7 +38,10 @@ public final class Engine {
     private final EntitySystem[] systems;
     private final ObjectMap<Class<? extends EntitySystem>, EntitySystem> systemsByType;
 
-    final EntityManager entityManager;
+    final Mask entities = new Mask();
+    final Mask removeQueue = new Mask();
+    final Mask remove = new Mask();
+
     final ComponentManager componentManager;
     final FamilyManager familyManager;
     final WireManager wireManager;
@@ -56,7 +60,6 @@ public final class Engine {
      *            configuration for this Engine.
      */
     public Engine(EngineConfig config) {
-        entityManager = new EntityManager(this);
         componentManager = new ComponentManager(this, config);
         familyManager = new FamilyManager(this);
         wireManager = new WireManager(this, config);
@@ -158,13 +161,13 @@ public final class Engine {
         while (dirty) {
             dirty = false;
 
-            entityManager.remove.set(entityManager.removeQueue);
-            entityManager.removeQueue.clear();
+            remove.set(removeQueue);
+            removeQueue.clear();
 
             for (Mapper<?> mapper : componentManager.array) {
                 mapper.removeMask.set(mapper.removeQueueMask);
-                mapper.removeMask.or(entityManager.remove);
-                entityManager.remove.getIndices(mapper.remove);
+                mapper.removeMask.or(remove);
+                remove.getIndices(mapper.remove);
                 mapper.removeQueueMask.clear();
                 mapper.removeCount = mapper.remove.size;
             }
@@ -172,7 +175,7 @@ public final class Engine {
             familyManager.updateFamilyMembership();
             componentManager.applyComponentChanges();
 
-            entityManager.entities.andNot(entityManager.remove);
+            entities.andNot(remove);
         }
     }
 
@@ -185,7 +188,23 @@ public final class Engine {
      * @return index of the created entity.
      */
     public int createEntity() {
-        return entityManager.createEntity();
+        dirty = true;
+        int entity = entities.nextClearBit(0);
+        entities.set(entity);
+        return entity;
+    }
+
+    /**
+     * Create a new entity with defined ID.
+     *
+     * @return true if entity was created, false if such entity already exists
+     */
+    public boolean createEntity(int entity) {
+        final boolean exists = entities.get(entity);
+        if(exists) return false;
+        dirty = true;
+        entities.set(entity);
+        return true;
     }
 
     /**
@@ -196,7 +215,8 @@ public final class Engine {
      *            the entity to destroy.
      */
     public void destroyEntity(int entity) {
-        entityManager.destroyEntity(entity);
+        dirty = true;
+        removeQueue.set(entity);
     }
 
     /**

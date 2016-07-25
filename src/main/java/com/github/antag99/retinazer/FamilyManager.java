@@ -100,7 +100,7 @@ final class FamilyManager {
 
             // Find matching entities, and add them to the new family set.
             Mapper<?>[] mappers = engine.componentManager.array;
-            Mask matchedEntities = new Mask().set(engine.entityManager.entities);
+            Mask matchedEntities = new Mask().set(engine.entities);
 
             for (int component : components) {
                 matchedEntities.and(mappers[component].componentsMask);
@@ -137,8 +137,8 @@ final class FamilyManager {
             assert family != null;
             EntitySet entities = family.entities;
 
-            Mask matchedEntities = tmpMatchedEntities.set(engine.entityManager.entities);
-            matchedEntities.andNot(engine.entityManager.remove);
+            Mask matchedEntities = tmpMatchedEntities.set(engine.entities);
+            matchedEntities.andNot(engine.remove);
 
             int[] components = family.components;
             for (int component : components) {
