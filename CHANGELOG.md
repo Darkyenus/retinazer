@@ -1,6 +1,6 @@
 ## Changelog
 
-# Version 0.2.2-SNAPSHOT
+# Version 0.2.2 (released 2017-1-30 by Darkyen)
 - Add `Component` pooling support, just implement `Pooled` interface on your components
 - Remove overly defensive behavior in some places, including altering of unnecessarily complex and defensive API
 - Migrate build to `sbt` (no intention of using Scala)

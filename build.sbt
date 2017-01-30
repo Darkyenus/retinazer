@@ -4,7 +4,7 @@ organization := "darkyenus"
 
 name := "retinazer"
 
-version := "0.2.2-SNAPSHOT"
+version := "0.2.2"
 
 javacOptions in compile ++= Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8", "-g")
 
