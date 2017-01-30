@@ -60,6 +60,14 @@ public final class Engine {
      *            configuration for this Engine.
      */
     public Engine(EngineConfig config) {
+        this(config, true);
+    }
+
+    /**
+     * @see #Engine(EngineConfig)
+     * @param initialize if {@link #initialize()} should be called automatically, if false, call it manually before doing anything else with the engine
+     */
+    public Engine(EngineConfig config, boolean initialize) {
         componentManager = new ComponentManager(this, config);
         familyManager = new FamilyManager(this);
         wireManager = new WireManager(this, config);
@@ -90,6 +98,10 @@ public final class Engine {
         for (EntitySystem system : systems)
             wire(system);
 
+        if (initialize) initialize();
+    }
+
+    public void initialize() {
         for (EntitySystem system : systems)
             system.setup();
 
@@ -157,7 +169,7 @@ public final class Engine {
         update = false;
     }
 
-    private void flush() {
+    public void flush() {
         while (dirty) {
             dirty = false;
 
