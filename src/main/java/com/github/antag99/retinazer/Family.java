@@ -3,19 +3,18 @@ package com.github.antag99.retinazer;
 import com.github.antag99.retinazer.util.Mask;
 
 public final class Family {
-    final int[] components;
-    final int[] excludedComponents;
+    final Mask requiredComponents;
+    final Mask excludedComponents;
     private final int index;
+
     final EntitySet entities = new EntitySet();
-    EntityListener[] listeners = new EntityListener[0];
+    private EntityListener[] listeners = EntityListener.EMPTY_ARRAY;
 
     final Mask removeEntities = new Mask();
     final Mask insertEntities = new Mask();
 
-    Family(int[] components,
-           int[] excludedComponents,
-           int index) {
-        this.components = components;
+    Family(Mask requiredComponents, Mask excludedComponents, int index) {
+        this.requiredComponents = requiredComponents;
         this.excludedComponents = excludedComponents;
         this.index = index;
     }
@@ -59,8 +58,20 @@ public final class Family {
         }
     }
 
+    void onInserted(EntitySetView inserted) {
+        for (EntityListener listener : listeners) {
+            listener.inserted(inserted);
+        }
+    }
+
+    void onRemoved(EntitySetView removed) {
+        for (EntityListener listener : listeners) {
+            listener.removed(removed);
+        }
+    }
+
     public EntitySetView getEntities() {
-        return entities.view();
+        return entities;
     }
 
     @Override
@@ -71,19 +82,5 @@ public final class Family {
     @Override
     public boolean equals(Object obj) {
         return this == obj;
-    }
-
-    public static FamilyConfig create() {
-        return new FamilyConfig();
-    }
-
-    @SafeVarargs
-    public static FamilyConfig with(Class<? extends Component>... componentTypes) {
-        return new FamilyConfig().with(componentTypes);
-    }
-
-    @SafeVarargs
-    public static FamilyConfig exclude(Class<? extends Component>... componentTypes) {
-        return new FamilyConfig().exclude(componentTypes);
     }
 }

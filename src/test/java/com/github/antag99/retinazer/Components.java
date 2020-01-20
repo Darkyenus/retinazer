@@ -5,7 +5,6 @@ package com.github.antag99.retinazer;
  */
 public final class Components {
 
-	public static final ComponentSet EMPTY_SET = new ComponentSet();
 	public static final ComponentSet FULL_SET = new ComponentSet(FlagComponentA.class, FlagComponentB.class, FlagComponentC.class);
 
 	public static final class FlagComponentA implements Component {
@@ -19,7 +18,7 @@ public final class Components {
 
 	public static class FlagSystemA extends EntityProcessorSystem {
 	    public FlagSystemA() {
-	        super(Family.with(FlagComponentA.class));
+	        super(FULL_SET.familyWith(FlagComponentA.class));
 	    }
 
 	    @Override
@@ -29,7 +28,7 @@ public final class Components {
 
 	public static class FlagSystemB extends EntityProcessorSystem {
 	    public FlagSystemB() {
-	        super(Family.with(FlagComponentB.class));
+	        super(FULL_SET.familyWith(FlagComponentB.class));
 	    }
 
 	    @Override
@@ -39,7 +38,7 @@ public final class Components {
 
 	public static class FlagSystemC extends EntityProcessorSystem {
 	    public FlagSystemC() {
-	        super(Family.with(FlagComponentC.class));
+	        super(FULL_SET.familyWith(FlagComponentC.class));
 	    }
 
 	    @Override

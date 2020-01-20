@@ -2,10 +2,10 @@ package com.github.antag99.retinazer;
 
 import com.badlogic.gdx.utils.IntArray;
 
-/**
- * Listener for a {@link Family} or {@link Engine}.
- */
+/** Listener for a {@link Family} or {@link Engine}. */
 public interface EntityListener {
+
+    EntityListener[] EMPTY_ARRAY = new EntityListener[0];
 
     /**
      * Called when entities are inserted.

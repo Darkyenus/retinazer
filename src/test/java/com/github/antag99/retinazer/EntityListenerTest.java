@@ -1,6 +1,5 @@
 package com.github.antag99.retinazer;
 
-import static com.github.antag99.retinazer.Components.EMPTY_SET;
 import static com.github.antag99.retinazer.Components.FULL_SET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -44,7 +43,7 @@ public class EntityListenerTest {
     @Test
     public void testEntityListener() {
         EntityListenerMock listener = new EntityListenerMock();
-        Engine engine = new Engine(EMPTY_SET);
+        Engine engine = new Engine(ComponentSet.EMPTY);
         engine.addEntityListener(listener);
         int entity = engine.createEntity();
         listener.verifyInserted();
@@ -65,8 +64,8 @@ public class EntityListenerTest {
         EntityListenerMock listenerB = new EntityListenerMock();
         EntityListenerMock listenerC = new EntityListenerMock();
         Engine engine = new Engine(FULL_SET);
-        engine.getFamily(Family.with(Components.FlagComponentB.class)).addListener(listenerB);
-        engine.getFamily(Family.with(Components.FlagComponentC.class)).addListener(listenerC);
+        engine.getFamily(FULL_SET.familyWith(Components.FlagComponentB.class)).addListener(listenerB);
+        engine.getFamily(FULL_SET.familyWith(Components.FlagComponentC.class)).addListener(listenerC);
         Mapper<Components.FlagComponentB> mFlagB = engine.getMapper(Components.FlagComponentB.class);
         Mapper<Components.FlagComponentC> mFlagC = engine.getMapper(Components.FlagComponentC.class);
         int entity = engine.createEntity();

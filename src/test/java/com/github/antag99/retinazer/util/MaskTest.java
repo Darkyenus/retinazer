@@ -1,12 +1,9 @@
 package com.github.antag99.retinazer.util;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.Arrays;
-
-import org.junit.jupiter.api.Test;
 
 public class MaskTest {
 
@@ -32,13 +29,16 @@ public class MaskTest {
 
     @Test
     public void testIndices() {
-        Mask mask;
-
-        mask = new Mask();
+        Mask mask = new Mask();
         mask.set(1);
         mask.set(4);
         mask.set(6);
         mask.set(7);
-        assertArrayEquals(new int[]{1, 4, 6, 7}, mask.getIndices());
+        mask.set(8);
+        mask.set(12);
+        mask.set(16);
+        mask.set(17);
+        mask.set(99);
+        assertArrayEquals(new int[]{1, 4, 6, 7, 8, 12, 16, 17, 99}, mask.getIndices());
     }
 }

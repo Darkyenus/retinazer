@@ -135,8 +135,7 @@ public final class Mapper<T extends Component> {
      * attempting to remove a component that does not exist. Removal operations
      * will be delayed until the next call to {@link Engine#flush()}.
      *
-     * @param entity
-     *            the index of the entity.
+     * @param entity the index of the entity.
      */
     public void remove(int entity) {
         if (!has(entity)) {

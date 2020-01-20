@@ -1,6 +1,5 @@
 package com.github.antag99.retinazer;
 
-import static com.github.antag99.retinazer.Components.EMPTY_SET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,7 @@ public class EntityProcessorSystemTest {
         public EntitySet processedEntities = new EntitySet();
 
         public TestEntityProcessorSystem() {
-            super(Family.create());
+            super(ComponentSet.EMPTY.family());
         }
 
         @Override
@@ -26,7 +25,7 @@ public class EntityProcessorSystemTest {
     @Test
     public void testEntityProcessorSystem() {
         TestEntityProcessorSystem system = new TestEntityProcessorSystem();
-        Engine engine = new Engine(EMPTY_SET, system);
+        Engine engine = new Engine(ComponentSet.EMPTY, system);
         Mask entities = new Mask();
         int a, b, c;
         entities.set(a = engine.createEntity());

@@ -22,7 +22,7 @@ public class EntitySetTest {
         engine.update(0f);
         assertArrayEquals(engine.getEntities().getIndices().toArray(), new int[]{entity0, entity1, entity2, entity3, entity4});
         assertArrayEquals(engine.getFamily(
-                Family.with(Components.FlagComponentA.class)).getEntities().getIndices().toArray(), new int[]{entity1});
+                FULL_SET.familyWith(Components.FlagComponentA.class)).getEntities().getIndices().toArray(), new int[]{entity1});
     }
 
     @Test

@@ -12,32 +12,32 @@ public class FamilyTest {
     @Test
     public void testHashCode() {
         Engine engine = new Engine(FULL_SET);
-        assertEquals(0, engine.getFamily(Family.create()).hashCode());
-        assertEquals(1, engine.getFamily(Family.with(Components.FlagComponentA.class)).hashCode());
-        assertEquals(2, engine.getFamily(Family.exclude(Components.FlagComponentA.class)).hashCode());
+        assertEquals(0, engine.getFamily(FULL_SET.family()).hashCode());
+        assertEquals(1, engine.getFamily(FULL_SET.familyWith(Components.FlagComponentA.class)).hashCode());
+        assertEquals(2, engine.getFamily(FULL_SET.familyWithout(Components.FlagComponentA.class)).hashCode());
     }
 
     @Test
     public void testEquals() {
         Engine engine = new Engine(FULL_SET);
-        assertEquals(engine.getFamily(Family.create()), engine.getFamily(Family.create()));
-        assertEquals(engine.getFamily(Family.with(Components.FlagComponentA.class)),
-                engine.getFamily(Family.with(Components.FlagComponentA.class)));
-        assertEquals(engine.getFamily(Family.exclude(Components.FlagComponentA.class)),
-                engine.getFamily(Family.exclude(Components.FlagComponentA.class)));
-        assertNotEquals(engine.getFamily(Family.with(Components.FlagComponentA.class)),
-                engine.getFamily(Family.exclude(Components.FlagComponentA.class)));
+        assertEquals(engine.getFamily(FULL_SET.family()), engine.getFamily(FULL_SET.family()));
+        assertEquals(engine.getFamily(FULL_SET.familyWith(Components.FlagComponentA.class)),
+                engine.getFamily(FULL_SET.familyWith(Components.FlagComponentA.class)));
+        assertEquals(engine.getFamily(FULL_SET.familyWithout(Components.FlagComponentA.class)),
+                engine.getFamily(FULL_SET.familyWithout(Components.FlagComponentA.class)));
+        assertNotEquals(engine.getFamily(FULL_SET.familyWith(Components.FlagComponentA.class)),
+                engine.getFamily(FULL_SET.familyWithout(Components.FlagComponentA.class)));
     }
 
     @Test
     public void testSame() {
         Engine engine = new Engine(FULL_SET);
-        assertSame(engine.getFamily(Family.create()), engine.getFamily(Family.create()));
-        assertSame(engine.getFamily(Family.with(Components.FlagComponentA.class)),
-                engine.getFamily(Family.with(Components.FlagComponentA.class)));
-        assertSame(engine.getFamily(Family.exclude(Components.FlagComponentA.class)),
-                engine.getFamily(Family.exclude(Components.FlagComponentA.class)));
-        assertNotSame(engine.getFamily(Family.with(Components.FlagComponentA.class)),
-                engine.getFamily(Family.exclude(Components.FlagComponentA.class)));
+        assertSame(engine.getFamily(FULL_SET.family()), engine.getFamily(FULL_SET.family()));
+        assertSame(engine.getFamily(FULL_SET.familyWith(Components.FlagComponentA.class)),
+                engine.getFamily(FULL_SET.familyWith(Components.FlagComponentA.class)));
+        assertSame(engine.getFamily(FULL_SET.familyWithout(Components.FlagComponentA.class)),
+                engine.getFamily(FULL_SET.familyWithout(Components.FlagComponentA.class)));
+        assertNotSame(engine.getFamily(FULL_SET.familyWith(Components.FlagComponentA.class)),
+                engine.getFamily(FULL_SET.familyWithout(Components.FlagComponentA.class)));
     }
 }

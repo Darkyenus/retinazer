@@ -19,10 +19,12 @@ public final class Engine {
     final Mask removeQueue = new Mask();
     final Mask remove = new Mask();
 
-    final ComponentSet componentSet;
+    final ComponentSet componentDomain;
     final Mapper<?>[] componentMappers;
     final FamilyManager familyManager;
     final WireManager wireManager;
+
+    private EntitySetView lazyAllEntitiesView = null;
 
     /** Tracks whether any components or entities have been modified; reset at every call to flush() */
     boolean dirty = false;
@@ -32,11 +34,11 @@ public final class Engine {
     /**
      * Creates a new {@link Engine} based on the specified configuration.
      *
-     * @param componentSet set of components that this engine operates over
+     * @param componentDomain set of components that this engine operates over
      * @param services of this engine. Services implementing {@link EntitySystem} and {@link WireResolver} will
      * be used as entity systems and wire resolvers, respectively. Order is significant for both.
      */
-    public Engine(ComponentSet componentSet, EngineService...services) {
+    public Engine(ComponentSet componentDomain, EngineService...services) {
         final ArrayList<EntitySystem> entitySystems = new ArrayList<>();
         final ArrayList<WireResolver> wireResolvers = new ArrayList<>();
 
@@ -52,8 +54,8 @@ public final class Engine {
             servicesByType.put(service.getClass(), service);
         }
 
-        this.componentSet = componentSet;
-        componentMappers = componentSet.buildComponentMappers(this);
+        this.componentDomain = componentDomain;
+        componentMappers = componentDomain.buildComponentMappers(this);
         familyManager = new FamilyManager(this);
         wireManager = new WireManager(this, wireResolvers.toArray(WireResolver.EMPTY_ARRAY));
 
@@ -76,11 +78,11 @@ public final class Engine {
     }
 
     public void addEntityListener(EntityListener entityListener) {
-        getFamily(new FamilyConfig()).addListener(entityListener);
+        getFamily(FamilySpec.ALL).addListener(entityListener);
     }
 
     public void removeEntityListener(EntityListener entityListener) {
-        getFamily(new FamilyConfig()).removeListener(entityListener);
+        getFamily(FamilySpec.ALL).removeListener(entityListener);
     }
 
     /**
@@ -140,11 +142,12 @@ public final class Engine {
                 mapper.removeMask.set(mapper.removeQueueMask);
                 mapper.removeMask.or(remove);
                 remove.getIndices(mapper.remove);
-                mapper.removeQueueMask.clear();
                 mapper.removeCount = mapper.remove.size;
+                mapper.removeQueueMask.clear();
             }
 
             familyManager.updateFamilyMembership();
+
             for (Mapper<?> mapper : componentMappers) {
                 mapper.flushComponentRemoval();
             }
@@ -199,19 +202,23 @@ public final class Engine {
      * @return {@link EntitySetView} containing all entities added to this engine
      */
     public EntitySetView getEntities() {
-        return familyManager.getEntities();
+        EntitySetView entities = this.lazyAllEntitiesView;
+        if (entities == null) {
+            entities = this.lazyAllEntitiesView = familyManager.getFamily(FamilySpec.ALL).getEntities();
+        }
+        return entities;
     }
 
     /**
      * Gets or creates a family for the given configuration. Typically, it's
      * not necessary to retrieve a family directly, but rather only use
-     * {@link FamilyConfig}.
+     * {@link FamilySpec}.
      *
      * @param config
      *            configuration for the family
      * @return family for the given configuration
      */
-    public Family getFamily(FamilyConfig config) {
+    public Family getFamily(FamilySpec config) {
         return familyManager.getFamily(config);
     }
 
@@ -263,7 +270,7 @@ public final class Engine {
      */
     @SuppressWarnings("unchecked")
     public <T extends Component> Mapper<T> getMapper(Class<T> componentType) {
-        return (Mapper<T>) componentMappers[componentSet.index(componentType)];
+        return (Mapper<T>) componentMappers[componentDomain.index(componentType)];
     }
 
     /** @return array of all mappers - do not modify! */

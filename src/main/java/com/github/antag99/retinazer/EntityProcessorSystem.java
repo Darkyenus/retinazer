@@ -3,10 +3,10 @@ package com.github.antag99.retinazer;
 import com.badlogic.gdx.utils.IntArray;
 
 public abstract class EntityProcessorSystem extends EntitySystem {
-    private final FamilyConfig family;
+    private final FamilySpec family;
     private EntitySetView entities;
 
-    public EntityProcessorSystem(FamilyConfig family) {
+    public EntityProcessorSystem(FamilySpec family) {
         this.family = family;
     }
 
@@ -21,7 +21,7 @@ public abstract class EntityProcessorSystem extends EntitySystem {
         return entities;
     }
 
-    public final FamilyConfig getFamily() {
+    public final FamilySpec getFamily() {
         return family;
     }
 

@@ -3,13 +3,11 @@ package com.github.antag99.retinazer;
 import com.badlogic.gdx.utils.IntArray;
 import com.github.antag99.retinazer.util.Mask;
 
-public final class EntitySet {
+public final class EntitySet implements EntitySetView {
 
     private final Mask entities = new Mask();
     private final IntArray indices = new IntArray();
     private boolean indicesDirty = false;
-
-    private final EntitySetView view = new EntitySetView(this);
 
     public EntitySet() {}
 
@@ -21,15 +19,6 @@ public final class EntitySet {
     public EntitySet(EntitySetView copyEntities) {
         this.entities.set(copyEntities.getMask());
         this.indicesDirty = true;
-    }
-
-    /**
-     * Returns an unmodifiable view of this entity set.
-     *
-     * @return Unmodifiable view of this entity set.
-     */
-    public EntitySetView view() {
-        return view;
     }
 
     /**
@@ -108,7 +97,7 @@ public final class EntitySet {
     }
 
     public boolean isEmpty() {
-        return size() == 0;
+        return indicesDirty ? entities.nextSetBit(0) == -1 : indices.size == 0;
     }
 
     @Override

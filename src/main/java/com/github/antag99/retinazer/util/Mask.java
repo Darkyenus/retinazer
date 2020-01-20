@@ -3,6 +3,8 @@ package com.github.antag99.retinazer.util;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
+import java.util.Arrays;
+
 /** Bit mask of an arbitrary size. */
 @SuppressWarnings("unused")
 public final class Mask implements Poolable {
@@ -21,7 +23,8 @@ public final class Mask implements Poolable {
 
     public Mask set(long[] otherWords) {
         if (words.length < otherWords.length) {
-            words = new long[otherWords.length];
+            this.words = Arrays.copyOf(otherWords, otherWords.length);
+            return this;
         }
         System.arraycopy(otherWords, 0, words, 0, otherWords.length);
         for (int i = otherWords.length, n = words.length; i < n; i++)
