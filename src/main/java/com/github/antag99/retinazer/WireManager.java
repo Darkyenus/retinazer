@@ -5,19 +5,17 @@ import com.badlogic.gdx.utils.ObjectMap;
 final class WireManager {
     private final Engine engine;
     private final WireResolver[] wireResolvers;
-    private final ObjectMap<Class<?>, WireCache> wireCaches;
+    private final ObjectMap<Class<?>, WireCache> wireCaches = new ObjectMap<>();
 
-    public WireManager(Engine engine, EngineConfig config) {
+    public WireManager(Engine engine, WireResolver[] wireResolvers) {
         this.engine = engine;
-        this.wireResolvers = config.wireResolvers.toArray();
-        this.wireCaches = new ObjectMap<>();
+        this.wireResolvers = wireResolvers;
     }
 
     private WireCache getCache(Class<?> type) {
         WireCache cache = wireCaches.get(type);
         if (cache == null) {
-            wireCaches.put(type, cache =
-                    new WireCache(engine, type, wireResolvers));
+            wireCaches.put(type, cache = new WireCache(engine, type, wireResolvers));
         }
         return cache;
     }

@@ -2,6 +2,8 @@
 
 # Version 0.2.3-SNAPSHOT
 - It is now required to supply all components at the `Engine` creation
+- `EngineConfig` has been deleted
+- `Engine.getSystem` has been replaced with generic `getService`
 - `ensureCapacity(int)` for all `Bag` implementations
 - Fix: `Bag.set(int)` no longer treats the `0` value specially
 

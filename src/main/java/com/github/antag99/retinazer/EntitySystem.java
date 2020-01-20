@@ -1,13 +1,11 @@
 package com.github.antag99.retinazer;
 
-/**
- * Base class for system implementations.
- */
-public abstract class EntitySystem {
+/** Base class for system implementations. */
+public abstract class EntitySystem implements EngineService {
 
-    /**
-     * Engine instance this entity system is added to, for convenience.
-     */
+    static final EntitySystem[] EMPTY_ARRAY = new EntitySystem[0];
+
+    /** Engine instance this entity system is added to, for convenience. */
     @Wire
     protected Engine engine;
 
@@ -18,14 +16,12 @@ public abstract class EntitySystem {
     protected void setup() {
     }
 
-    /**
-     * Initializes this system. If you override this method, mark it {@code final}.
-     */
+    /** Initializes this system. */
     protected void initialize() {
     }
 
     /**
-     * Updates this system. If you override this method, mark it {@code final}.
+     * Updates this system.
      * @param delta time in seconds since last update
      */
     protected void update(float delta) {

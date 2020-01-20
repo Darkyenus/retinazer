@@ -1,10 +1,10 @@
 package com.github.antag99.retinazer;
 
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.github.antag99.retinazer.EngineConfig.EntitySystemRegistration;
 import com.github.antag99.retinazer.util.Mask;
+
+import java.util.ArrayList;
 
 /**
  * Engine is the core class of retinazer; it manages all active entities,
@@ -13,7 +13,7 @@ import com.github.antag99.retinazer.util.Mask;
 public final class Engine {
 
     private final EntitySystem[] systems;
-    private final ObjectMap<Class<? extends EntitySystem>, EntitySystem> systemsByType;
+    private final ObjectMap<Class<? extends EngineService>, EngineService> servicesByType = new ObjectMap<>();
 
     final Mask entities = new Mask();
     final Mask removeQueue = new Mask();
@@ -30,53 +30,38 @@ public final class Engine {
     boolean update = false;
 
     /**
-     * Creates a new {@link Engine} based on the specified configuration. Note
-     * that the same configuration should <b>not</b> be reused, as system
-     * implementations do not handle being registered to multiple engines.
+     * Creates a new {@link Engine} based on the specified configuration.
      *
-     * @param config
-     *            configuration for this Engine.
+     * @param componentSet set of components that this engine operates over
+     * @param services of this engine. Services implementing {@link EntitySystem} and {@link WireResolver} will
+     * be used as entity systems and wire resolvers, respectively. Order is significant for both.
      */
-    public Engine(EngineConfig config) {
-        this(config, true);
-    }
+    public Engine(ComponentSet componentSet, EngineService...services) {
+        final ArrayList<EntitySystem> entitySystems = new ArrayList<>();
+        final ArrayList<WireResolver> wireResolvers = new ArrayList<>();
 
-    /**
-     * @see #Engine(EngineConfig)
-     * @param initialize if {@link #initialize()} should be called automatically, if false, call it manually before doing anything else with the engine
-     */
-    public Engine(EngineConfig config, boolean initialize) {
-        componentSet = config.componentSet;
+        wireResolvers.add(new DefaultWireResolver());
+
+        for (EngineService service : services) {
+            if (service instanceof EntitySystem) {
+                entitySystems.add((EntitySystem) service);
+            }
+            if (service instanceof WireResolver) {
+                wireResolvers.add((WireResolver) service);
+            }
+            servicesByType.put(service.getClass(), service);
+        }
+
+        this.componentSet = componentSet;
         componentMappers = componentSet.buildComponentMappers(this);
-
         familyManager = new FamilyManager(this);
-        wireManager = new WireManager(this, config);
+        wireManager = new WireManager(this, wireResolvers.toArray(WireResolver.EMPTY_ARRAY));
 
-        Array<EntitySystemRegistration> systemRegistrations = new Array<>();
-        for (EntitySystemRegistration system : config.systems) {
-            systemRegistrations.add(system);
-        }
-
-        systemRegistrations.sort();
-
-        EntitySystem[] systems = new EntitySystem[systemRegistrations.size];
-        ObjectMap<Class<? extends EntitySystem>, EntitySystem> systemsByType = new ObjectMap<>();
-
-        for (int i = 0, n = systemRegistrations.size; i < n; i++) {
-            systems[i] = systemRegistrations.get(i).system;
-            systemsByType.put(systems[i].getClass(), systems[i]);
-        }
-
-        this.systems = systems;
-        this.systemsByType = systemsByType;
+        final EntitySystem[] systems = this.systems = entitySystems.toArray(EntitySystem.EMPTY_ARRAY);
 
         for (EntitySystem system : systems)
             wire(system);
 
-        if (initialize) initialize();
-    }
-
-    public void initialize() {
         for (EntitySystem system : systems)
             system.setup();
 
@@ -231,44 +216,29 @@ public final class Engine {
     }
 
     /**
-     * Gets the system of the given type. Note that only one system of a type
+     * Gets the service of the given type. Note that only one service of a type
      * can exist in an engine configuration.
-     *
-     * @param systemType
-     *            type of the system
-     * @param <T>
-     *            generic type of the system.
-     * @return the system
-     * @throws IllegalArgumentException
-     *             if the system does not exist
+     * @throws IllegalArgumentException if the service does not exist
      */
-    public <T extends EntitySystem> T getSystem(Class<T> systemType) {
-        return getSystem(systemType, false);
+    public <T extends EngineService> T getService(Class<T> serviceType) {
+        return getService(serviceType, false);
     }
 
     /**
-     * Gets the system of the given type. Note that only one system of a type
+     * Gets the service of the given type. Note that only one service of a type
      * can exist in an engine configuration.
      *
-     * @param systemType
-     *            type of the system.
-     * @param optional
-     *            whether to return {@code null} if the system does not exist.
-     * @param <T>
-     *            generic type of the system.
-     * @return the system, or {@code null} if {@code optional} is {@code true}
-     *         and the system does not exist.
-     * @throws IllegalArgumentException
-     *             if {@code optional} is {@code false} and the system does not exist.
+     * @return the system, or {@code null} if {@code optional} is {@code true} and the system does not exist.
+     * @throws IllegalArgumentException if {@code optional} is {@code false} and the system does not exist.
      */
-    public <T extends EntitySystem> T getSystem(Class<T> systemType, boolean optional) {
+    public <T extends EngineService> T getService(Class<T> serviceType, boolean optional) {
         @SuppressWarnings("unchecked")
-        T system = (T) systemsByType.get(systemType);
+        final T service = (T) servicesByType.get(serviceType);
 
-        if (system == null && !optional) {
-            throw new IllegalArgumentException("System not registered: " + systemType.getName());
+        if (service == null && !optional) {
+            throw new IllegalArgumentException("Service not registered: " + serviceType.getName());
         } else {
-            return system;
+            return service;
         }
     }
 

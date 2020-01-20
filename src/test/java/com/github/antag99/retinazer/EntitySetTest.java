@@ -2,6 +2,7 @@ package com.github.antag99.retinazer;
 
 import org.junit.jupiter.api.Test;
 
+import static com.github.antag99.retinazer.Components.FULL_SET;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -10,8 +11,8 @@ public class EntitySetTest {
 
     @Test
     public void testIndices() {
-        Engine engine = new Engine(new EngineConfig(FlagComponentA.class));
-        Mapper<FlagComponentA> mapper = engine.getMapper(FlagComponentA.class);
+        Engine engine = new Engine(FULL_SET);
+        Mapper<Components.FlagComponentA> mapper = engine.getMapper(Components.FlagComponentA.class);
         int entity0 = engine.createEntity();
         int entity1 = engine.createEntity();
         mapper.create(entity1);
@@ -21,7 +22,7 @@ public class EntitySetTest {
         engine.update(0f);
         assertArrayEquals(engine.getEntities().getIndices().toArray(), new int[]{entity0, entity1, entity2, entity3, entity4});
         assertArrayEquals(engine.getFamily(
-                Family.with(FlagComponentA.class)).getEntities().getIndices().toArray(), new int[]{entity1});
+                Family.with(Components.FlagComponentA.class)).getEntities().getIndices().toArray(), new int[]{entity1});
     }
 
     @Test

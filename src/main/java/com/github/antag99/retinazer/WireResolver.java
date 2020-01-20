@@ -4,11 +4,12 @@ import java.lang.reflect.Field;
 
 /**
  * WireResolver is used for wiring/un-wiring fields marked with {@link Wire}.
- * Multiple resolvers can be registered to an {@link EngineConfig}.
  *
  * @see Wire
  */
-public interface WireResolver {
+public interface WireResolver extends EngineService {
+
+    WireResolver[] EMPTY_ARRAY = new WireResolver[0];
 
     /**
      * Wires the field of the given object.
@@ -19,5 +20,4 @@ public interface WireResolver {
      * @return Whether this resolver handled the given field.
      */
     boolean wire(Engine engine, Object object, Field field) throws IllegalAccessException;
-
 }

@@ -1,9 +1,4 @@
-package com.github.antag99.retinazer.resolvers;
-
-import com.github.antag99.retinazer.Component;
-import com.github.antag99.retinazer.Engine;
-import com.github.antag99.retinazer.Mapper;
-import com.github.antag99.retinazer.WireResolver;
+package com.github.antag99.retinazer;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -11,8 +6,9 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-/** Wires {@link Mapper} instances by their generic parameter. */
-public final class MapperWireResolver implements WireResolver {
+/** Wires {@link Engine}, {@link EngineService}s and {@link Mapper}s (by the generic parameter)
+ *  registered in the engine. */
+final class DefaultWireResolver implements WireResolver {
 
     @SuppressWarnings("unchecked")
     private static <T> Class<? extends T> getTypeArgument(Type genericType, @SuppressWarnings("SameParameterValue") int index) {
@@ -33,21 +29,24 @@ public final class MapperWireResolver implements WireResolver {
         return null;
     }
 
-    private static Class<? extends Component> getType(Field field) {
-        if (field.getType() != Mapper.class)
-            return null;
-
-        return getTypeArgument(field.getGenericType(), 0);
-    }
-
     @Override
+    @SuppressWarnings("unchecked")
     public boolean wire(Engine engine, Object object, Field field) throws IllegalAccessException {
-        Class<? extends Component> type = getType(field);
-        if (type != null) {
-            field.set(object, engine.getMapper(type));
-            return true;
+        Class<?> type = field.getType();
+        if (type == Engine.class) {
+            field.set(object, engine);
+        } else if (type == Mapper.class) {
+            final Class<? extends Component> componentType = getTypeArgument(field.getGenericType(), 0);
+            if (componentType == null) {
+                return false;
+            }
+            field.set(object, engine.getMapper(componentType));
+        } else if (EngineService.class.isAssignableFrom(type)) {
+            field.set(object, engine.getService((Class<? extends EngineService>) type));
+        } else {
+            return false;
         }
-        return false;
+        return true;
     }
 
 }

@@ -2,6 +2,7 @@ package com.github.antag99.retinazer;
 
 import org.junit.jupiter.api.Test;
 
+import static com.github.antag99.retinazer.Components.FULL_SET;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MapperTest {
@@ -14,7 +15,7 @@ public class MapperTest {
 
     @Test()
     public void testNoConstructor() {
-        Engine engine = new Engine(new EngineConfig(BadComponent.class));
+        Engine engine = new Engine(new ComponentSet(BadComponent.class));
         int entity = engine.createEntity();
         Mapper<BadComponent> mBad = engine.getMapper(BadComponent.class);
         assertThrows(UnsupportedOperationException.class, () -> mBad.create(entity));
@@ -29,7 +30,7 @@ public class MapperTest {
 
     @Test()
     public void testErrorConstructor() {
-        Engine engine = new Engine(new EngineConfig(ReallyBadComponent.class));
+        Engine engine = new Engine(new ComponentSet(ReallyBadComponent.class));
         int entity = engine.createEntity();
         Mapper<ReallyBadComponent> mReallyBad = engine.getMapper(ReallyBadComponent.class);
         assertThrows(RuntimeException.class, () -> mReallyBad.create(entity));
@@ -37,8 +38,8 @@ public class MapperTest {
 
     @Test
     public void testRemoveNothing() {
-        Engine engine = new Engine(new EngineConfig(FlagComponentA.class));
-        Mapper<FlagComponentA> mFlagA = engine.getMapper(FlagComponentA.class);
+        Engine engine = new Engine(FULL_SET);
+        Mapper<Components.FlagComponentA> mFlagA = engine.getMapper(Components.FlagComponentA.class);
         int entity = engine.createEntity();
         mFlagA.remove(entity); // nothing should happen
         engine.update(0f);
@@ -50,10 +51,10 @@ public class MapperTest {
 
     @Test()
     public void testAddTwice() {
-        Engine engine = new Engine(new EngineConfig(FlagComponentA.class));
-        Mapper<FlagComponentA> mFlagA = engine.getMapper(FlagComponentA.class);
+        Engine engine = new Engine(FULL_SET);
+        Mapper<Components.FlagComponentA> mFlagA = engine.getMapper(Components.FlagComponentA.class);
         int entity = engine.createEntity();
-        mFlagA.add(entity, new FlagComponentA());
-        assertThrows(IllegalArgumentException.class, () -> mFlagA.add(entity, new FlagComponentA()));
+        mFlagA.add(entity, new Components.FlagComponentA());
+        assertThrows(IllegalArgumentException.class, () -> mFlagA.add(entity, new Components.FlagComponentA()));
     }
 }

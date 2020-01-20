@@ -19,6 +19,7 @@ public final class ComponentSet {
 
 	/** Create a new set of components.
 	 * @param components each non-null and unique from the others */
+	@SafeVarargs
 	public ComponentSet(final Class<? extends Component>...components) {
 		this.components = components;
 		for (int i = 0; i < components.length; i++) {
