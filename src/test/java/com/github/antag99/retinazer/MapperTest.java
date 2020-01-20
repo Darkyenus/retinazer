@@ -8,7 +8,7 @@ public class MapperTest {
 
     // This should usually not be done... bad.
     public static final class BadComponent implements Component {
-        public BadComponent(int requiresAnArgument) {
+        public BadComponent(@SuppressWarnings("unused") int requiresAnArgument) {
         }
     }
 
