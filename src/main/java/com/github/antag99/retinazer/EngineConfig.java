@@ -6,35 +6,20 @@ import com.badlogic.gdx.utils.Array;
 import com.github.antag99.retinazer.resolvers.DefaultWireResolver;
 import com.github.antag99.retinazer.resolvers.MapperWireResolver;
 
-/**
- * Stores configuration for an {@link Engine} instance.
- */
+/** Stores configuration for an {@link Engine} instance. */
 public final class EngineConfig {
-    static final class EntitySystemRegistration implements Comparable<EntitySystemRegistration> {
-        final EntitySystem system;
-        final Order order;
 
-        EntitySystemRegistration(EntitySystem system, Order order) {
-            this.system = system;
-            this.order = order;
-        }
+    final ComponentSet componentSet;
+    final Array<EntitySystemRegistration> systems = new Array<>();
+    final Array<WireResolver> wireResolvers = new Array<>(WireResolver.class);
 
-        @Override
-        public int compareTo(EntitySystemRegistration o) {
-            return Integer.compare(order.ordinal(), o.order.ordinal());
-        }
-    }
-
-    /**
-     * Creates a new engine configuration with the default values.
-     */
-    public EngineConfig() {
+    /** Creates a new engine configuration with the default values. */
+    @SafeVarargs
+    public EngineConfig(Class<? extends Component>...components) {
+        componentSet = new ComponentSet(components);
         wireResolvers.add(new DefaultWireResolver());
         wireResolvers.add(new MapperWireResolver());
     }
-
-    final Array<EntitySystemRegistration> systems = new Array<>();
-    final Array<WireResolver> wireResolvers = new Array<>(WireResolver.class);
 
     /**
      * Registers a system.
@@ -83,5 +68,20 @@ public final class EngineConfig {
         Objects.requireNonNull(resolver, "resolver cannot be null");
         wireResolvers.add(resolver);
         return this;
+    }
+
+    static final class EntitySystemRegistration implements Comparable<EntitySystemRegistration> {
+        final EntitySystem system;
+        final Order order;
+
+        EntitySystemRegistration(EntitySystem system, Order order) {
+            this.system = system;
+            this.order = order;
+        }
+
+        @Override
+        public int compareTo(EntitySystemRegistration o) {
+            return Integer.compare(order.ordinal(), o.order.ordinal());
+        }
     }
 }

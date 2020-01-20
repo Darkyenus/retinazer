@@ -62,7 +62,7 @@ public class EntityListenerTest {
     public void testFamilyListener() {
         EntityListenerMock listenerB = new EntityListenerMock();
         EntityListenerMock listenerC = new EntityListenerMock();
-        Engine engine = new Engine(new EngineConfig());
+        Engine engine = new Engine(new EngineConfig(FlagComponentA.class, FlagComponentB.class, FlagComponentC.class));
         engine.getFamily(Family.with(FlagComponentB.class)).addListener(listenerB);
         engine.getFamily(Family.with(FlagComponentC.class)).addListener(listenerC);
         Mapper<FlagComponentB> mFlagB = engine.getMapper(FlagComponentB.class);

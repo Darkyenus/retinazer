@@ -19,7 +19,8 @@ public final class Engine {
     final Mask removeQueue = new Mask();
     final Mask remove = new Mask();
 
-    final ComponentManager componentManager;
+    final ComponentSet componentSet;
+    final Mapper<?>[] componentMappers;
     final FamilyManager familyManager;
     final WireManager wireManager;
 
@@ -45,7 +46,9 @@ public final class Engine {
      * @param initialize if {@link #initialize()} should be called automatically, if false, call it manually before doing anything else with the engine
      */
     public Engine(EngineConfig config, boolean initialize) {
-        componentManager = new ComponentManager(this);
+        componentSet = config.componentSet;
+        componentMappers = componentSet.buildComponentMappers(this);
+
         familyManager = new FamilyManager(this);
         wireManager = new WireManager(this, config);
 
@@ -148,7 +151,7 @@ public final class Engine {
             remove.set(removeQueue);
             removeQueue.clear();
 
-            for (Mapper<?> mapper : componentManager.array) {
+            for (Mapper<?> mapper : componentMappers) {
                 mapper.removeMask.set(mapper.removeQueueMask);
                 mapper.removeMask.or(remove);
                 remove.getIndices(mapper.remove);
@@ -157,7 +160,9 @@ public final class Engine {
             }
 
             familyManager.updateFamilyMembership();
-            componentManager.applyComponentChanges();
+            for (Mapper<?> mapper : componentMappers) {
+                mapper.flushComponentRemoval();
+            }
 
             entities.andNot(remove);
         }
@@ -286,17 +291,13 @@ public final class Engine {
      *            generic type of the component.
      * @return mapper for the specified type.
      */
+    @SuppressWarnings("unchecked")
     public <T extends Component> Mapper<T> getMapper(Class<T> componentType) {
-        return componentManager.getMapper(componentType);
+        return (Mapper<T>) componentMappers[componentSet.index(componentType)];
     }
 
-    /**
-     * Get all mappers created so far.
-     * Do not modify or keep the array.
-     *
-     * @return array of all mappers
-     */
+    /** @return array of all mappers - do not modify! */
     public Mapper<?>[] getMappers(){
-        return componentManager.array;
+        return componentMappers;
     }
 }

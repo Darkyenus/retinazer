@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 public class FamilyTest {
     @Test
     public void testHashCode() {
-        Engine engine = new Engine(new EngineConfig());
+        Engine engine = new Engine(new EngineConfig(FlagComponentA.class));
         assertEquals(0, engine.getFamily(Family.create()).hashCode());
         assertEquals(1, engine.getFamily(Family.with(FlagComponentA.class)).hashCode());
         assertEquals(2, engine.getFamily(Family.exclude(FlagComponentA.class)).hashCode());
@@ -18,7 +18,7 @@ public class FamilyTest {
 
     @Test
     public void testEquals() {
-        Engine engine = new Engine(new EngineConfig());
+        Engine engine = new Engine(new EngineConfig(FlagComponentA.class));
         assertEquals(engine.getFamily(Family.create()), engine.getFamily(Family.create()));
         assertEquals(engine.getFamily(Family.with(FlagComponentA.class)),
                 engine.getFamily(Family.with(FlagComponentA.class)));
@@ -30,7 +30,7 @@ public class FamilyTest {
 
     @Test
     public void testSame() {
-        Engine engine = new Engine(new EngineConfig());
+        Engine engine = new Engine(new EngineConfig(FlagComponentA.class));
         assertSame(engine.getFamily(Family.create()), engine.getFamily(Family.create()));
         assertSame(engine.getFamily(Family.with(FlagComponentA.class)),
                 engine.getFamily(Family.with(FlagComponentA.class)));

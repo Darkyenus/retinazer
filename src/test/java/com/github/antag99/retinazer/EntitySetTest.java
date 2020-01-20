@@ -10,7 +10,7 @@ public class EntitySetTest {
 
     @Test
     public void testIndices() {
-        Engine engine = new Engine(new EngineConfig());
+        Engine engine = new Engine(new EngineConfig(FlagComponentA.class));
         Mapper<FlagComponentA> mapper = engine.getMapper(FlagComponentA.class);
         int entity0 = engine.createEntity();
         int entity1 = engine.createEntity();

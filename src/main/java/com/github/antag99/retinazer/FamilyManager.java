@@ -62,11 +62,11 @@ final class FamilyManager {
 
             i = 0;
             for (Class<? extends Component> componentType : config.components)
-                components[i++] = engine.componentManager.getIndex(componentType);
+                components[i++] = engine.componentSet.index(componentType);
 
             i = 0;
             for (Class<? extends Component> componentType : config.excludedComponents)
-                excludedComponents[i++] = engine.componentManager.getIndex(componentType);
+                excludedComponents[i++] = engine.componentSet.index(componentType);
 
             Family family = new Family(components, excludedComponents, index);
             Key key = new Key();
@@ -76,7 +76,7 @@ final class FamilyManager {
             families.set(index, family);
 
             // Find matching entities, and add them to the new family set.
-            Mapper<?>[] mappers = engine.componentManager.array;
+            final Mapper<?>[] mappers = engine.componentMappers;
             Mask matchedEntities = new Mask().set(engine.entities);
 
             for (int component : components) {
@@ -103,7 +103,7 @@ final class FamilyManager {
      * to/from family sets.
      */
     void updateFamilyMembership() {
-        Mapper<?>[] mappers = engine.componentManager.array;
+        final Mapper<?>[] mappers = engine.componentMappers;
 
         final Mask tmpMask = this.updateFamilyMembership_tmpMask;
         @SuppressWarnings("UnnecessaryLocalVariable")

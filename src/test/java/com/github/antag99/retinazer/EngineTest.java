@@ -112,7 +112,7 @@ public class EngineTest {
 
     @Test
     public void testEntityRetrieval() {
-        Engine engine = new Engine(new EngineConfig());
+        Engine engine = new Engine(new EngineConfig(FlagComponentA.class, FlagComponentB.class, FlagComponentC.class));
         Mapper<FlagComponentA> mFlagA = engine.getMapper(FlagComponentA.class);
         Mapper<FlagComponentB> mFlagB = engine.getMapper(FlagComponentB.class);
         Mapper<FlagComponentC> mFlagC = engine.getMapper(FlagComponentC.class);
@@ -291,7 +291,7 @@ public class EngineTest {
         FlagSystemA flagSystemA = new FlagSystemA();
         FlagSystemB flagSystemB = new FlagSystemB();
         FlagSystemC flagSystemC = new FlagSystemC();
-        Engine engine = new Engine(new EngineConfig()
+        Engine engine = new Engine(new EngineConfig(FlagComponentA.class, FlagComponentB.class, FlagComponentC.class)
                 .addSystem(system)
                 .addSystem(flagSystemA)
                 .addSystem(flagSystemB)
