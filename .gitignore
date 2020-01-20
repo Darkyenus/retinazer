@@ -1,26 +1,3 @@
-## Eclipse
-.project
-.classpath
-.settings
-.metadata
-.recommenders
-
-## Intellij IDEA
-.idea
-*.ipr
-*.iws
-*.iml
-
-## Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-
-## GWT
-*/war/
+## Wemi
+/build/cache/
+/build/logs/
