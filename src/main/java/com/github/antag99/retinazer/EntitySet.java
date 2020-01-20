@@ -33,10 +33,7 @@ public final class EntitySet implements EntitySetView {
     }
 
     public void addEntity(int entity) {
-        if (!this.entities.get(entity)) {
-            this.indicesDirty = true;
-            this.entities.set(entity);
-        }
+        indicesDirty |= entities.setChanged(entity);
     }
 
     public void addEntities(Mask entities) {
@@ -54,9 +51,8 @@ public final class EntitySet implements EntitySetView {
     }
 
     public void removeEntity(int entity) {
-        if (this.entities.get(entity)) {
+        if (entities.clearChanged(entity)) {
             this.indicesDirty = true;
-            this.entities.clear(entity);
         }
     }
 

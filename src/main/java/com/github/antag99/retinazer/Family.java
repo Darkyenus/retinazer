@@ -34,10 +34,11 @@ public final class Family {
     public final Family with(Class<? extends Component>... components) {
         final ComponentSet domain = this.domain;
         final Family result = new Family(domain);
+        boolean modified = false;
         for (Class<? extends Component> component : components) {
-            result.requiredComponents.set(domain.index(component));
+            modified |= result.requiredComponents.setChanged(domain.index(component));
         }
-        if (result.requiredComponents.equals(this.requiredComponents)) {
+        if (!modified) {
             return this;
         }
         result.excludedComponents.set(this.excludedComponents);
@@ -53,10 +54,11 @@ public final class Family {
         }
         final ComponentSet domain = this.domain;
         final Family result = new Family(domain);
+        boolean modified = false;
         for (Class<? extends Component> component : components) {
-            result.excludedComponents.set(domain.index(component));
+            modified |= result.excludedComponents.setChanged(domain.index(component));
         }
-        if (result.excludedComponents.equals(this.excludedComponents)) {
+        if (!modified) {
             return this;
         }
         result.requiredComponents.set(this.requiredComponents);

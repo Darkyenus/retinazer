@@ -112,21 +112,38 @@ public final class Mask implements Poolable {
         }
     }
 
-    /**
-     * Sets the bit at the given index in this mask.
-     *
-     * @param index The index of the bit.
-     */
+    /** Sets the bit at the given index in this mask. */
     public void set(int index) {
+        long[] words = this.words;
         int wordIndex = index >> 6;
         if (wordIndex >= words.length) {
             int newCapacity = Bag.capacityFor(wordIndex + 1);
             long[] newWords = new long[newCapacity];
             System.arraycopy(words, 0, newWords, 0, words.length);
-            this.words = newWords;
+            this.words = words = newWords;
         }
         // Note: index is truncated before shifting
         words[wordIndex] |= 1L << index;
+    }
+
+    /**
+     * Sets the bit at the given index in this mask.
+     * @return true iff changed
+     */
+    public boolean setChanged(int index) {
+        long[] words = this.words;
+        int wordIndex = index >> 6;
+        if (wordIndex >= words.length) {
+            int newCapacity = Bag.capacityFor(wordIndex + 1);
+            long[] newWords = new long[newCapacity];
+            System.arraycopy(words, 0, newWords, 0, words.length);
+            this.words = words = newWords;
+        }
+        // Note: index is truncated before shifting
+        final long bit = 1L << index;
+        final boolean changed = (words[wordIndex] & bit) == 0L;
+        words[wordIndex] |= bit;
+        return changed;
     }
 
     /**
@@ -142,17 +159,28 @@ public final class Mask implements Poolable {
             clear(index);
     }
 
-    /**
-     * Clears the bit at the given index in this mask.
-     *
-     * @param index The index of the bit.
-     */
+    /** Clears the bit at the given index in this mask. */
     public void clear(int index) {
         int wordIndex = index >> 6;
         if (wordIndex >= words.length) {
             return;
         }
         words[wordIndex] &= ~(1L << index);
+    }
+
+    /** Clears the bit at the given index in this mask.
+     * @return true iff the bit changed */
+    public boolean clearChanged(int index) {
+        final long[] words = this.words;
+        int wordIndex = index >> 6;
+        if (wordIndex >= words.length) {
+            return false;
+        }
+
+        final long bit = 1L << index;
+        final boolean changed = (words[wordIndex] & bit) != 0L;
+        words[wordIndex] &= ~bit;
+        return changed;
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.github.antag99.retinazer;
 
-import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.antag99.retinazer.util.Mask;
 
@@ -16,8 +15,7 @@ public final class Engine {
     private final ObjectMap<Class<? extends EngineService>, EngineService> servicesByType = new ObjectMap<>();
 
     final Mask entities = new Mask();
-    final Mask removeQueue = new Mask();
-    final Mask remove = new Mask();
+    private final Mask entitiesScheduledForRemoval = new Mask();
 
     final ComponentSet componentDomain;
     final Mapper<?>[] componentMappers;
@@ -91,7 +89,6 @@ public final class Engine {
 
         for (EntitySystem system : systems) {
             system.update(delta);
-
             flush();
         }
 
@@ -108,41 +105,24 @@ public final class Engine {
 
         update = true;
 
-        flush();
-
-        IntArray entities = getEntities().getIndices();
-        int[] items = entities.items;
-        for (int i = 0, n = entities.size; i < n; i++) {
-            destroyEntity(items[i]);
-        }
-
+        entitiesScheduledForRemoval.or(entities);
+        dirty = true;
         flush();
 
         update = false;
     }
 
     public void flush() {
-        while (dirty) {
+        if (dirty) {
             dirty = false;
 
-            remove.set(removeQueue);
-            removeQueue.clear();
-
+            entities.andNot(entitiesScheduledForRemoval);
             for (Mapper<?> mapper : componentMappers) {
-                mapper.removeMask.set(mapper.removeQueueMask);
-                mapper.removeMask.or(remove);
-                remove.getIndices(mapper.remove);
-                mapper.removeCount = mapper.remove.size;
-                mapper.removeQueueMask.clear();
+                mapper.removeScheduled(entitiesScheduledForRemoval);
             }
+            entitiesScheduledForRemoval.clear();
 
             familyManager.updateFamilyMembership();
-
-            for (Mapper<?> mapper : componentMappers) {
-                mapper.flushComponentRemoval();
-            }
-
-            entities.andNot(remove);
         }
     }
 
@@ -167,11 +147,10 @@ public final class Engine {
      * @return true if entity was created, false if such entity already exists
      */
     public boolean createEntity(int entity) {
-        final boolean exists = entities.get(entity);
-        if(exists) return false;
-        dirty = true;
-        entities.set(entity);
-        return true;
+        if (entities.setChanged(entity)) {
+            return dirty = true;
+        }
+        return false;
     }
 
     /**
@@ -182,8 +161,7 @@ public final class Engine {
      *            the entity to destroy.
      */
     public void destroyEntity(int entity) {
-        dirty = true;
-        removeQueue.set(entity);
+        dirty |= entitiesScheduledForRemoval.setChanged(entity);
     }
 
     /**

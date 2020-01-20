@@ -93,7 +93,7 @@ public final class ComponentSet {
 		final Class<? extends Component>[] components = this.components;
 		final Mapper<?>[] mappers = new Mapper[components.length];
 		for (int i = 0; i < components.length; i++) {
-			mappers[i] = new Mapper<>(engine, components[i], i);
+			mappers[i] = new Mapper<>(engine, components[i]);
 		}
 		return mappers;
 	}

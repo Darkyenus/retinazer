@@ -1,6 +1,5 @@
 package com.github.antag99.retinazer;
 
-import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Pool;
 import com.github.antag99.retinazer.util.Bag;
 import com.github.antag99.retinazer.util.Mask;
@@ -18,9 +17,7 @@ public final class Mapper<T extends Component> {
     /** The engine instance this mapper is tied to */
     private final Engine engine;
     /** The component type */
-    public final Class<T> type;
-    /** A unique index for the component type */
-    final int typeIndex;
+    private final Class<T> type;
 
     /** Zero-arg constructor for the component */
     private final Constructor<T> constructor;
@@ -28,23 +25,16 @@ public final class Mapper<T extends Component> {
     private final Pool<T> componentPool;
 
     /** Stores components */
-    final Bag<T> components = new Bag<>();
+    private final Bag<T> components = new Bag<>();
     /** Mask of current components */
     final Mask componentsMask = new Mask();
 
-    /** Indices of components to be removed later */
-    final IntArray remove = new IntArray();
-    /** Amount of components that will be removed */
-    int removeCount = 0;
-    /** Mask of components to be removed later */
-    final Mask removeQueueMask = new Mask();
-    /** Mask of components that will be removed */
-    final Mask removeMask = new Mask();
+    /** Mask of components to be removed on next flush */
+    private final Mask scheduledForRemoval = new Mask();
 
-    Mapper(Engine engine, Class<T> type, int typeIndex) {
+    Mapper(Engine engine, Class<T> type) {
         this.engine = engine;
         this.type = type;
-        this.typeIndex = typeIndex;
         Constructor<T> constructor;
         try {
             constructor = type.getConstructor();
@@ -70,8 +60,7 @@ public final class Mapper<T extends Component> {
      * Retrieves a component of the type handled by this mapper. Returns {@code null}
      * if the specified entity does not have a component of the type.
      *
-     * @param entity
-     *            the index of the entity.
+     * @param entity the index of the entity.
      * @return the component; may be {@code null}.
      */
     public T get(int entity) {
@@ -82,12 +71,11 @@ public final class Mapper<T extends Component> {
      * Checks whether the specified entity has a component of the type handled by
      * this mapper.
      *
-     * @param entity
-     *            the index of the entity.
+     * @param entity the index of the entity.
      * @return whether the entity has the component of the type handled by this mapper.
      */
     public boolean has(int entity) {
-        return components.get(entity) != null;
+        return componentsMask.get(entity);
     }
 
     /**
@@ -119,14 +107,13 @@ public final class Mapper<T extends Component> {
      *            the component instance.
      */
     public void add(int entity, T instance) {
-        if (has(entity)) {
+        assert instance != null;
+        if (!componentsMask.setChanged(entity)) {
             throw new IllegalArgumentException("Cannot insert a component that "
                     + "already exists: " + instance.getClass().getName());
         }
-
         engine.dirty = true;
         components.set(entity, instance);
-        componentsMask.set(entity);
     }
 
     /**
@@ -138,50 +125,28 @@ public final class Mapper<T extends Component> {
      * @param entity the index of the entity.
      */
     public void remove(int entity) {
-        if (!has(entity)) {
-            return;
+        if (componentsMask.get(entity) && scheduledForRemoval.setChanged(entity)) {
+            engine.dirty = true;
         }
-
-        if (removeQueueMask.get(entity)) {
-            return;
-        }
-
-        engine.dirty = true;
-        remove.add(entity);
-        removeQueueMask.set(entity);
     }
 
-    void flushComponentRemoval() {
+    void removeScheduled(Mask globallyRemoved) {
         final Bag<T> components = this.components;
-        final IntArray remove = this.remove;
         final Mask componentsMask = this.componentsMask;
-        final Mask removeMask = this.removeMask;
-        final int removeCount = this.removeCount;
+        final Mask scheduledForRemoval = this.scheduledForRemoval;
+
+        scheduledForRemoval.or(globallyRemoved);
+        scheduledForRemoval.and(componentsMask);
 
         final Pool<T> pool = this.componentPool;
-        if(pool == null){
-            //Version for standard components
-            for (int i = 0; i < removeCount; i++) {
-                final int entity = remove.get(i);
-                components.remove(entity);
-                componentsMask.clear(entity);
-                removeMask.clear(entity);
-            }
-        } else {
-            //Version for pooled components
-            for (int i = 0; i < removeCount; i++) {
-                final int entity = remove.get(i);
-
-                final T component = components.remove(entity);
-                if(component != null) pool.free(component);
-
-                componentsMask.clear(entity);
-                removeMask.clear(entity);
-            }
+        for (int entity = scheduledForRemoval.nextSetBit(0); entity != -1; entity = scheduledForRemoval.nextSetBit(entity + 1)) {
+            final T component = components.remove(entity);
+            assert component != null;
+            if(pool != null) pool.free(component);
         }
 
-        if (removeCount > 0)
-            remove.removeRange(0, removeCount - 1);
+        componentsMask.andNot(scheduledForRemoval);
+        scheduledForRemoval.clear();
     }
 
     /** Returns a component instance which is safe to keep around, outside of the entity system.

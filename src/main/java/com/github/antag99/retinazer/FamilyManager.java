@@ -79,7 +79,6 @@ final class FamilyManager {
         return familyHolder.entities;
     }
 
-    private final Mask updateFamilyMembership_tmpMask = new Mask();
     private final Mask updateFamilyMembership_tmpMatchedEntities = new Mask();
 
     /**
@@ -92,27 +91,19 @@ final class FamilyManager {
         final int familyCount = familyIndices.size;
 
         final Mapper<?>[] mappers = engine.componentMappers;
-        final Mask tmpMask = this.updateFamilyMembership_tmpMask;
         final Mask matchedEntities = this.updateFamilyMembership_tmpMatchedEntities;
         for (int i = 0; i < familyCount; i++) {
             FamilyHolder family = families.get(i);
             assert family != null;
 
             matchedEntities.set(engine.entities);
-            matchedEntities.andNot(engine.remove);
 
             for (int componentI = family.requiredComponents.nextSetBit(0); componentI != -1; componentI = family.requiredComponents.nextSetBit(componentI + 1)) {
-                final Mapper<?> mapper = mappers[componentI];
-                tmpMask.set(mapper.componentsMask);
-                tmpMask.andNot(mapper.removeMask);
-                matchedEntities.and(tmpMask);
+                matchedEntities.and(mappers[componentI].componentsMask);
             }
 
             for (int componentI = family.excludedComponents.nextSetBit(0); componentI != -1; componentI = family.excludedComponents.nextSetBit(componentI + 1)) {
-                final Mapper<?> mapper = mappers[componentI];
-                tmpMask.set(mapper.componentsMask);
-                tmpMask.andNot(mapper.removeMask);
-                matchedEntities.andNot(tmpMask);
+                matchedEntities.andNot(mappers[componentI].componentsMask);
             }
 
             family.entities.setEntities(matchedEntities);
