@@ -21,53 +21,42 @@
  ******************************************************************************/
 package com.github.antag99.retinazer.util;
 
+/** Generic dynamically sized container for shorts. */
 public final class ShortBag {
-    @Experimental
-    public short[] buffer;
+    private short[] buffer = EMPTY;
+    private static final short[] EMPTY = new short[0];
 
-    public ShortBag() {
-        this(0);
+    /** Ensure that the internal buffer has at least the given capacity.
+     * Returns internal buffer. */
+    public short[] ensureCapacity(int capacity) {
+        final short[] buffer = this.buffer;
+        final int oldLength = buffer.length;
+        if (oldLength >= capacity)
+            return buffer;
+        short[] newBuffer = new short[Bag.capacityFor(capacity)];
+        System.arraycopy(buffer, 0, newBuffer, 0, oldLength);
+        return this.buffer = newBuffer;
     }
 
-    public ShortBag(int capacity) {
-        buffer = new short[capacity];
-    }
-
-    public void ensureCapacity(int capacity) {
-        if (this.buffer.length >= capacity)
-            return;
-        int newCapacity = Bag.nextPowerOfTwo(capacity);
-        short[] newBuffer = new short[newCapacity];
-        System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
-        this.buffer = newBuffer;
-    }
-
+    /** Get the value at given index.
+     * If the value was never assigned, it will be zero. */
     public short get(int index) {
-        if (index < 0) {
-            throw new IndexOutOfBoundsException("index < 0: " + index);
-        }
-
+        final short[] buffer = this.buffer;
         if (index >= buffer.length) {
             return 0;
         }
-
         return buffer[index];
     }
 
+    /** Set the value at given index. */
     public void set(int index, short value) {
-        if (index < 0) {
-            throw new IndexOutOfBoundsException("index < 0: " + index);
-        }
-
-        if (index >= buffer.length) {
-            ensureCapacity(index + 1);
-        }
-
-        buffer[index] = value;
+        ensureCapacity(index + 1)[index] = value;
     }
 
+    /** Set all values to zero. */
     public void clear() {
-        for (int i = 0, n = buffer.length; i < n; ++i) {
+        final short[] buffer = this.buffer;
+        for (int i = buffer.length - 1; i >= 0; i--) {
             buffer[i] = 0;
         }
     }

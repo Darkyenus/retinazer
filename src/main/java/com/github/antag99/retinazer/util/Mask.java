@@ -24,12 +24,11 @@ package com.github.antag99.retinazer.util;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
+/** Bit mask of an arbitrary size. */
 @SuppressWarnings("unused")
 public final class Mask implements Poolable {
-    private long[] words = new long[0];
-
-    public Mask() {
-    }
+    private long[] words = EMPTY;
+    private static final long[] EMPTY = new long[0];
 
     /**
      * Sets this mask to the value of the other mask.
@@ -51,20 +50,14 @@ public final class Mask implements Poolable {
         return this;
     }
 
-    /**
-     * Clears all bits in this mask.
-     */
+    /** Clears all bits in this mask. */
     public void clear() {
         long[] words = this.words;
         for (int i = 0, n = words.length; i < n; i++)
             words[i] = 0L;
     }
 
-    /**
-     * Sets all bits in this mask that are set in the other mask.
-     *
-     * @param other The other operand.
-     */
+    /** Sets all bits in this mask that are set in the other mask. */
     public void or(Mask other) {
         if (words.length < other.words.length) {
             long[] newWords = new long[other.words.length];
@@ -145,7 +138,7 @@ public final class Mask implements Poolable {
     public void set(int index) {
         int wordIndex = index >> 6;
         if (wordIndex >= words.length) {
-            int newCapacity = Bag.nextPowerOfTwo(wordIndex + 1);
+            int newCapacity = Bag.capacityFor(wordIndex + 1);
             long[] newWords = new long[newCapacity];
             System.arraycopy(words, 0, newWords, 0, words.length);
             this.words = newWords;
@@ -340,20 +333,18 @@ public final class Mask implements Poolable {
 
     public void setWord(int index, long word) {
         if (index >= words.length) {
-            long[] newWords = new long[Bag.nextPowerOfTwo(index + 1)];
+            long[] newWords = new long[Bag.capacityFor(index + 1)];
             System.arraycopy(words, 0, newWords, 0, words.length);
             this.words = newWords;
         }
         words[index] = word;
     }
 
-    /**
-     * Gets the amount of necessary words in this mask. Excludes trailing zero
-     * words.
-     */
+    /** Gets the amount of necessary words in this mask. */
     public int getWordCount() {
         final long[] words = this.words;
         for (int i = words.length - 1; i > 0; i--) {
+            // Exclude trailing zero words
             if (words[i] != 0L) {
                 return i;
             }
@@ -362,10 +353,7 @@ public final class Mask implements Poolable {
         return 0;
     }
 
-    /**
-     * Gets the backing buffer of this mask. Does not exclude trailing zero
-     * words.
-     */
+    /** Gets the backing buffer of this mask. Does not exclude trailing zero words. */
     public long[] getWords() {
         return words;
     }

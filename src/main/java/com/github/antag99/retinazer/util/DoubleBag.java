@@ -21,54 +21,43 @@
  ******************************************************************************/
 package com.github.antag99.retinazer.util;
 
+/** Generic dynamically sized container for doubles. */
 public final class DoubleBag {
-    @Experimental
-    public double[] buffer;
+    private double[] buffer = EMPTY;
+    private static final double[] EMPTY = new double[0];
 
-    public DoubleBag() {
-        this(0);
+    /** Ensure that the internal buffer has at least the given capacity.
+     * Returns internal buffer. */
+    public double[] ensureCapacity(int capacity) {
+        final double[] buffer = this.buffer;
+        final int oldLength = buffer.length;
+        if (oldLength >= capacity)
+            return buffer;
+        double[] newBuffer = new double[Bag.capacityFor(capacity)];
+        System.arraycopy(buffer, 0, newBuffer, 0, oldLength);
+        return this.buffer = newBuffer;
     }
 
-    public DoubleBag(int capacity) {
-        buffer = new double[capacity];
-    }
-
-    public void ensureCapacity(int capacity) {
-        if (this.buffer.length >= capacity)
-            return;
-        int newCapacity = Bag.nextPowerOfTwo(capacity);
-        double[] newBuffer = new double[newCapacity];
-        System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
-        this.buffer = newBuffer;
-    }
-
+    /** Get the value at given index.
+     * If the value was never assigned, it will be zero. */
     public double get(int index) {
-        if (index < 0) {
-            throw new IndexOutOfBoundsException("index < 0: " + index);
-        }
-
+        final double[] buffer = this.buffer;
         if (index >= buffer.length) {
             return 0;
         }
-
         return buffer[index];
     }
 
+    /** Set the value at given index. */
     public void set(int index, double value) {
-        if (index < 0) {
-            throw new IndexOutOfBoundsException("index < 0: " + index);
-        }
-
-        if (index >= buffer.length) {
-            ensureCapacity(index + 1);
-        }
-
-        buffer[index] = value;
+        ensureCapacity(index + 1)[index] = value;
     }
 
+    /** Set all values to zero. */
     public void clear() {
-        for (int i = 0, n = buffer.length; i < n; ++i) {
-            buffer[i] = 0d;
+        final double[] buffer = this.buffer;
+        for (int i = buffer.length - 1; i >= 0; i--) {
+            buffer[i] = 0;
         }
     }
 }
