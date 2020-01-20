@@ -1,6 +1,9 @@
-package com.github.antag99.retinazer;
+package com.github.antag99.retinazer.systems;
 
 import com.badlogic.gdx.utils.IntArray;
+import com.github.antag99.retinazer.EntitySetView;
+import com.github.antag99.retinazer.EntitySystem;
+import com.github.antag99.retinazer.FamilySpec;
 
 public abstract class EntityProcessorSystem extends EntitySystem {
     private final FamilySpec family;

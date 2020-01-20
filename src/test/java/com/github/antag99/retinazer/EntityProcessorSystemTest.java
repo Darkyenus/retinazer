@@ -2,6 +2,7 @@ package com.github.antag99.retinazer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.github.antag99.retinazer.systems.EntityProcessorSystem;
 import org.junit.jupiter.api.Test;
 
 import com.github.antag99.retinazer.util.Mask;

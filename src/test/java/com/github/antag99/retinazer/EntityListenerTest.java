@@ -3,24 +3,29 @@ package com.github.antag99.retinazer;
 import static com.github.antag99.retinazer.Components.FULL_SET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.github.antag99.retinazer.systems.FamilyPresenceWatcherSystem;
 import com.github.antag99.retinazer.util.Mask;
 import org.junit.jupiter.api.Test;
 
 public class EntityListenerTest {
-    private static class EntityListenerMock implements EntityListener {
+    private static class EntityListenerMock extends FamilyPresenceWatcherSystem {
         private final EntitySet insertedEntities = new EntitySet();
         private final EntitySet removedEntities = new EntitySet();
 
-        @Override
-        public void inserted(EntitySetView entities) {
-            assertEquals(0, insertedEntities.size(), "Insertion without verification");
-            insertedEntities.addEntities(entities.getMask());
+        protected EntityListenerMock(FamilySpec familySpec) {
+            super(familySpec);
         }
 
         @Override
-        public void removed(EntitySetView entities) {
+        protected void insertedEntities(Mask entities, float delta) {
+            assertEquals(0, insertedEntities.size(), "Insertion without verification");
+            insertedEntities.addEntities(entities);
+        }
+
+        @Override
+        protected void removedEntities(Mask entities, float delta) {
             assertEquals(0, removedEntities.size(), "Removal without verification");
-            removedEntities.addEntities(entities.getMask());
+            removedEntities.addEntities(entities);
         }
 
         public void verifyInserted(int... entities) {
@@ -42,9 +47,8 @@ public class EntityListenerTest {
 
     @Test
     public void testEntityListener() {
-        EntityListenerMock listener = new EntityListenerMock();
-        Engine engine = new Engine(ComponentSet.EMPTY);
-        engine.addEntityListener(listener);
+        EntityListenerMock listener = new EntityListenerMock(ComponentSet.EMPTY.family());
+        Engine engine = new Engine(ComponentSet.EMPTY, listener);
         int entity = engine.createEntity();
         listener.verifyInserted();
         listener.verifyRemoved();
@@ -61,11 +65,9 @@ public class EntityListenerTest {
 
     @Test
     public void testFamilyListener() {
-        EntityListenerMock listenerB = new EntityListenerMock();
-        EntityListenerMock listenerC = new EntityListenerMock();
-        Engine engine = new Engine(FULL_SET);
-        engine.getFamily(FULL_SET.familyWith(Components.FlagComponentB.class)).addListener(listenerB);
-        engine.getFamily(FULL_SET.familyWith(Components.FlagComponentC.class)).addListener(listenerC);
+        EntityListenerMock listenerB = new EntityListenerMock(FULL_SET.familyWith(Components.FlagComponentB.class));
+        EntityListenerMock listenerC = new EntityListenerMock(FULL_SET.familyWith(Components.FlagComponentC.class));
+        Engine engine = new Engine(FULL_SET, listenerB, listenerC);
         Mapper<Components.FlagComponentB> mFlagB = engine.getMapper(Components.FlagComponentB.class);
         Mapper<Components.FlagComponentC> mFlagC = engine.getMapper(Components.FlagComponentC.class);
         int entity = engine.createEntity();
