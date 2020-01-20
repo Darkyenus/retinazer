@@ -1,11 +1,10 @@
 package com.github.antag99.retinazer.systems;
 
 import com.github.antag99.retinazer.EntitySystem;
-import com.github.antag99.retinazer.Family;
 import com.github.antag99.retinazer.FamilySpec;
 import com.github.antag99.retinazer.util.Mask;
 
-/** {@link EntitySystem} which watches for entities to be added or removed to/from a {@link Family}. */
+/** {@link EntitySystem} which watches for entities to be added or removed to/from a {@link FamilySpec}. */
 public abstract class FamilyPresenceWatcherSystem extends EntitySystem {
 
 	private final FamilySpec family;
@@ -24,7 +23,7 @@ public abstract class FamilyPresenceWatcherSystem extends EntitySystem {
 	@Override
 	protected void setup() {
 		super.setup();
-		currentEntities = engine.getFamily(family).getEntities().getMask();
+		currentEntities = engine.getEntities(family).getMask();
 	}
 
 	@Override

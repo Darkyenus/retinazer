@@ -4,7 +4,8 @@
 - It is now required to supply all components at the `Engine` creation through `ComponentSet`
 - `EngineConfig` has been deleted
 - `Engine.getSystem` has been replaced with generic `getService`
-- Renamed `FamilyConf` to `FamilySpec` and made it immutable
+- Renamed `FamilyConf` to `Family` and made it immutable. Old `Family` no longer exists because it served no purpose.
+- Added `FamilyPresenceWatcherSystem`, replacing `EntityListener`
 - `ensureCapacity(int)` for all `Bag` implementations
 - Fix: `Bag.set(int)` no longer treats the `0` value specially
 

@@ -30,7 +30,7 @@ final class FamilyManager {
     }
 
     private final ObjectIntMap<Key> familyIndices = new ObjectIntMap<>();
-    private final Bag<Family> families = new Bag<>();
+    private final Bag<FamilyHolder> families = new Bag<>();
     private final Engine engine;
 
     FamilyManager(Engine engine) {
@@ -39,8 +39,8 @@ final class FamilyManager {
 
     private final Key getFamily_lookup = new Key();
 
-    /** @return existing or new family conforming to the given configuration */
-    public Family getFamily(FamilySpec spec) {
+    /** @return {@link EntitySet} conforming to the given configuration backed by the family */
+    public EntitySet getFamily(FamilySpec spec) {
         assert spec.domain.isSubsetOf(engine.componentDomain);
         final ObjectIntMap<Key> familyIndices = this.familyIndices;
         final int index;
@@ -52,7 +52,7 @@ final class FamilyManager {
         }
 
         if (index == familyIndices.size) {
-            final Family family = new Family(spec.requiredComponents, spec.excludedComponents, index);
+            final FamilyHolder family = new FamilyHolder(spec.requiredComponents, spec.excludedComponents);
             Key key = new Key();
             key.requiredComponents = spec.requiredComponents;
             key.excludedComponents = spec.excludedComponents;
@@ -74,12 +74,13 @@ final class FamilyManager {
             family.entities.addEntities(matchedEntities);
         }
 
-        return families.get(index);
+        final FamilyHolder familyHolder = families.get(index);
+        assert familyHolder != null;
+        return familyHolder.entities;
     }
 
     private final Mask updateFamilyMembership_tmpMask = new Mask();
     private final Mask updateFamilyMembership_tmpMatchedEntities = new Mask();
-    private final EntitySet updateFamilyMembership_argument = new EntitySet();
 
     /**
      * Updates family membership for all entities. This will insert/remove entities
@@ -87,63 +88,45 @@ final class FamilyManager {
      */
     void updateFamilyMembership() {
         final Engine engine = this.engine;
-        final Bag<Family> families = this.families;
+        final Bag<FamilyHolder> families = this.families;
         final int familyCount = familyIndices.size;
 
-        {
-            final Mapper<?>[] mappers = engine.componentMappers;
-            final Mask tmpMask = this.updateFamilyMembership_tmpMask;
-            final Mask matchedEntities = this.updateFamilyMembership_tmpMatchedEntities;
-            for (int i = 0; i < familyCount; i++) {
-                Family family = families.get(i);
-                assert family != null;
-                EntitySet entities = family.entities;
+        final Mapper<?>[] mappers = engine.componentMappers;
+        final Mask tmpMask = this.updateFamilyMembership_tmpMask;
+        final Mask matchedEntities = this.updateFamilyMembership_tmpMatchedEntities;
+        for (int i = 0; i < familyCount; i++) {
+            FamilyHolder family = families.get(i);
+            assert family != null;
 
-                matchedEntities.set(engine.entities);
-                matchedEntities.andNot(engine.remove);
+            matchedEntities.set(engine.entities);
+            matchedEntities.andNot(engine.remove);
 
-                for (int componentI = family.requiredComponents.nextSetBit(0); componentI != -1; componentI = family.requiredComponents.nextSetBit(componentI + 1)) {
-                    final Mapper<?> mapper = mappers[componentI];
-                    tmpMask.set(mapper.componentsMask);
-                    tmpMask.andNot(mapper.removeMask);
-                    matchedEntities.and(tmpMask);
-                }
-
-                for (int componentI = family.excludedComponents.nextSetBit(0); componentI != -1; componentI = family.excludedComponents.nextSetBit(componentI + 1)) {
-                    final Mapper<?> mapper = mappers[componentI];
-                    tmpMask.set(mapper.componentsMask);
-                    tmpMask.andNot(mapper.removeMask);
-                    matchedEntities.andNot(tmpMask);
-                }
-
-                family.insertEntities.set(matchedEntities);
-                family.insertEntities.andNot(entities.getMask());
-                entities.addEntities(family.insertEntities);
-
-                family.removeEntities.set(entities.getMask());
-                family.removeEntities.andNot(matchedEntities);
-                entities.removeEntities(family.removeEntities);
+            for (int componentI = family.requiredComponents.nextSetBit(0); componentI != -1; componentI = family.requiredComponents.nextSetBit(componentI + 1)) {
+                final Mapper<?> mapper = mappers[componentI];
+                tmpMask.set(mapper.componentsMask);
+                tmpMask.andNot(mapper.removeMask);
+                matchedEntities.and(tmpMask);
             }
+
+            for (int componentI = family.excludedComponents.nextSetBit(0); componentI != -1; componentI = family.excludedComponents.nextSetBit(componentI + 1)) {
+                final Mapper<?> mapper = mappers[componentI];
+                tmpMask.set(mapper.componentsMask);
+                tmpMask.andNot(mapper.removeMask);
+                matchedEntities.andNot(tmpMask);
+            }
+
+            family.entities.setEntities(matchedEntities);
         }
+    }
 
-        {
-            final EntitySet argument = this.updateFamilyMembership_argument;
-            for (int i = 0; i < familyCount; i++) {
-                Family family = families.get(i);
-                assert family != null;
+    private static final class FamilyHolder {
+        final Mask requiredComponents;
+        final Mask excludedComponents;
+        final EntitySet entities = new EntitySet();
 
-                if (!family.insertEntities.isEmpty()) {
-                    argument.addEntities(family.insertEntities);
-                    family.onInserted(argument);
-                    argument.clear();
-                }
-
-                if (!family.removeEntities.isEmpty()) {
-                    argument.addEntities(family.removeEntities);
-                    family.onRemoved(argument);
-                    argument.clear();
-                }
-            }
+        FamilyHolder(Mask requiredComponents, Mask excludedComponents) {
+            this.requiredComponents = requiredComponents;
+            this.excludedComponents = excludedComponents;
         }
     }
 }

@@ -17,7 +17,7 @@ public abstract class EntityProcessorSystem extends EntitySystem {
     public void setup() {
         super.setup();
 
-        entities = engine.getFamily(getFamily()).getEntities();
+        entities = engine.getEntities(getFamily());
     }
 
     public final EntitySetView getEntities() {

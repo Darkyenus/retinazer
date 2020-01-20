@@ -46,6 +46,13 @@ public final class EntitySet implements EntitySetView {
         }
     }
 
+    public void setEntities(Mask entities) {
+        if (!this.entities.equals(entities)) {
+            this.indicesDirty = true;
+            this.entities.set(entities);
+        }
+    }
+
     public void removeEntity(int entity) {
         if (this.entities.get(entity)) {
             this.indicesDirty = true;

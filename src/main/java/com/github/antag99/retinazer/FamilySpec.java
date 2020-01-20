@@ -2,7 +2,7 @@ package com.github.antag99.retinazer;
 
 import com.github.antag99.retinazer.util.Mask;
 
-/** Specifies a {@link Family}. Immutable. */
+/** Specifies a set of entities defined by what {@link Component}s they have or don't have. Immutable. */
 public final class FamilySpec {
 
     /** Family of all entities.

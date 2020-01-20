@@ -24,8 +24,6 @@ public final class Engine {
     final FamilyManager familyManager;
     final WireManager wireManager;
 
-    private EntitySetView lazyAllEntitiesView = null;
-
     /** Tracks whether any components or entities have been modified; reset at every call to flush() */
     boolean dirty = false;
     /** Tracks whether this engine is within a call to update() */
@@ -75,14 +73,6 @@ public final class Engine {
 
     public void wire(Object object) {
         wireManager.wire(object);
-    }
-
-    public void addEntityListener(EntityListener entityListener) {
-        getFamily(FamilySpec.ALL).addListener(entityListener);
-    }
-
-    public void removeEntityListener(EntityListener entityListener) {
-        getFamily(FamilySpec.ALL).removeListener(entityListener);
     }
 
     /**
@@ -202,24 +192,17 @@ public final class Engine {
      * @return {@link EntitySetView} containing all entities added to this engine
      */
     public EntitySetView getEntities() {
-        EntitySetView entities = this.lazyAllEntitiesView;
-        if (entities == null) {
-            entities = this.lazyAllEntitiesView = familyManager.getFamily(FamilySpec.ALL).getEntities();
-        }
-        return entities;
+        return getEntities(FamilySpec.ALL);
     }
 
     /**
-     * Gets or creates a family for the given configuration. Typically, it's
-     * not necessary to retrieve a family directly, but rather only use
-     * {@link FamilySpec}.
+     * Retrieves the set of entities belonging to the given {@link FamilySpec}.
+     * The set is dynamically updated, so the returned object may be kept indefinitely.
      *
-     * @param config
-     *            configuration for the family
-     * @return family for the given configuration
+     * @param family specification of the entity family
      */
-    public Family getFamily(FamilySpec config) {
-        return familyManager.getFamily(config);
+    public EntitySetView getEntities(FamilySpec family) {
+        return familyManager.getFamily(family);
     }
 
     /**
