@@ -192,16 +192,16 @@ public final class Engine {
      * @return {@link EntitySetView} containing all entities added to this engine
      */
     public EntitySetView getEntities() {
-        return getEntities(FamilySpec.ALL);
+        return getEntities(Family.ALL);
     }
 
     /**
-     * Retrieves the set of entities belonging to the given {@link FamilySpec}.
+     * Retrieves the set of entities belonging to the given {@link Family}.
      * The set is dynamically updated, so the returned object may be kept indefinitely.
      *
      * @param family specification of the entity family
      */
-    public EntitySetView getEntities(FamilySpec family) {
+    public EntitySetView getEntities(Family family) {
         return familyManager.getFamily(family);
     }
 

@@ -3,11 +3,11 @@ package com.github.antag99.retinazer;
 import com.github.antag99.retinazer.util.Mask;
 
 /** Specifies a set of entities defined by what {@link Component}s they have or don't have. Immutable. */
-public final class FamilySpec {
+public final class Family {
 
     /** Family of all entities.
      * NOTE: It is impossible to derive anything from it, because it has an empty domain. */
-    static final FamilySpec ALL = new FamilySpec(ComponentSet.EMPTY);
+    static final Family ALL = new Family(ComponentSet.EMPTY);
 
     final ComponentSet domain;
     /** Each family member must have all of these components. */
@@ -15,12 +15,12 @@ public final class FamilySpec {
     /** Each family member must not have any of these components. */
     final Mask excludedComponents = new Mask();
 
-    FamilySpec(ComponentSet domain) {
+    Family(ComponentSet domain) {
         this.domain = domain;
     }
 
     @SafeVarargs
-    FamilySpec(ComponentSet domain, boolean require, Class<? extends Component>... components) {
+    Family(ComponentSet domain, boolean require, Class<? extends Component>... components) {
         this(domain);
         final Mask mask = require ? requiredComponents : excludedComponents;
         for (Class<? extends Component> component : components) {
@@ -29,11 +29,11 @@ public final class FamilySpec {
     }
 
 
-    /** Derive a new {@link FamilySpec} which also requires given components. */
+    /** Derive a new {@link Family} which also requires given components. */
     @SafeVarargs
-    public final FamilySpec with(Class<? extends Component>... components) {
+    public final Family with(Class<? extends Component>... components) {
         final ComponentSet domain = this.domain;
-        final FamilySpec result = new FamilySpec(domain);
+        final Family result = new Family(domain);
         for (Class<? extends Component> component : components) {
             result.requiredComponents.set(domain.index(component));
         }
@@ -45,14 +45,14 @@ public final class FamilySpec {
         return result;
     }
 
-    /** Derive a new {@link FamilySpec} which also excludes given components. */
+    /** Derive a new {@link Family} which also excludes given components. */
     @SafeVarargs
-    public final FamilySpec without(Class<? extends Component>... components) {
+    public final Family without(Class<? extends Component>... components) {
         if (components.length == 0) {
             return this;
         }
         final ComponentSet domain = this.domain;
-        final FamilySpec result = new FamilySpec(domain);
+        final Family result = new Family(domain);
         for (Class<? extends Component> component : components) {
             result.excludedComponents.set(domain.index(component));
         }

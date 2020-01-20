@@ -72,21 +72,21 @@ public final class ComponentSet {
 		return true;
 	}
 
-	/** Create a new {@link FamilySpec} which contains all entities. */
-	public final FamilySpec family() {
-		return new FamilySpec(this);
+	/** Create a new {@link Family} which contains all entities. */
+	public final Family family() {
+		return new Family(this);
 	}
 
-	/** Create a new {@link FamilySpec} which requires given components. */
+	/** Create a new {@link Family} which requires given components. */
 	@SafeVarargs
-	public final FamilySpec familyWith(Class<? extends Component>... components) {
-		return new FamilySpec(this, true, components);
+	public final Family familyWith(Class<? extends Component>... components) {
+		return new Family(this, true, components);
 	}
 
-	/** Create a new {@link FamilySpec} which excludes given components. */
+	/** Create a new {@link Family} which excludes given components. */
 	@SafeVarargs
-	public final FamilySpec familyWithout(Class<? extends Component>... components) {
-		return new FamilySpec(this, false, components);
+	public final Family familyWithout(Class<? extends Component>... components) {
+		return new Family(this, false, components);
 	}
 
 	Mapper<?>[] buildComponentMappers(Engine engine) {

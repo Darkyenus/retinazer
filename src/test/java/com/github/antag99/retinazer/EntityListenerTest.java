@@ -12,7 +12,7 @@ public class EntityListenerTest {
         private final EntitySet insertedEntities = new EntitySet();
         private final EntitySet removedEntities = new EntitySet();
 
-        protected EntityListenerMock(FamilySpec familySpec) {
+        protected EntityListenerMock(Family familySpec) {
             super(familySpec);
         }
 

@@ -1,22 +1,22 @@
 package com.github.antag99.retinazer.systems;
 
 import com.github.antag99.retinazer.EntitySystem;
-import com.github.antag99.retinazer.FamilySpec;
+import com.github.antag99.retinazer.Family;
 import com.github.antag99.retinazer.util.Mask;
 
-/** {@link EntitySystem} which watches for entities to be added or removed to/from a {@link FamilySpec}. */
+/** {@link EntitySystem} which watches for entities to be added or removed to/from a {@link Family}. */
 public abstract class FamilyPresenceWatcherSystem extends EntitySystem {
 
-	private final FamilySpec family;
+	private final Family family;
 	private Mask currentEntities;
 	private final Mask lastEntities = new Mask();
 	private final Mask workingSet = new Mask();
 
-	protected FamilyPresenceWatcherSystem(FamilySpec family) {
+	protected FamilyPresenceWatcherSystem(Family family) {
 		this.family = family;
 	}
 
-	public final FamilySpec getFamily() {
+	public final Family getFamily() {
 		return family;
 	}
 
@@ -50,7 +50,7 @@ public abstract class FamilyPresenceWatcherSystem extends EntitySystem {
 	/** Simplified {@link FamilyPresenceWatcherSystem} which gets the notification per-entity, not in bulk. */
 	public static abstract class Single extends FamilyPresenceWatcherSystem {
 
-		protected Single(FamilySpec family) {
+		protected Single(Family family) {
 			super(family);
 		}
 

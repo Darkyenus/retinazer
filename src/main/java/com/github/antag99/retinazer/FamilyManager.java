@@ -40,7 +40,7 @@ final class FamilyManager {
     private final Key getFamily_lookup = new Key();
 
     /** @return {@link EntitySet} conforming to the given configuration backed by the family */
-    public EntitySet getFamily(FamilySpec spec) {
+    public EntitySet getFamily(Family spec) {
         assert spec.domain.isSubsetOf(engine.componentDomain);
         final ObjectIntMap<Key> familyIndices = this.familyIndices;
         final int index;
