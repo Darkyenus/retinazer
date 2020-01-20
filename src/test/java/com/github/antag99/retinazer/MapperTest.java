@@ -1,6 +1,8 @@
 package com.github.antag99.retinazer;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MapperTest {
 
@@ -10,12 +12,12 @@ public class MapperTest {
         }
     }
 
-    @Test(expected = RetinazerException.class)
+    @Test()
     public void testNoConstructor() {
         Engine engine = new Engine(new EngineConfig());
         int entity = engine.createEntity();
         Mapper<BadComponent> mBad = engine.getMapper(BadComponent.class);
-        mBad.create(entity);
+        assertThrows(RetinazerException.class, () -> mBad.create(entity));
     }
 
     // This should *never* be done
@@ -25,12 +27,12 @@ public class MapperTest {
         }
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test()
     public void testErrorConstructor() {
         Engine engine = new Engine(new EngineConfig());
         int entity = engine.createEntity();
         Mapper<ReallyBadComponent> mReallyBad = engine.getMapper(ReallyBadComponent.class);
-        mReallyBad.create(entity);
+        assertThrows(UnsupportedOperationException.class, () -> mReallyBad.create(entity));
     }
 
     @Test
@@ -46,12 +48,14 @@ public class MapperTest {
         engine.update(0f);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test()
     public void testAddTwice() {
         Engine engine = new Engine(new EngineConfig());
         Mapper<FlagComponentA> mFlagA = engine.getMapper(FlagComponentA.class);
         int entity = engine.createEntity();
         mFlagA.add(entity, new FlagComponentA());
-        mFlagA.add(entity, new FlagComponentA());
+        assertThrows(IllegalArgumentException.class, () -> {
+            mFlagA.add(entity, new FlagComponentA());
+        });
     }
 }

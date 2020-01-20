@@ -21,10 +21,10 @@
  ******************************************************************************/
 package com.github.antag99.retinazer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.github.antag99.retinazer.util.Mask;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EntityListenerTest {
     private static class EntityListenerMock implements EntityListener {
@@ -33,13 +33,13 @@ public class EntityListenerTest {
 
         @Override
         public void inserted(EntitySetView entities) {
-            assertEquals("Insertion without verification", 0, insertedEntities.size());
+            assertEquals(0, insertedEntities.size(), "Insertion without verification");
             insertedEntities.addEntities(entities.getMask());
         }
 
         @Override
         public void removed(EntitySetView entities) {
-            assertEquals("Removal without verification", 0, removedEntities.size());
+            assertEquals(0, removedEntities.size(), "Removal without verification");
             removedEntities.addEntities(entities.getMask());
         }
 
@@ -47,7 +47,7 @@ public class EntityListenerTest {
             final Mask shouldBePresent = new Mask();
             for (int e : entities)
                 shouldBePresent.set(e);
-            assertEquals("Insert verification failed", shouldBePresent, insertedEntities.getMask());
+            assertEquals(shouldBePresent, insertedEntities.getMask(), "Insert verification failed");
             insertedEntities.clear();
         }
 
@@ -55,7 +55,7 @@ public class EntityListenerTest {
             final Mask shouldBePresent = new Mask();
             for (int e : entities)
                 shouldBePresent.set(e);
-            assertEquals("Remove verification failed", shouldBePresent, removedEntities.getMask());
+            assertEquals(shouldBePresent, removedEntities.getMask(), "Remove verification failed");
             removedEntities.clear();
         }
     }

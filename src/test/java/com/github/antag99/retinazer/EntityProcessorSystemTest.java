@@ -1,8 +1,8 @@
 package com.github.antag99.retinazer;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.antag99.retinazer.util.Mask;
 

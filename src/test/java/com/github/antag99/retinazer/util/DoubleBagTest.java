@@ -21,11 +21,11 @@
  ******************************************************************************/
 package com.github.antag99.retinazer.util;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
-
-import com.github.antag99.retinazer.util.DoubleBag;
+import org.junit.jupiter.api.Test;
 
 public class DoubleBagTest {
 
@@ -142,66 +142,19 @@ public class DoubleBagTest {
     }
 
     /**
-     * Ensures that the bag resizes correctly when out of capacity, that it
-     * does not resize when queried for non-existing elements, and that it does
-     * not resize when the default value is set.
-     */
-    @Test
-    public void testCapacity() {
-        DoubleBag bag;
-
-        bag = new DoubleBag();
-        assertEquals(0, bag.buffer.length);
-        bag.set(0, 1d);
-        assertEquals(1, bag.buffer.length);
-        bag.set(1, 2d);
-        assertEquals(2, bag.buffer.length);
-        bag.set(2, 3d);
-        assertEquals(4, bag.buffer.length);
-        bag.set(3, 4d);
-        assertEquals(4, bag.buffer.length);
-        bag.set(4, 5d);
-        assertEquals(8, bag.buffer.length);
-        bag.set(8, 6d);
-        assertEquals(16, bag.buffer.length);
-        bag.set(35, 7d);
-        assertEquals(64, bag.buffer.length);
-
-        bag = new DoubleBag();
-        for (int i = 0; i < 32; i++) {
-            bag.get((1 << i) - 1);
-            assertEquals(0, bag.buffer.length);
-        }
-        bag.get(Integer.MAX_VALUE);
-        assertEquals(0, bag.buffer.length);
-    }
-
-    /**
      * When a negative index is used, an {@link IndexOutOfBoundsException} should be thrown.
      */
     @Test
     public void testIndexOutOfBoundsException() {
         DoubleBag bag = new DoubleBag();
         for (int i = 0; i < 32; i++) {
-            try {
-                bag.set(-(1 << i), 0d);
-            } catch (IndexOutOfBoundsException ex) {
-                if (ex.getClass() == IndexOutOfBoundsException.class)
-                    continue;
-            }
-
-            fail("IndexOutOfBoundsException expected for index " + (-(1 << i)));
+            final int i_ = i;
+            assertThrows(IndexOutOfBoundsException.class, () -> bag.set(-(1 << i_), 0));
         }
 
         for (int i = 0; i < 32; i++) {
-            try {
-                bag.get(-(1 << i));
-            } catch (IndexOutOfBoundsException ex) {
-                if (ex.getClass() == IndexOutOfBoundsException.class)
-                    continue;
-            }
-
-            fail("IndexOutOfBoundsException expected for index " + (-(1 << i)));
+            final int i_ = i;
+            assertThrows(IndexOutOfBoundsException.class, () -> bag.get(-(1 << i_)));
         }
     }
 }

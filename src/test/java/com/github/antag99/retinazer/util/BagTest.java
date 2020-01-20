@@ -21,9 +21,13 @@
  ******************************************************************************/
 package com.github.antag99.retinazer.util;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BagTest {
 
@@ -140,55 +144,29 @@ public class BagTest {
     @Test
     public void testDefault() {
         Bag<Object> bag = new Bag<>();
-        assertEquals(null, bag.get(0));
+        assertNull(bag.get(0));
         bag.set(0, new Object());
-        assertEquals(null, bag.get(1));
-        assertEquals(null, bag.get(2));
-        assertEquals(null, bag.get(3));
-    }
-
-    /**
-     * Ensures that the bag resizes correctly when out of capacity, that it
-     * does not resize when queried for non-existing elements, and that it does
-     * not resize when the default value is set.
-     */
-    @Test
-    public void testCapacity() {
-        Bag<Object> bag;
-
-        bag = new Bag<>();
-        assertEquals(0, bag.buffer.length);
-        bag.set(0, new Object());
-        assertEquals(1, bag.buffer.length);
-        bag.set(1, new Object());
-        assertEquals(2, bag.buffer.length);
-        bag.set(2, new Object());
-        assertEquals(4, bag.buffer.length);
-        bag.set(3, new Object());
-        assertEquals(4, bag.buffer.length);
-        bag.set(4, new Object());
-        assertEquals(8, bag.buffer.length);
-        bag.set(8, new Object());
-        assertEquals(16, bag.buffer.length);
-        bag.set(35, new Object());
-        assertEquals(64, bag.buffer.length);
-
-        bag = new Bag<>();
-        for (int i = 0; i < 32; i++) {
-            bag.get((1 << i) - 1);
-            assertEquals(0, bag.buffer.length);
-        }
-        bag.get(Integer.MAX_VALUE);
-        assertEquals(0, bag.buffer.length);
+        assertNull(bag.get(1));
+        assertNull(bag.get(2));
+        assertNull(bag.get(3));
     }
 
     @Test
-    public void testNextPowerOfTwo() {
-        assertEquals(1, Bag.nextPowerOfTwo(0));
-        assertEquals(1, Bag.nextPowerOfTwo(1));
-        assertEquals(2, Bag.nextPowerOfTwo(2));
-        assertEquals(4, Bag.nextPowerOfTwo(3));
-        assertEquals(1 << 31, Bag.nextPowerOfTwo((1 << 30) + 1));
+    public void testCapacityFor() {
+        assertEquals(16, Bag.capacityFor(0));
+        assertEquals(16, Bag.capacityFor(1));
+        assertEquals(16, Bag.capacityFor(2));
+        assertEquals(16, Bag.capacityFor(3));
+        assertEquals(16, Bag.capacityFor(16));
+        assertEquals(32, Bag.capacityFor(17));
+        assertEquals(32, Bag.capacityFor(32));
+        assertEquals(64, Bag.capacityFor(33));
+        assertEquals(512, Bag.capacityFor(512));
+        assertEquals(1024, Bag.capacityFor(513));
+        assertEquals(1024, Bag.capacityFor(1000));
+        assertEquals(1024, Bag.capacityFor(1024));
+        assertEquals(2048, Bag.capacityFor(1025));
+        assertEquals(5120, Bag.capacityFor(5000));
     }
 
     /**
@@ -198,24 +176,16 @@ public class BagTest {
     public void testIndexOutOfBoundsException() {
         Bag<Object> bag = new Bag<>();
         for (int i = 0; i < 32; i++) {
-            try {
-                bag.set(-(1 << i), new Object());
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                if (ex.getClass() == ArrayIndexOutOfBoundsException.class)
-                    continue;
-            }
-
-            fail("ArrayIndexOutOfBoundsException expected for index " + (-(1 << i)));
+            final int i_ = i;
+            assertThrows(IndexOutOfBoundsException.class, () -> bag.set(-(1 << i_), new Object()));
         }
         for (int i = 0; i < 32; i++) {
-            try {
-                bag.get(-(1 << i));
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                if (ex.getClass() == ArrayIndexOutOfBoundsException.class)
-                    continue;
-            }
-
-            fail("ArrayIndexOutOfBoundsException expected for index " + (-(1 << i)));
+            final int i_ = i;
+            assertThrows(IndexOutOfBoundsException.class, () -> bag.get(-(1 << i_)));
+        }
+        for (int i = 0; i < 32; i++) {
+            final int i_ = i;
+            assertThrows(IndexOutOfBoundsException.class, () -> bag.remove(-(1 << i_)));
         }
     }
 }

@@ -21,16 +21,17 @@
  ******************************************************************************/
 package com.github.antag99.retinazer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EngineTest {
     private Array<EntitySystem> initializedSystems = new Array<>();
@@ -287,10 +288,13 @@ public class EngineTest {
         private @Wire MissingService service;
     }
 
-    @Test(expected = RetinazerException.class)
+    @Test
     public void testMissingDependencyInjection() {
         MissingServiceConsumer consumer = new MissingServiceConsumer();
-        new Engine(new EngineConfig()).wire(consumer);
+        final Engine engine = new Engine(new EngineConfig());
+        assertThrows(RetinazerException.class, () -> {
+            engine.wire(consumer);
+        });
     }
 
     public static class ExampleSystem extends EntitySystem {
