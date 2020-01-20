@@ -91,7 +91,7 @@ final class FamilyManager {
             for (Class<? extends Component> componentType : config.excludedComponents)
                 excludedComponents[i++] = engine.componentManager.getIndex(componentType);
 
-            Family family = new Family(engine, components, excludedComponents, index);
+            Family family = new Family(components, excludedComponents, index);
             Key key = new Key();
             key.components = config.components;
             key.excludedComponents = config.excludedComponents;

@@ -1,9 +1,10 @@
 package com.github.antag99.retinazer.resolvers;
 
-import com.badlogic.gdx.utils.reflect.Field;
 import com.github.antag99.retinazer.Engine;
 import com.github.antag99.retinazer.WireResolver;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Objects;
 
 /**
@@ -20,9 +21,9 @@ public final class SimpleWireResolver implements WireResolver {
     }
 
     @Override
-    public boolean wire(Engine engine, Object object, Field field) throws Throwable {
+    public boolean wire(Engine engine, Object object, Field field) throws IllegalAccessException {
         if (field.getType().isInstance(value)) {
-            if (field.isFinal()) return false;
+            if (Modifier.isFinal(field.getModifiers())) return false;
             field.set(object, value);
             return true;
         } else {

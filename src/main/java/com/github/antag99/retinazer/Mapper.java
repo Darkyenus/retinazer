@@ -23,12 +23,11 @@ package com.github.antag99.retinazer;
 
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.ReflectionPool;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.Constructor;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.github.antag99.retinazer.util.Bag;
 import com.github.antag99.retinazer.util.Mask;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * {@code Mapper} is used for accessing the components of a specific type. This
@@ -41,15 +40,16 @@ public final class Mapper<T extends Component> {
     private final Engine engine;
     /** The component type */
     public final Class<T> type;
-    /** Unique index for the component type */
+    /** A unique index for the component type */
     final int typeIndex;
+
     /** Zero-arg constructor for the component */
-    private final Constructor constructor;
+    private final Constructor<T> constructor;
     /** Pool of components this mapper maps or null if my component type is not poolable. */
     private final Pool<T> componentPool;
 
     /** Stores components */
-    final Bag<T> components = new Bag<T>();
+    final Bag<T> components = new Bag<>();
     /** Mask of current components */
     final Mask componentsMask = new Mask();
 
@@ -66,19 +66,22 @@ public final class Mapper<T extends Component> {
         this.engine = engine;
         this.type = type;
         this.typeIndex = typeIndex;
-        Constructor constructor;
+        Constructor<T> constructor;
         try {
-            constructor = ClassReflection.getConstructor(type);
+            constructor = type.getConstructor();
             constructor.setAccessible(true);
-        } catch (ReflectionException ex) {
-            if (ex.getCause() instanceof RuntimeException)
-                throw (RuntimeException) ex.getCause();
+        } catch (NoSuchMethodException ex) {
             constructor = null;
         }
         this.constructor = constructor;
         if(Component.Pooled.class.isAssignableFrom(type)){
-            assert constructor != null : "Pooled component MUST have no-arg constructor! ("+type+")";
-            componentPool = new ReflectionPool<T>(type);
+            assert constructor != null : "Pooled component MUST have a no-arg constructor! ("+type+")";
+            componentPool = new Pool<T>() {
+                @Override
+                protected T newObject() {
+                    return newComponent();
+                }
+            };
         } else {
             componentPool = null;
         }
@@ -203,11 +206,6 @@ public final class Mapper<T extends Component> {
             remove.removeRange(0, removeCount - 1);
     }
 
-    /** @return true if components of this Mapper are pooled */
-    public boolean isPooled() {
-        return componentPool != null;
-    }
-
     /** Returns a component instance which is safe to keep around, outside of the entity system.
      * No guarantees are placed on which data does the component obtain.
      * Component must have no-arg constructor for this to work. */
@@ -218,20 +216,19 @@ public final class Mapper<T extends Component> {
         }
 
         if (constructor == null) {
-            throw new RetinazerException("Component type " + type.getName()
-                    + " does not expose a zero-argument constructor");
+            throw new UnsupportedOperationException("Can't create component "+type.getName()+" - zero-argument constructor is missing");
         }
 
+        return newComponent();
+    }
+
+    private static final Object[] NO_ARGS = new Object[0];
+
+    private T newComponent() {
         try {
-            @SuppressWarnings("unchecked")
-            T instance = (T) constructor.newInstance();
-            return instance;
-        } catch (ReflectionException ex) {
-            // GWT compatibility hack - no InvocationTargetException emulation
-            if ("java.lang.reflect.InvocationTargetException".equals(
-                    ex.getCause().getClass().getName()))
-                throw Internal.sneakyThrow(ex.getCause().getCause());
-            throw new AssertionError(ex);
+            return constructor.newInstance(NO_ARGS);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Could not create a new instance of "+this.type, e);
         }
     }
 

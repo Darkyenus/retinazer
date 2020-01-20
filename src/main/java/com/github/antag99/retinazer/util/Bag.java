@@ -28,13 +28,13 @@ import com.badlogic.gdx.math.MathUtils;
  * Accessing zero or positive indices behaves as if this was an infinite array. */
 public final class Bag<E> {
     private Object[] buffer = EMPTY;
-    private static Object[] EMPTY = new Object[0];
+    private static final Object[] EMPTY = new Object[0];
 
     /** Arrays of smaller size will never be generated. */
-    private static int MIN_SIZE = 16;
-    private static int INCREMENT_THRESHOLD_POWER = 10;
+    private static final int MIN_SIZE = 16;
+    private static final int INCREMENT_THRESHOLD_POWER = 10;
     /** Sizes larger than this will no longer jump by powers of two, but by adding this increment. */
-    private static int INCREMENT_THRESHOLD = 1 << INCREMENT_THRESHOLD_POWER;
+    private static final int INCREMENT_THRESHOLD = 1 << INCREMENT_THRESHOLD_POWER;
     static int capacityFor(int requiredSize) {
         if (requiredSize <= MIN_SIZE) {
             // Never return anything smaller than that, because allocating small arrays is pointless

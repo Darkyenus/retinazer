@@ -17,7 +17,7 @@ public class MapperTest {
         Engine engine = new Engine(new EngineConfig());
         int entity = engine.createEntity();
         Mapper<BadComponent> mBad = engine.getMapper(BadComponent.class);
-        assertThrows(RetinazerException.class, () -> mBad.create(entity));
+        assertThrows(UnsupportedOperationException.class, () -> mBad.create(entity));
     }
 
     // This should *never* be done
@@ -32,7 +32,7 @@ public class MapperTest {
         Engine engine = new Engine(new EngineConfig());
         int entity = engine.createEntity();
         Mapper<ReallyBadComponent> mReallyBad = engine.getMapper(ReallyBadComponent.class);
-        assertThrows(UnsupportedOperationException.class, () -> mReallyBad.create(entity));
+        assertThrows(RuntimeException.class, () -> mReallyBad.create(entity));
     }
 
     @Test
@@ -54,8 +54,6 @@ public class MapperTest {
         Mapper<FlagComponentA> mFlagA = engine.getMapper(FlagComponentA.class);
         int entity = engine.createEntity();
         mFlagA.add(entity, new FlagComponentA());
-        assertThrows(IllegalArgumentException.class, () -> {
-            mFlagA.add(entity, new FlagComponentA());
-        });
+        assertThrows(IllegalArgumentException.class, () -> mFlagA.add(entity, new FlagComponentA()));
     }
 }

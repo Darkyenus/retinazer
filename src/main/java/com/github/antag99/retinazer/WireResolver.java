@@ -21,7 +21,7 @@
  ******************************************************************************/
 package com.github.antag99.retinazer;
 
-import com.badlogic.gdx.utils.reflect.Field;
+import java.lang.reflect.Field;
 
 /**
  * WireResolver is used for wiring/un-wiring fields marked with {@link Wire}.
@@ -38,8 +38,7 @@ public interface WireResolver {
      * @param object The object to wire.
      * @param field The field of the object.
      * @return Whether this resolver handled the given field.
-     * @throws Throwable If an unexpected error occurred.
      */
-    boolean wire(Engine engine, Object object, Field field) throws Throwable;
+    boolean wire(Engine engine, Object object, Field field) throws IllegalAccessException;
 
 }

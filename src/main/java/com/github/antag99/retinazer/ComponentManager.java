@@ -21,13 +21,12 @@
  ******************************************************************************/
 package com.github.antag99.retinazer;
 
-import com.github.antag99.retinazer.util.Bag;
 import com.github.antag99.retinazer.util.Mask;
 
 final class ComponentManager {
-    private Engine engine;
+    private final Engine engine;
 
-    ComponentManager(Engine engine, EngineConfig config) {
+    ComponentManager(Engine engine) {
         this.engine = engine;
     }
 
@@ -74,7 +73,7 @@ final class ComponentManager {
         // Copy the array and add the new type
         Mapper<?>[] newArray = new Mapper<?>[array.length + 1];
         System.arraycopy(array, 0, newArray, 0, array.length);
-        newArray[array.length] = new Mapper<T>(engine, additionalType, array.length);
+        newArray[array.length] = new Mapper<>(engine, additionalType, array.length);
         this.array = newArray;
 
         // Create backing hash table filled to about 25%; this is done to
@@ -130,9 +129,9 @@ final class ComponentManager {
             }
         } else {
             Mapper<?>[] stash = this.stash;
-            for (int i = 0, n = stash.length; i < n; i++) {
-                if (stash[i].type == componentType) {
-                    return (Mapper<T>) stash[i];
+            for (Mapper<?> mapper : stash) {
+                if (mapper.type == componentType) {
+                    return (Mapper<T>) mapper;
                 }
             }
         }

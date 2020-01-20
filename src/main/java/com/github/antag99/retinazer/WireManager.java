@@ -3,9 +3,9 @@ package com.github.antag99.retinazer;
 import com.badlogic.gdx.utils.ObjectMap;
 
 final class WireManager {
-    private Engine engine;
-    private WireResolver[] wireResolvers;
-    private ObjectMap<Class<?>, WireCache> wireCaches;
+    private final Engine engine;
+    private final WireResolver[] wireResolvers;
+    private final ObjectMap<Class<?>, WireCache> wireCaches;
 
     public WireManager(Engine engine, EngineConfig config) {
         this.engine = engine;

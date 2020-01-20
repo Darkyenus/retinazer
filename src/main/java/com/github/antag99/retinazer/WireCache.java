@@ -21,28 +21,30 @@
  ******************************************************************************/
 package com.github.antag99.retinazer;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.Field;
 
 final class WireCache {
     private final Engine engine;
     private final Field[] fields;
     private final WireResolver[] wireResolvers;
 
+    private static final Field[] NO_FIELDS = new Field[0];
+
     public WireCache(Engine engine, Class<?> type, WireResolver[] wireResolvers) {
         final List<Field> fields = new ArrayList<>();
 
         for (Class<?> current = type; current != Object.class; current = current.getSuperclass()){
-            for (Field field : ClassReflection.getDeclaredFields(current)) {
+            for (Field field : current.getDeclaredFields()) {
                 if (field.getDeclaredAnnotation(Wire.class) == null) {
                     continue;
                 }
 
-                if (field.isStatic()){
-                    throw new RetinazerException("Static fields can not be wired ("+current.getName()+"#"+field.getName()+")");
+                if (Modifier.isStatic(field.getModifiers())){
+                    throw new IllegalArgumentException("Static fields can not be wired ("+current.getName()+"#"+field.getName()+")");
                 }
 
                 if (field.isSynthetic()) {
@@ -55,7 +57,7 @@ final class WireCache {
         }
 
         this.engine = engine;
-        this.fields = fields.toArray(new Field[fields.size()]);
+        this.fields = fields.toArray(NO_FIELDS);
         this.wireResolvers = wireResolvers;
     }
 
@@ -69,14 +71,16 @@ final class WireCache {
                     if (wireResolver.wire(engine, object, field)) {
                         continue fields;
                     }
-                } catch (Throwable ex) {
-                    throw Internal.sneakyThrow(ex);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException("Failed to wire field " +
+                            field.getName() + " of " +
+                            field.getDeclaringClass().getName() + " of type "+field.getType().getName(), e);
                 }
             }
 
-            throw new RetinazerException("Failed to wire field " +
+            throw new RuntimeException("Failed to wire field " +
                     field.getName() + " of " +
-                    field.getDeclaringClass().getName() + " of type "+field.getType().getName()+"; no resolver");
+                    field.getDeclaringClass().getName() + " of type "+field.getType().getName()+" - no resolver");
         }
     }
 

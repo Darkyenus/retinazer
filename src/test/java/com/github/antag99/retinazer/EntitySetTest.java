@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,11 +22,9 @@ public class EntitySetTest {
         int entity3 = engine.createEntity();
         int entity4 = engine.createEntity();
         engine.update(0f);
-        assertTrue(Arrays.equals(engine.getEntities().getIndices().toArray(),
-                new int[] { entity0, entity1, entity2, entity3, entity4 }));
-        assertTrue(Arrays.equals(engine.getFamily(
-                Family.with(FlagComponentA.class)).getEntities().getIndices().toArray(),
-                new int[] { entity1 }));
+        assertArrayEquals(engine.getEntities().getIndices().toArray(), new int[]{entity0, entity1, entity2, entity3, entity4});
+        assertArrayEquals(engine.getFamily(
+                Family.with(FlagComponentA.class)).getEntities().getIndices().toArray(), new int[]{entity1});
     }
 
     @Test

@@ -30,20 +30,16 @@ public final class EntitySet {
     private final IntArray indices = new IntArray();
     private boolean indicesDirty = false;
 
-    private final EntitySetView view;
+    private final EntitySetView view = new EntitySetView(this);
 
-    public EntitySet() {
-        this.view = new EntitySetView(this);
-    }
+    public EntitySet() {}
 
     public EntitySet(EntitySet copyEntities) {
-        this();
         this.entities.set(copyEntities.entities);
         this.indicesDirty = true;
     }
 
     public EntitySet(EntitySetView copyEntities) {
-        this();
         this.entities.set(copyEntities.getMask());
         this.indicesDirty = true;
     }

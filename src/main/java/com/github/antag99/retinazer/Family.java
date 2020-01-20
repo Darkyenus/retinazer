@@ -24,21 +24,18 @@ package com.github.antag99.retinazer;
 import com.github.antag99.retinazer.util.Mask;
 
 public final class Family {
-    final Engine engine;
     final int[] components;
     final int[] excludedComponents;
-    final int index;
+    private final int index;
     final EntitySet entities = new EntitySet();
     EntityListener[] listeners = new EntityListener[0];
 
-    Mask removeEntities = new Mask();
-    Mask insertEntities = new Mask();
+    final Mask removeEntities = new Mask();
+    final Mask insertEntities = new Mask();
 
-    Family(Engine engine,
-            int[] components,
-            int[] excludedComponents,
-            int index) {
-        this.engine = engine;
+    Family(int[] components,
+           int[] excludedComponents,
+           int index) {
         this.components = components;
         this.excludedComponents = excludedComponents;
         this.index = index;
@@ -50,14 +47,13 @@ public final class Family {
      * @param listener The listener to add.
      */
     public void addListener(EntityListener listener) {
+        final EntityListener[] listeners = this.listeners;
         int n = listeners.length;
         for (int i = 0; i < n; i++) {
             if (listeners[i] == listener) {
-                EntityListener[] newListeners = new EntityListener[n];
-                System.arraycopy(listeners, 0, newListeners, 1, i);
-                System.arraycopy(listeners, i + 1, newListeners, i, n - i - 1);
-                newListeners[0] = listener;
-                this.listeners = newListeners;
+                // Move to front
+                System.arraycopy(listeners, 0, listeners, 1, i);
+                listeners[0] = listener;
                 return;
             }
         }

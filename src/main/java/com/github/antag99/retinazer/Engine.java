@@ -21,8 +21,6 @@
  ******************************************************************************/
 package com.github.antag99.retinazer;
 
-import java.util.Comparator;
-
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -68,7 +66,7 @@ public final class Engine {
      * @param initialize if {@link #initialize()} should be called automatically, if false, call it manually before doing anything else with the engine
      */
     public Engine(EngineConfig config, boolean initialize) {
-        componentManager = new ComponentManager(this, config);
+        componentManager = new ComponentManager(this);
         familyManager = new FamilyManager(this);
         wireManager = new WireManager(this, config);
 
@@ -77,12 +75,7 @@ public final class Engine {
             systemRegistrations.add(system);
         }
 
-        systemRegistrations.sort(new Comparator<EntitySystemRegistration>() {
-            @Override
-            public int compare(EntitySystemRegistration o1, EntitySystemRegistration o2) {
-                return o1.order.ordinal() - o2.order.ordinal();
-            }
-        });
+        systemRegistrations.sort();
 
         EntitySystem[] systems = new EntitySystem[systemRegistrations.size];
         ObjectMap<Class<? extends EntitySystem>, EntitySystem> systemsByType = new ObjectMap<>();

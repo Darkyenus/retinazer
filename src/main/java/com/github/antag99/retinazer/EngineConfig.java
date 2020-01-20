@@ -31,13 +31,18 @@ import com.github.antag99.retinazer.resolvers.MapperWireResolver;
  * Stores configuration for an {@link Engine} instance.
  */
 public final class EngineConfig {
-    static final class EntitySystemRegistration {
+    static final class EntitySystemRegistration implements Comparable<EntitySystemRegistration> {
         final EntitySystem system;
         final Order order;
 
         EntitySystemRegistration(EntitySystem system, Order order) {
             this.system = system;
             this.order = order;
+        }
+
+        @Override
+        public int compareTo(EntitySystemRegistration o) {
+            return Integer.compare(order.ordinal(), o.order.ordinal());
         }
     }
 
@@ -49,8 +54,8 @@ public final class EngineConfig {
         wireResolvers.add(new MapperWireResolver());
     }
 
-    Array<EntitySystemRegistration> systems = new Array<>();
-    Array<WireResolver> wireResolvers = new Array<>(WireResolver.class);
+    final Array<EntitySystemRegistration> systems = new Array<>();
+    final Array<WireResolver> wireResolvers = new Array<>(WireResolver.class);
 
     /**
      * Registers a system.
