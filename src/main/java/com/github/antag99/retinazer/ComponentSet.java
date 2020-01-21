@@ -2,6 +2,8 @@ package com.github.antag99.retinazer;
 
 import com.badlogic.gdx.utils.ObjectIntMap;
 
+import java.util.Arrays;
+
 /**
  * A set of components, which assigns each component a unique ID.
  * Used for optimizations as a form of <a href="https://en.wikipedia.org/wiki/Perfect_hash_function">perfect hashing</a>.
@@ -57,6 +59,10 @@ public final class ComponentSet {
 	/** Check if this is a compatible subset of the other set.
 	 * A compatible subset is a subset where each component from the subset has the same index in both sets. */
 	public boolean isSubsetOf(ComponentSet other) {
+		if (this == other) {
+			return true;
+		}
+
 		final Class<? extends Component>[] myComponents = this.components;
 		final Class<? extends Component>[] otherComponents = other.components;
 		final int mySize = myComponents.length;
@@ -74,19 +80,19 @@ public final class ComponentSet {
 
 	/** Create a new {@link Family} which contains all entities. */
 	public final Family family() {
-		return new Family(this);
+		return new Family(this, Family.EMPTY_MASK, Family.EMPTY_MASK);
 	}
 
 	/** Create a new {@link Family} which requires given components. */
 	@SafeVarargs
 	public final Family familyWith(Class<? extends Component>... components) {
-		return new Family(this, true, components);
+		return new Family(this, Family.maskOf(Family.EMPTY_MASK, this, components), Family.EMPTY_MASK);
 	}
 
 	/** Create a new {@link Family} which excludes given components. */
 	@SafeVarargs
 	public final Family familyWithout(Class<? extends Component>... components) {
-		return new Family(this, false, components);
+		return new Family(this, Family.EMPTY_MASK, Family.maskOf(Family.EMPTY_MASK, this, components));
 	}
 
 	Mapper<?>[] buildComponentMappers(Engine engine) {
@@ -96,5 +102,18 @@ public final class ComponentSet {
 			mappers[i] = new Mapper<>(engine, components[i]);
 		}
 		return mappers;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof ComponentSet)) return false;
+
+		return Arrays.equals(components, ((ComponentSet) o).components);
+	}
+
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(components);
 	}
 }

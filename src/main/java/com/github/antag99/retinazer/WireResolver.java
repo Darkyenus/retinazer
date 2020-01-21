@@ -9,8 +9,6 @@ import java.lang.reflect.Field;
  */
 public interface WireResolver extends EngineService {
 
-    WireResolver[] EMPTY_ARRAY = new WireResolver[0];
-
     /**
      * Wires the field of the given object.
      * Note that this will be called before {@link EngineService#initialize()}, because

@@ -2,6 +2,7 @@
 
 # Version 0.2.5
 - `EngineService`s are now automatically wired and initialized
+- Internal optimizations and simplifications
 
 # Version 0.2.4 (released 2010-01-21)
 - Update libGDX to 1.9.10

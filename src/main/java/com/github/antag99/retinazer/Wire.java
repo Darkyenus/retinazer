@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation that makes fields eligible for wiring. This can be applied to a single field.
  * If a wired field is not handled by any {@link WireResolver}, an exception is thrown.
- * Attempting to wire a static field results in an exception.
+ * Attempting to wire a static, or a final field results in an exception.
  *
  * @see WireResolver
  */

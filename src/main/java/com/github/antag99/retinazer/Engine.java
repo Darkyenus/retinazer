@@ -17,10 +17,10 @@ public final class Engine {
     final Mask entities = new Mask();
     private final Mask entitiesScheduledForRemoval = new Mask();
 
-    final ComponentSet componentDomain;
+    public final ComponentSet componentDomain;
     final Mapper<?>[] componentMappers;
-    final FamilyManager familyManager;
-    final WireManager wireManager;
+    private final FamilyManager familyManager;
+    private final WireManager wireManager;
 
     /** Tracks whether any components or entities have been modified; reset at every call to flush() */
     boolean dirty = false;
@@ -53,7 +53,7 @@ public final class Engine {
         componentMappers = domain.buildComponentMappers(this);
         systems = entitySystems.toArray(EntitySystem.EMPTY_ARRAY);
         familyManager = new FamilyManager(this);
-        wireManager = new WireManager(wireResolvers.toArray(WireResolver.EMPTY_ARRAY));
+        wireManager = new WireManager(wireResolvers);
 
         for (EngineService service : services)
             wire(service);
@@ -61,6 +61,7 @@ public final class Engine {
         for (EngineService service : services)
             service.initialize();
 
+        wireManager.flushCache();
         flush();
     }
 

@@ -6,30 +6,7 @@ import com.github.antag99.retinazer.util.Mask;
 
 final class FamilyManager {
 
-    private static final class Key {
-        Mask requiredComponents = null;
-        Mask excludedComponents = null;
-
-        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null)
-                return false;
-            // No need for a type check; this class is only used internally
-            Key key = (Key) obj;
-            return key.excludedComponents.equals(excludedComponents) &&
-                    key.requiredComponents.equals(requiredComponents);
-        }
-
-        @Override
-        public int hashCode() {
-            // Excluded components are rarer than required components; prioritize
-            // the components hashCode over excluded components hashCode.
-            return 31 * excludedComponents.hashCode() + requiredComponents.hashCode();
-        }
-    }
-
-    private final ObjectIntMap<Key> familyIndices = new ObjectIntMap<>();
+    private final ObjectIntMap<Family> familyIndices = new ObjectIntMap<>();
     private final Bag<FamilyHolder> families = new Bag<>();
     private final Engine engine;
 
@@ -37,31 +14,26 @@ final class FamilyManager {
         this.engine = engine;
     }
 
-    private final Key getFamily_lookup = new Key();
+    private transient final Mask _matchedEntities = new Mask();
 
     /** @return {@link EntitySet} conforming to the given configuration backed by the family */
     public EntitySet getFamily(Family spec) {
         assert spec.domain.isSubsetOf(engine.componentDomain);
-        final ObjectIntMap<Key> familyIndices = this.familyIndices;
+        final ObjectIntMap<Family> familyIndices = this.familyIndices;
         final int index;
         {
-            final Key lookup = this.getFamily_lookup;
-            lookup.requiredComponents = spec.requiredComponents;
-            lookup.excludedComponents = spec.excludedComponents;
-            index = familyIndices.get(lookup, familyIndices.size);
+            index = familyIndices.get(spec, familyIndices.size);
         }
 
         if (index == familyIndices.size) {
             final FamilyHolder family = new FamilyHolder(spec.requiredComponents, spec.excludedComponents);
-            Key key = new Key();
-            key.requiredComponents = spec.requiredComponents;
-            key.excludedComponents = spec.excludedComponents;
-            familyIndices.put(key, index);
+            familyIndices.put(spec, index);
             families.set(index, family);
 
             // Find matching entities, and add them to the new family set.
             final Mapper<?>[] mappers = engine.componentMappers;
-            Mask matchedEntities = new Mask().set(engine.entities);
+            final Mask matchedEntities = this._matchedEntities;
+            matchedEntities.set(engine.entities);
             for (int componentI = spec.requiredComponents.nextSetBit(0); componentI != -1; componentI = spec.requiredComponents.nextSetBit(componentI + 1)) {
                 matchedEntities.and(mappers[componentI].componentsMask);
             }
@@ -79,8 +51,6 @@ final class FamilyManager {
         return familyHolder.entities;
     }
 
-    private final Mask updateFamilyMembership_tmpMatchedEntities = new Mask();
-
     /**
      * Updates family membership for all entities. This will insert/remove entities
      * to/from family sets.
@@ -91,7 +61,7 @@ final class FamilyManager {
         final int familyCount = familyIndices.size;
 
         final Mapper<?>[] mappers = engine.componentMappers;
-        final Mask matchedEntities = this.updateFamilyMembership_tmpMatchedEntities;
+        final Mask matchedEntities = this._matchedEntities;
         for (int i = 0; i < familyCount; i++) {
             FamilyHolder family = families.get(i);
             assert family != null;

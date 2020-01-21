@@ -1,15 +1,12 @@
 package com.github.antag99.retinazer.resolvers;
 
-import com.github.antag99.retinazer.Engine;
 import com.github.antag99.retinazer.WireResolver;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Objects;
 
 /**
  * Wires single value to appropriate wired variables based on polymorphism ("where it fits").
- * Does not assign to final variables.
  */
 public final class SimpleWireResolver implements WireResolver {
 
@@ -23,7 +20,6 @@ public final class SimpleWireResolver implements WireResolver {
     @Override
     public boolean wire(Object object, Field field) throws IllegalAccessException {
         if (field.getType().isInstance(value)) {
-            if (Modifier.isFinal(field.getModifiers())) return false;
             field.set(object, value);
             return true;
         } else {

@@ -22,34 +22,34 @@ public final class Mask implements Poolable {
     }
 
     public Mask set(long[] otherWords) {
+        final long[] words = this.words;
         if (words.length < otherWords.length) {
             this.words = Arrays.copyOf(otherWords, otherWords.length);
             return this;
         }
         System.arraycopy(otherWords, 0, words, 0, otherWords.length);
-        for (int i = otherWords.length, n = words.length; i < n; i++)
-            words[i] = 0;
+        Arrays.fill(words, otherWords.length, words.length, 0L);
         return this;
     }
 
     /** Clears all bits in this mask. */
     public void clear() {
         long[] words = this.words;
-        for (int i = 0, n = words.length; i < n; i++)
-            words[i] = 0L;
+        Arrays.fill(words, 0, words.length, 0L);
     }
 
     /** Sets all bits in this mask that are set in the other mask. */
     public void or(Mask other) {
-        if (words.length < other.words.length) {
-            long[] newWords = new long[other.words.length];
-            System.arraycopy(words, 0, newWords, 0, words.length);
-            this.words = newWords;
-        }
-
         long[] words = this.words;
-        long[] otherWords = other.words;
-        int commonWords = Math.min(words.length, otherWords.length);
+        final long[] otherWords = other.words;
+
+        final int commonWords;
+        if (words.length < otherWords.length) {
+            commonWords = words.length;
+            this.words = words = Arrays.copyOf(otherWords, otherWords.length);
+        } else {
+            commonWords = otherWords.length;
+        }
 
         for (int i = 0; i < commonWords; i++) {
             words[i] |= otherWords[i];
@@ -63,15 +63,16 @@ public final class Mask implements Poolable {
      * @param other The other operand.
      */
     public void xor(Mask other) {
-        if (words.length < other.words.length) {
-            long[] newWords = new long[other.words.length];
-            System.arraycopy(words, 0, newWords, 0, words.length);
-            this.words = newWords;
-        }
-
         long[] words = this.words;
-        long[] otherWords = other.words;
-        int commonWords = Math.min(words.length, otherWords.length);
+        final long[] otherWords = other.words;
+
+        final int commonWords;
+        if (words.length < otherWords.length) {
+            commonWords = words.length;
+            this.words = words = Arrays.copyOf(otherWords, otherWords.length);
+        } else {
+            commonWords = otherWords.length;
+        }
 
         for (int i = 0; i < commonWords; i++) {
             words[i] ^= otherWords[i];
@@ -84,16 +85,15 @@ public final class Mask implements Poolable {
      * @param other The other operand.
      */
     public void and(Mask other) {
-        long[] words = this.words;
-        long[] otherWords = other.words;
+        final long[] words = this.words;
+        final long[] otherWords = other.words;
         int commonWords = Math.min(words.length, otherWords.length);
-
-        for (int i = otherWords.length, n = words.length; i < n; i++) {
-            words[i] = 0;
-        }
 
         for (int i = 0; i < commonWords; i++) {
             words[i] &= otherWords[i];
+        }
+        if (otherWords.length < words.length) {
+            Arrays.fill(words, otherWords.length, words.length, 0L);
         }
     }
 
@@ -103,9 +103,9 @@ public final class Mask implements Poolable {
      * @param other The other operand.
      */
     public void andNot(Mask other) {
-        long[] words = this.words;
-        long[] otherWords = other.words;
-        int commonWords = Math.min(words.length, otherWords.length);
+        final long[] words = this.words;
+        final long[] otherWords = other.words;
+        final int commonWords = Math.min(words.length, otherWords.length);
 
         for (int i = 0; i < commonWords; i++) {
             words[i] &= ~otherWords[i];
@@ -115,7 +115,7 @@ public final class Mask implements Poolable {
     /** Sets the bit at the given index in this mask. */
     public void set(int index) {
         long[] words = this.words;
-        int wordIndex = index >> 6;
+        final int wordIndex = index >> 6;
         if (wordIndex >= words.length) {
             int newCapacity = Bag.capacityFor(wordIndex + 1);
             long[] newWords = new long[newCapacity];
@@ -132,7 +132,7 @@ public final class Mask implements Poolable {
      */
     public boolean setChanged(int index) {
         long[] words = this.words;
-        int wordIndex = index >> 6;
+        final int wordIndex = index >> 6;
         if (wordIndex >= words.length) {
             int newCapacity = Bag.capacityFor(wordIndex + 1);
             long[] newWords = new long[newCapacity];
@@ -282,7 +282,7 @@ public final class Mask implements Poolable {
         final long[] otherWords = other.words;
         final int commonWords = Math.min(words.length, otherWords.length);
         for (int i = 0; i < commonWords; i++)
-            if ((words[i] & otherWords[i]) != 0)
+            if ((words[i] & otherWords[i]) != 0L)
                 return true;
         return false;
     }
@@ -327,7 +327,7 @@ public final class Mask implements Poolable {
     }
 
     public void getIndices(IntArray out) {
-        int offset = out.size;
+        final int offset = out.size;
         int count = cardinality();
         out.ensureCapacity(count);
         int[] items = out.items;
@@ -338,14 +338,14 @@ public final class Mask implements Poolable {
     }
 
     public long getWord(int index) {
+        final long[] words = this.words;
         return index < words.length ? words[index] : 0L;
     }
 
     public void setWord(int index, long word) {
+        long[] words = this.words;
         if (index >= words.length) {
-            long[] newWords = new long[Bag.capacityFor(index + 1)];
-            System.arraycopy(words, 0, newWords, 0, words.length);
-            this.words = newWords;
+            this.words = words = Arrays.copyOf(words, Bag.capacityFor(index + 1));
         }
         words[index] = word;
     }
