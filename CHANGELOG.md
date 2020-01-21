@@ -1,6 +1,8 @@
 ## Changelog
 
-# Version 0.2.3-SNAPSHOT
+# Version 0.2.4-SNAPSHOT
+
+# Version 0.2.3 (released 2010-01-21)
 - It is now required to supply all components at the `Engine` creation through `ComponentSet`
 - `EngineConfig` has been deleted
 - `Engine.getSystem` has been replaced with generic `getService`
@@ -9,7 +11,7 @@
 - `ensureCapacity(int)` for all `Bag` implementations
 - Fix: `Bag.set(int)` no longer treats the `0` value specially
 
-# Version 0.2.2
+# Version 0.2.2 (released 2017-01-30)
 - Add `Component` pooling support, just implement `Pooled` interface on your components
 - Remove overly defensive behavior in some places, including altering of unnecessarily complex and defensive API
 - Migrate build to `sbt` (no intention of using Scala)
