@@ -1,6 +1,8 @@
 ## Changelog
 
-# Version 0.2.4-SNAPSHOT
+# Version 0.2.4 (released 2010-01-21)
+- Update libGDX to 1.9.10
+- Fix build
 
 # Version 0.2.3 (released 2010-01-21)
 - It is now required to supply all components at the `Engine` creation through `ComponentSet`
