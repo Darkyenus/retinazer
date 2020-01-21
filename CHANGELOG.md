@@ -1,14 +1,14 @@
 ## Changelog
 
-# Version 0.2.5
+# Version 0.2.5 (released 2020-01-21)
 - `EngineService`s are now automatically wired and initialized
 - Internal optimizations and simplifications
 
-# Version 0.2.4 (released 2010-01-21)
+# Version 0.2.4 (released 2020-01-21)
 - Update libGDX to 1.9.10
 - Fix build
 
-# Version 0.2.3 (released 2010-01-21)
+# Version 0.2.3 (released 2020-01-21)
 - It is now required to supply all components at the `Engine` creation through `ComponentSet`
 - `EngineConfig` has been deleted
 - `Engine.getSystem` has been replaced with generic `getService`

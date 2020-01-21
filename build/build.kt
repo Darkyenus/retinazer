@@ -7,7 +7,7 @@ val retinazer by project(Archetypes.JavaProject) {
 
 	projectGroup set { "com.darkyen" }
 	projectName set { "retinazer" }
-	projectVersion set { "0.2.4" }
+	projectVersion set { "0.2.5" }
 
 	compilerOptions[JavaCompilerFlags.customFlags] = { it + "-encoding" + "UTF-8" }
 
