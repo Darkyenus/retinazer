@@ -1,5 +1,6 @@
 package com.github.antag99.retinazer.systems;
 
+import com.github.antag99.retinazer.EntitySetView;
 import com.github.antag99.retinazer.EntitySystem;
 import com.github.antag99.retinazer.Family;
 import com.github.antag99.retinazer.util.Mask;
@@ -8,7 +9,7 @@ import com.github.antag99.retinazer.util.Mask;
 public abstract class FamilyPresenceWatcherSystem extends EntitySystem {
 
 	private final Family family;
-	private Mask currentEntities;
+	private EntitySetView familyEntities;
 	private final Mask lastEntities = new Mask();
 	private final Mask workingSet = new Mask();
 
@@ -20,17 +21,21 @@ public abstract class FamilyPresenceWatcherSystem extends EntitySystem {
 		return family;
 	}
 
-	@Override
-	public void initialize() {
-		super.initialize();
-		currentEntities = engine.getEntities(family).getMask();
+	public final EntitySetView getFamilyEntities() {
+		return familyEntities;
 	}
 
 	@Override
-	protected final void update(float delta) {
+	public void initialize() {
+		super.initialize();
+		familyEntities = engine.getEntities(family);
+	}
+
+	@Override
+	protected void update(float delta) {
 		final Mask workingSet = this.workingSet;
 		final Mask lastEntities = this.lastEntities;
-		final Mask currentEntities = this.currentEntities;
+		final Mask currentEntities = this.familyEntities.getMask();
 		// Get added entities
 		workingSet.set(currentEntities).andNot(lastEntities);
 		insertedEntities(workingSet, delta);
