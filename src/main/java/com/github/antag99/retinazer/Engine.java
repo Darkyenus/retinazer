@@ -4,15 +4,21 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.github.antag99.retinazer.util.Mask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Engine is the core class of retinazer; it manages all active entities,
  * performs system processing and initialization.
  */
+@SuppressWarnings("unused")
 public final class Engine {
 
-    private final EntitySystem[] systems;
+    private final EngineService[] services;
     private final ObjectMap<Class<? extends EngineService>, EngineService> servicesByType = new ObjectMap<>();
+
+    private final EntitySystem[] systems;
 
     final Mask entities = new Mask();
     private final Mask entitiesScheduledForRemoval = new Mask();
@@ -46,14 +52,18 @@ public final class Engine {
             if (service instanceof WireResolver) {
                 wireResolvers.add((WireResolver) service);
             }
-            servicesByType.put(service.getClass(), service);
+            final EngineService previous = servicesByType.put(service.getClass(), service);
+            if (previous != null) {
+                throw new IllegalArgumentException("Types of services must be unique and "+previous+" is duplicated by "+service);
+            }
         }
 
-        componentDomain = domain;
-        componentMappers = domain.buildComponentMappers(this);
-        systems = entitySystems.toArray(EntitySystem.EMPTY_ARRAY);
-        familyManager = new FamilyManager(this);
-        wireManager = new WireManager(wireResolvers);
+        this.componentDomain = domain;
+        this.componentMappers = domain.buildComponentMappers(this);
+        this.services = services;
+        this.systems = entitySystems.toArray(EntitySystem.EMPTY_ARRAY);
+        this.familyManager = new FamilyManager(this);
+        this.wireManager = new WireManager(wireResolvers);
 
         for (EngineService service : services)
             wire(service);
@@ -61,7 +71,7 @@ public final class Engine {
         for (EngineService service : services)
             service.initialize();
 
-        wireManager.flushCache();
+        this.wireManager.flushCache();
         flush();
     }
 
@@ -204,6 +214,28 @@ public final class Engine {
         } else {
             return service;
         }
+    }
+
+    /** Retrieve all services that are subclasses of given class */
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getServices(Class<T> type) {
+        if (type == EngineService.class) {
+            return (List<T>) Arrays.asList(services);
+        }
+        ArrayList<T> result = null;
+        for (EngineService service : services) {
+            if (type.isInstance(service)) {
+                if (result == null) {
+                    result = new ArrayList<>();
+                }
+                result.add((T) service);
+            }
+        }
+
+        if (result == null) {
+            return Collections.emptyList();
+        }
+        return result;
     }
 
     /**

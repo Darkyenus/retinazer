@@ -1,5 +1,8 @@
 ## Changelog
 
+# Version 0.2.6
+- Add `Engine.getServices` to retrieve service subclasses
+
 # Version 0.2.5 (released 2020-01-21)
 - `EngineService`s are now automatically wired and initialized
 - Internal optimizations and simplifications

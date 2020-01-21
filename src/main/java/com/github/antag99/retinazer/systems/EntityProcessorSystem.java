@@ -1,9 +1,9 @@
 package com.github.antag99.retinazer.systems;
 
-import com.badlogic.gdx.utils.IntArray;
 import com.github.antag99.retinazer.EntitySetView;
 import com.github.antag99.retinazer.EntitySystem;
 import com.github.antag99.retinazer.Family;
+import com.github.antag99.retinazer.util.Mask;
 
 public abstract class EntityProcessorSystem extends EntitySystem {
     private final Family family;
@@ -29,10 +29,9 @@ public abstract class EntityProcessorSystem extends EntitySystem {
 
     @Override
     public void update(float delta) {
-        IntArray indices = getEntities().getIndices();
-        int[] items = indices.items;
-        for (int i = 0, n = indices.size; i < n; i++) {
-            process(items[i], delta);
+        final Mask mask = entities.getMask();
+        for (int entity = mask.nextSetBit(0); entity != -1; entity = mask.nextSetBit(entity + 1)) {
+            process(entity, delta);
         }
     }
 
