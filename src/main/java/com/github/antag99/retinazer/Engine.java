@@ -30,15 +30,14 @@ public final class Engine {
     /**
      * Creates a new {@link Engine} based on the specified configuration.
      *
-     * @param componentDomain set of components that this engine operates over
+     * @param domain set of components that this engine operates over
      * @param services of this engine. Services implementing {@link EntitySystem} and {@link WireResolver} will
      * be used as entity systems and wire resolvers, respectively. Order is significant for both.
      */
-    public Engine(ComponentSet componentDomain, EngineService...services) {
+    public Engine(ComponentSet domain, EngineService...services) {
         final ArrayList<EntitySystem> entitySystems = new ArrayList<>();
         final ArrayList<WireResolver> wireResolvers = new ArrayList<>();
-
-        wireResolvers.add(new DefaultWireResolver());
+        wireResolvers.add(new DefaultWireResolver(this));
 
         for (EngineService service : services) {
             if (service instanceof EntitySystem) {
@@ -50,21 +49,17 @@ public final class Engine {
             servicesByType.put(service.getClass(), service);
         }
 
-        this.componentDomain = componentDomain;
-        componentMappers = componentDomain.buildComponentMappers(this);
+        componentDomain = domain;
+        componentMappers = domain.buildComponentMappers(this);
+        systems = entitySystems.toArray(EntitySystem.EMPTY_ARRAY);
         familyManager = new FamilyManager(this);
-        wireManager = new WireManager(this, wireResolvers.toArray(WireResolver.EMPTY_ARRAY));
+        wireManager = new WireManager(wireResolvers.toArray(WireResolver.EMPTY_ARRAY));
 
-        final EntitySystem[] systems = this.systems = entitySystems.toArray(EntitySystem.EMPTY_ARRAY);
+        for (EngineService service : services)
+            wire(service);
 
-        for (EntitySystem system : systems)
-            wire(system);
-
-        for (EntitySystem system : systems)
-            system.setup();
-
-        for (EntitySystem system : systems)
-            system.initialize();
+        for (EngineService service : services)
+            service.initialize();
 
         flush();
     }

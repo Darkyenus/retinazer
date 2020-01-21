@@ -10,6 +10,32 @@ import java.lang.reflect.Type;
  *  registered in the engine. */
 final class DefaultWireResolver implements WireResolver {
 
+    private final Engine engine;
+
+    DefaultWireResolver(Engine engine) {
+        this.engine = engine;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean wire(Object object, Field field) throws IllegalAccessException {
+        Class<?> type = field.getType();
+        if (type == Engine.class) {
+            field.set(object, engine);
+        } else if (type == Mapper.class) {
+            final Class<? extends Component> componentType = getTypeArgument(field.getGenericType(), 0);
+            if (componentType == null) {
+                return false;
+            }
+            field.set(object, engine.getMapper(componentType));
+        } else if (EngineService.class.isAssignableFrom(type)) {
+            field.set(object, engine.getService((Class<? extends EngineService>) type));
+        } else {
+            return false;
+        }
+        return true;
+    }
+
     @SuppressWarnings("unchecked")
     private static <T> Class<? extends T> getTypeArgument(Type genericType, @SuppressWarnings("SameParameterValue") int index) {
         if (genericType instanceof ParameterizedType) {
@@ -27,26 +53,6 @@ final class DefaultWireResolver implements WireResolver {
             }
         }
         return null;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean wire(Engine engine, Object object, Field field) throws IllegalAccessException {
-        Class<?> type = field.getType();
-        if (type == Engine.class) {
-            field.set(object, engine);
-        } else if (type == Mapper.class) {
-            final Class<? extends Component> componentType = getTypeArgument(field.getGenericType(), 0);
-            if (componentType == null) {
-                return false;
-            }
-            field.set(object, engine.getMapper(componentType));
-        } else if (EngineService.class.isAssignableFrom(type)) {
-            field.set(object, engine.getService((Class<? extends EngineService>) type));
-        } else {
-            return false;
-        }
-        return true;
     }
 
 }

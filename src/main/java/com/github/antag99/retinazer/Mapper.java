@@ -15,9 +15,9 @@ import java.lang.reflect.InvocationTargetException;
  */
 public final class Mapper<T extends Component> {
     /** The engine instance this mapper is tied to */
-    private final Engine engine;
+    public final Engine engine;
     /** The component type */
-    private final Class<T> type;
+    public final Class<T> type;
 
     /** Zero-arg constructor for the component */
     private final Constructor<T> constructor;

@@ -18,8 +18,10 @@ public class EngineTest {
     private Array<EntitySystem> updatedSystems = new Array<>();
 
     public abstract class OrderSystem extends EntitySystem {
+
         @Override
-        protected final void initialize() {
+        public final void initialize() {
+            super.initialize();
             initializedSystems.add(this);
         }
 

@@ -7,13 +7,12 @@ import java.util.List;
 
 
 final class WireCache {
-    private final Engine engine;
     private final Field[] fields;
     private final WireResolver[] wireResolvers;
 
     private static final Field[] NO_FIELDS = new Field[0];
 
-    public WireCache(Engine engine, Class<?> type, WireResolver[] wireResolvers) {
+    public WireCache(Class<?> type, WireResolver[] wireResolvers) {
         final List<Field> fields = new ArrayList<>();
 
         for (Class<?> current = type; current != Object.class; current = current.getSuperclass()){
@@ -35,7 +34,6 @@ final class WireCache {
             }
         }
 
-        this.engine = engine;
         this.fields = fields.toArray(NO_FIELDS);
         this.wireResolvers = wireResolvers;
     }
@@ -47,7 +45,7 @@ final class WireCache {
         for (final Field field : fields) {
             for (WireResolver wireResolver : wireResolvers) {
                 try {
-                    if (wireResolver.wire(engine, object, field)) {
+                    if (wireResolver.wire(object, field)) {
                         continue fields;
                     }
                 } catch (IllegalAccessException e) {

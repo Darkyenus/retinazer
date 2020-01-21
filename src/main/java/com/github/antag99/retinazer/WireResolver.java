@@ -13,11 +13,12 @@ public interface WireResolver extends EngineService {
 
     /**
      * Wires the field of the given object.
+     * Note that this will be called before {@link EngineService#initialize()}, because
+     * wiring is done before initialization.
      *
-     * @param engine The engine instance.
      * @param object The object to wire.
      * @param field The field of the object.
      * @return Whether this resolver handled the given field.
      */
-    boolean wire(Engine engine, Object object, Field field) throws IllegalAccessException;
+    boolean wire(Object object, Field field) throws IllegalAccessException;
 }

@@ -21,7 +21,7 @@ public final class SimpleWireResolver implements WireResolver {
     }
 
     @Override
-    public boolean wire(Engine engine, Object object, Field field) throws IllegalAccessException {
+    public boolean wire(Object object, Field field) throws IllegalAccessException {
         if (field.getType().isInstance(value)) {
             if (Modifier.isFinal(field.getModifiers())) return false;
             field.set(object, value);

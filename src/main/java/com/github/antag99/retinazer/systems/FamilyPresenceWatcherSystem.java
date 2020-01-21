@@ -21,8 +21,8 @@ public abstract class FamilyPresenceWatcherSystem extends EntitySystem {
 	}
 
 	@Override
-	protected void setup() {
-		super.setup();
+	public void initialize() {
+		super.initialize();
 		currentEntities = engine.getEntities(family).getMask();
 	}
 
