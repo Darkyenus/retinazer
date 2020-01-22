@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.github.antag99.retinazer.util.Mask;
 
 public class EntityProcessorSystemTest {
-    public static final class TestEntityProcessorSystem extends EntityProcessorSystem {
+    public static final class TestEntityProcessorSystem extends EntityProcessorSystem.Single {
         public EntitySet processedEntities = new EntitySet();
 
         public TestEntityProcessorSystem() {
