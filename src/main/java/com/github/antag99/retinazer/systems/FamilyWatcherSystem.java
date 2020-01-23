@@ -1,41 +1,24 @@
 package com.github.antag99.retinazer.systems;
 
-import com.github.antag99.retinazer.EntitySetView;
 import com.github.antag99.retinazer.EntitySystem;
 import com.github.antag99.retinazer.Family;
 import com.github.antag99.retinazer.util.Mask;
 
 /** {@link EntitySystem} which watches for entities to be added or removed to/from a {@link Family}. */
-public abstract class FamilyPresenceWatcherSystem extends EntitySystem {
+public abstract class FamilyWatcherSystem extends EntitySystem {
 
-	private final Family family;
-	private EntitySetView familyEntities;
 	private final Mask lastEntities = new Mask();
 	private final Mask workingSet = new Mask();
 
-	protected FamilyPresenceWatcherSystem(Family family) {
-		this.family = family;
-	}
-
-	public final Family getFamily() {
-		return family;
-	}
-
-	public final EntitySetView getFamilyEntities() {
-		return familyEntities;
+	protected FamilyWatcherSystem(Family family) {
+		super(family);
 	}
 
 	@Override
-	public void initialize() {
-		super.initialize();
-		familyEntities = engine.getEntities(family);
-	}
-
-	@Override
-	protected void update(float delta) {
+	public void update(float delta) {
 		final Mask workingSet = this.workingSet;
 		final Mask lastEntities = this.lastEntities;
-		final Mask currentEntities = this.familyEntities.getMask();
+		final Mask currentEntities = this.getEntities().getMask();
 		// Get added entities
 		workingSet.set(currentEntities).andNot(lastEntities);
 		insertedEntities(workingSet, delta);
@@ -52,8 +35,8 @@ public abstract class FamilyPresenceWatcherSystem extends EntitySystem {
 	/** Called on each update. {@code entities} contains all added entities in this step, if any. */
 	protected abstract void insertedEntities(Mask entities, float delta);
 
-	/** Simplified {@link FamilyPresenceWatcherSystem} which gets the notification per-entity, not in bulk. */
-	public static abstract class Single extends FamilyPresenceWatcherSystem {
+	/** Simplified {@link FamilyWatcherSystem} which gets the notification per-entity, not in bulk. */
+	public static abstract class Single extends FamilyWatcherSystem {
 
 		protected Single(Family family) {
 			super(family);

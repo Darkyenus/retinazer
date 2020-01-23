@@ -18,7 +18,7 @@ public final class Components {
 	public static final class FlagComponentC implements Component {
 	}
 
-	public static class FlagSystemA extends EntityProcessorSystem.Single {
+	public static class FlagSystemA extends EntityProcessorSystem {
 	    public FlagSystemA() {
 	        super(FULL_SET.familyWith(FlagComponentA.class));
 	    }
@@ -28,7 +28,7 @@ public final class Components {
 	    }
 	}
 
-	public static class FlagSystemB extends EntityProcessorSystem.Single {
+	public static class FlagSystemB extends EntityProcessorSystem {
 	    public FlagSystemB() {
 	        super(FULL_SET.familyWith(FlagComponentB.class));
 	    }
@@ -38,7 +38,7 @@ public final class Components {
 	    }
 	}
 
-	public static class FlagSystemC extends EntityProcessorSystem.Single {
+	public static class FlagSystemC extends EntityProcessorSystem {
 	    public FlagSystemC() {
 	        super(FULL_SET.familyWith(FlagComponentC.class));
 	    }

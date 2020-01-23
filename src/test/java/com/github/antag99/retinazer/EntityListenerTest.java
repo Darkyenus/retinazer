@@ -3,12 +3,12 @@ package com.github.antag99.retinazer;
 import static com.github.antag99.retinazer.Components.FULL_SET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.github.antag99.retinazer.systems.FamilyPresenceWatcherSystem;
+import com.github.antag99.retinazer.systems.FamilyWatcherSystem;
 import com.github.antag99.retinazer.util.Mask;
 import org.junit.jupiter.api.Test;
 
 public class EntityListenerTest {
-    private static class EntityListenerMock extends FamilyPresenceWatcherSystem {
+    private static class EntityListenerMock extends FamilyWatcherSystem {
         private final EntitySet insertedEntities = new EntitySet();
         private final EntitySet removedEntities = new EntitySet();
 
@@ -65,8 +65,8 @@ public class EntityListenerTest {
 
     @Test
     public void testFamilyListener() {
-        EntityListenerMock listenerB = new EntityListenerMock(FULL_SET.familyWith(Components.FlagComponentB.class));
-        EntityListenerMock listenerC = new EntityListenerMock(FULL_SET.familyWith(Components.FlagComponentC.class));
+        EntityListenerMock listenerB = new EntityListenerMock(FULL_SET.familyWith(Components.FlagComponentB.class)) {};
+        EntityListenerMock listenerC = new EntityListenerMock(FULL_SET.familyWith(Components.FlagComponentC.class)) {};
         Engine engine = new Engine(FULL_SET, listenerB, listenerC);
         Mapper<Components.FlagComponentB> mFlagB = engine.getMapper(Components.FlagComponentB.class);
         Mapper<Components.FlagComponentC> mFlagC = engine.getMapper(Components.FlagComponentC.class);

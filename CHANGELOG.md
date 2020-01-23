@@ -2,8 +2,7 @@
 
 # Version 0.2.6
 - Add `Engine.getServices` to retrieve service subclasses
-- Made `FamilyPresenceWatcherSystem` more open for extensions
-- Split existing `EntityProcessorSystem` functionality into separate subclass `Single`, similar to how `FamilyPresenceWatcherSystem` handles things
+- Made `FamilyWatcherSystem` (renamed from `FamilyPresenceWatcherSystem`) more open for extensions
 - Lift `update` into `EngineService` - all services can now receive updates
 
 # Version 0.2.5 (released 2020-01-21)

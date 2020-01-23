@@ -14,19 +14,18 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EngineTest {
-    private Array<EntitySystem> initializedSystems = new Array<>();
-    private Array<EntitySystem> updatedSystems = new Array<>();
+    private Array<EngineService> initializedSystems = new Array<>();
+    private Array<EngineService> updatedSystems = new Array<>();
 
-    public abstract class OrderSystem extends EntitySystem {
+    public abstract class OrderSystem implements EngineService {
 
         @Override
         public final void initialize() {
-            super.initialize();
             initializedSystems.add(this);
         }
 
         @Override
-        protected final void update(float delta) {
+        public final void update(float delta) {
             updatedSystems.add(this);
         }
     }
@@ -46,35 +45,35 @@ public class EngineTest {
 
     @Test
     public void testEntitySystemPriority() {
-        EntitySystem entitySystemA = new OrderSystem() {
+        EngineService serviceA = new OrderSystem() {
             @Override
             public String toString() {
                 return "A";
             }
         };
 
-        EntitySystem entitySystemB = new OrderSystem() {
+        EngineService serviceB = new OrderSystem() {
             @Override
             public String toString() {
                 return "B";
             }
         };
 
-        EntitySystem entitySystemC = new OrderSystem() {
+        EngineService serviceC = new OrderSystem() {
             @Override
             public String toString() {
                 return "C";
             }
         };
 
-        EntitySystem entitySystemD = new OrderSystem() {
+        EngineService serviceD = new OrderSystem() {
             @Override
             public String toString() {
                 return "D";
             }
         };
 
-        EntitySystem entitySystemE = new OrderSystem() {
+        EngineService serviceE = new OrderSystem() {
             @Override
             public String toString() {
                 return "E";
@@ -82,24 +81,24 @@ public class EngineTest {
         };
 
         Engine engine = new Engine(ComponentSet.EMPTY,
-                entitySystemC,
-                entitySystemA,
-                entitySystemB,
-                entitySystemE,
-                entitySystemD
+                serviceC,
+                serviceA,
+                serviceB,
+                serviceE,
+                serviceD
         );
-        assertEquals(Array.with(entitySystemC,
-                entitySystemA,
-                entitySystemB,
-                entitySystemE,
-                entitySystemD), initializedSystems);
+        assertEquals(Array.with(serviceC,
+                serviceA,
+                serviceB,
+                serviceE,
+                serviceD), initializedSystems);
         initializedSystems.clear();
         engine.update(0f);
-        assertEquals(Array.with(entitySystemC,
-                entitySystemA,
-                entitySystemB,
-                entitySystemE,
-                entitySystemD), updatedSystems);
+        assertEquals(Array.with(serviceC,
+                serviceA,
+                serviceB,
+                serviceE,
+                serviceD), updatedSystems);
         updatedSystems.clear();
     }
 
@@ -279,7 +278,7 @@ public class EngineTest {
         assertThrows(RuntimeException.class, () -> engine.wire(consumer));
     }
 
-    public static class ExampleSystem extends EntitySystem {
+    public static class ExampleSystem implements EngineService {
         public @Wire Engine engine;
         public @Wire
         Components.FlagSystemA flagSystemA;
