@@ -18,8 +18,6 @@ public final class Engine {
     private final EngineService[] services;
     private final ObjectMap<Class<? extends EngineService>, EngineService> servicesByType = new ObjectMap<>();
 
-    private final EntitySystem[] systems;
-
     final Mask entities = new Mask();
     private final Mask entitiesScheduledForRemoval = new Mask();
 
@@ -37,18 +35,14 @@ public final class Engine {
      * Creates a new {@link Engine} based on the specified configuration.
      *
      * @param domain set of components that this engine operates over
-     * @param services of this engine. Services implementing {@link EntitySystem} and {@link WireResolver} will
-     * be used as entity systems and wire resolvers, respectively. Order is significant for both.
+     * @param services of this engine. Services implementing {@link WireResolver} will
+     * be used as wire resolvers. Order is significant.
      */
     public Engine(ComponentSet domain, EngineService...services) {
-        final ArrayList<EntitySystem> entitySystems = new ArrayList<>();
         final ArrayList<WireResolver> wireResolvers = new ArrayList<>();
         wireResolvers.add(new DefaultWireResolver(this));
 
         for (EngineService service : services) {
-            if (service instanceof EntitySystem) {
-                entitySystems.add((EntitySystem) service);
-            }
             if (service instanceof WireResolver) {
                 wireResolvers.add((WireResolver) service);
             }
@@ -61,7 +55,6 @@ public final class Engine {
         this.componentDomain = domain;
         this.componentMappers = domain.buildComponentMappers(this);
         this.services = services;
-        this.systems = entitySystems.toArray(EntitySystem.EMPTY_ARRAY);
         this.familyManager = new FamilyManager(this);
         this.wireManager = new WireManager(wireResolvers);
 
@@ -93,8 +86,8 @@ public final class Engine {
 
         flush();
 
-        for (EntitySystem system : systems) {
-            system.update(delta);
+        for (EngineService service : services) {
+            service.update(delta);
             flush();
         }
 
@@ -236,16 +229,6 @@ public final class Engine {
             return Collections.emptyList();
         }
         return result;
-    }
-
-    /**
-     * Gets the systems registered during configuration of the engine.
-     * Do not modify returned value.
-     *
-     * @return all systems registered during configuration of the engine.
-     */
-    public EntitySystem[] getSystems() {
-        return systems;
     }
 
     /**
