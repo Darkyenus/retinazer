@@ -24,7 +24,7 @@ public final class Components {
 	    }
 
 	    @Override
-	    public void process(int entity, float delta) {
+	    public void process(int entity) {
 	    }
 	}
 
@@ -34,7 +34,7 @@ public final class Components {
 	    }
 
 	    @Override
-	    public void process(int entity, float delta) {
+	    public void process(int entity) {
 	    }
 	}
 
@@ -44,7 +44,7 @@ public final class Components {
 	    }
 
 	    @Override
-	    public void process(int entity, float delta) {
+	    public void process(int entity) {
 	    }
 	}
 }

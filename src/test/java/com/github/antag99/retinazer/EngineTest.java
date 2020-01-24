@@ -25,7 +25,7 @@ public class EngineTest {
         }
 
         @Override
-        public final void update(float delta) {
+        public final void update() {
             updatedSystems.add(this);
         }
     }
@@ -33,14 +33,14 @@ public class EngineTest {
     @Test
     public void testEngine() {
         Engine engine = new Engine(ComponentSet.EMPTY);
-        engine.update(0f);
-        engine.update(0f);
-        engine.update(0f);
-        engine.update(0f);
-        engine.update(0f);
-        engine.update(0f);
-        engine.update(0f);
-        engine.update(0f);
+        engine.update();
+        engine.update();
+        engine.update();
+        engine.update();
+        engine.update();
+        engine.update();
+        engine.update();
+        engine.update();
     }
 
     @Test
@@ -93,7 +93,7 @@ public class EngineTest {
                 serviceE,
                 serviceD), initializedSystems);
         initializedSystems.clear();
-        engine.update(0f);
+        engine.update();
         assertEquals(Array.with(serviceC,
                 serviceA,
                 serviceB,
@@ -148,7 +148,7 @@ public class EngineTest {
         mFlagB.create(entity7);
         mFlagC.create(entity7);
 
-        engine.update(0f);
+        engine.update();
 
         assertEquals(
                 asSet(entity0, entity1, entity2, entity3, entity4, entity5, entity6, entity7),

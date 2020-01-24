@@ -12,14 +12,8 @@ public interface EngineService {
 	 * Called after the service is {@link Wire}d up.
 	 * If overriding, <b>ALWAYS</b> call {@code super} first.
 	 */
-	default void initialize() {
-	}
+	default void initialize() {}
 
-	/**
-	 * Called on each {@link Engine#update}.
-	 *
-	 * @param delta time in seconds since last update
-	 */
-	default void update(float delta) {
-	}
+	/** Called on each {@link Engine#update}. */
+	default void update() {}
 }

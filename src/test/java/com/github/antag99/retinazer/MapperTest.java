@@ -42,11 +42,11 @@ public class MapperTest {
         Mapper<Components.FlagComponentA> mFlagA = engine.getMapper(Components.FlagComponentA.class);
         int entity = engine.createEntity();
         mFlagA.remove(entity); // nothing should happen
-        engine.update(0f);
+        engine.update();
         mFlagA.create(entity);
         mFlagA.remove(entity);
         mFlagA.remove(entity);
-        engine.update(0f);
+        engine.update();
     }
 
     @Test()

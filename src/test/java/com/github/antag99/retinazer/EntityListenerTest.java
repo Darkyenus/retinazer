@@ -17,13 +17,13 @@ public class EntityListenerTest {
         }
 
         @Override
-        protected void insertedEntities(Mask entities, float delta) {
+        protected void insertedEntities(Mask entities) {
             assertEquals(0, insertedEntities.size(), "Insertion without verification");
             insertedEntities.addEntities(entities);
         }
 
         @Override
-        protected void removedEntities(Mask entities, float delta) {
+        protected void removedEntities(Mask entities) {
             assertEquals(0, removedEntities.size(), "Removal without verification");
             removedEntities.addEntities(entities);
         }
@@ -52,13 +52,13 @@ public class EntityListenerTest {
         int entity = engine.createEntity();
         listener.verifyInserted();
         listener.verifyRemoved();
-        engine.update(0f);
+        engine.update();
         listener.verifyInserted(entity);
         listener.verifyRemoved();
         engine.destroyEntity(entity);
         listener.verifyInserted();
         listener.verifyRemoved();
-        engine.update(0f);
+        engine.update();
         listener.verifyInserted();
         listener.verifyRemoved(entity);
     }
@@ -71,7 +71,7 @@ public class EntityListenerTest {
         Mapper<Components.FlagComponentB> mFlagB = engine.getMapper(Components.FlagComponentB.class);
         Mapper<Components.FlagComponentC> mFlagC = engine.getMapper(Components.FlagComponentC.class);
         int entity = engine.createEntity();
-        engine.update(0f);
+        engine.update();
         listenerB.verifyInserted();
         listenerB.verifyRemoved();
         listenerC.verifyInserted();
@@ -81,25 +81,25 @@ public class EntityListenerTest {
         listenerB.verifyRemoved();
         listenerC.verifyInserted();
         listenerC.verifyRemoved();
-        engine.update(0f);
+        engine.update();
         listenerB.verifyInserted(entity);//
         listenerB.verifyRemoved();
         listenerC.verifyInserted();
         listenerC.verifyRemoved();
         mFlagB.remove(entity);
-        engine.update(0f);
+        engine.update();
         listenerB.verifyInserted();
         listenerB.verifyRemoved(entity);
         listenerC.verifyInserted();
         listenerC.verifyRemoved();
         mFlagC.create(entity);
-        engine.update(0f);
+        engine.update();
         listenerB.verifyInserted();
         listenerB.verifyRemoved();
         listenerC.verifyInserted(entity);
         listenerC.verifyRemoved();
         engine.destroyEntity(entity);
-        engine.update(0f);
+        engine.update();
         listenerB.verifyInserted();
         listenerB.verifyRemoved();
         listenerC.verifyInserted();

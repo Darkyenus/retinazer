@@ -19,7 +19,7 @@ public class EntitySetTest {
         int entity2 = engine.createEntity();
         int entity3 = engine.createEntity();
         int entity4 = engine.createEntity();
-        engine.update(0f);
+        engine.update();
         assertArrayEquals(engine.getEntities().getIndices().toArray(), new int[]{entity0, entity1, entity2, entity3, entity4});
         assertArrayEquals(engine.getEntities(
                 FULL_SET.familyWith(Components.FlagComponentA.class)).getIndices().toArray(), new int[]{entity1});

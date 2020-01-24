@@ -16,7 +16,7 @@ public class EntityProcessorSystemTest {
         }
 
         @Override
-        protected void process(int entity, float delta) {
+        protected void process(int entity) {
             if (processedEntities.contains(entity))
                 throw new AssertionError("entity already processed: " + entity);
             processedEntities.addEntity(entity);
@@ -32,16 +32,16 @@ public class EntityProcessorSystemTest {
         entities.set(a = engine.createEntity());
         entities.set(b = engine.createEntity());
         entities.set(c = engine.createEntity());
-        engine.update(0f);
+        engine.update();
         assertEquals(system.processedEntities.getMask(), entities);
         system.processedEntities.clear();
         engine.destroyEntity(b);
         entities.clear(b);
-        engine.update(0f);
+        engine.update();
         assertEquals(system.processedEntities.getMask(), entities);
         system.processedEntities.clear();
         entities.set(b = engine.createEntity());
-        engine.update(0f);
+        engine.update();
         assertEquals(system.processedEntities.getMask(), entities);
         system.processedEntities.clear();
         engine.destroyEntity(a);

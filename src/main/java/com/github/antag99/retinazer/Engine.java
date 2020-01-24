@@ -72,12 +72,8 @@ public final class Engine {
         wireManager.wire(object);
     }
 
-    /**
-     * Updates all systems, interleaved by inserting/removing entities to/from
-     * entity sets.
-     * @param delta time in seconds since last update
-     */
-    public void update(float delta) {
+    /** Updates all systems, interleaved by inserting/removing entities to/from entity sets. */
+    public void update() {
         if (update) {
             throw new IllegalStateException("Cannot nest calls to update()");
         }
@@ -87,7 +83,7 @@ public final class Engine {
         flush();
 
         for (EngineService service : services) {
-            service.update(delta);
+            service.update();
             flush();
         }
 
