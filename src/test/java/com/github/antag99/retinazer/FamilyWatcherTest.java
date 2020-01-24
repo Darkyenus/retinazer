@@ -2,12 +2,10 @@ package com.github.antag99.retinazer;
 
 import com.github.antag99.retinazer.systems.FamilyWatcherSystem;
 import com.github.antag99.retinazer.util.Mask;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static com.github.antag99.retinazer.Components.FULL_SET;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -22,18 +20,24 @@ public class FamilyWatcherTest {
 
 		public final ArrayList<Integer> addedEntities = new ArrayList<>();
 
+		private int blanks;
 		private int rounds;
 
-		public EntityAdder(int rounds) {
+		public EntityAdder(int blanks, int rounds) {
+			this.blanks = blanks;
 			this.rounds = rounds;
 		}
 
 		public EntityAdder() {
-			this(1);
+			this(0, 1);
 		}
 
 		@Override
 		public void update() {
+			if (blanks > 0) {
+				blanks--;
+				return;
+			}
 			if (rounds > 0) {
 				addedEntities.add(engine.createEntity());
 				rounds--;
@@ -157,10 +161,11 @@ public class FamilyWatcherTest {
 		assertEquals(1, watcher.removed, "Removed");
 	}
 
-	@Disabled("Fails")
 	@Test
 	public void familyWatcherAliasing() {
+		// This used to trigger an ABA problem for watchers
 		Engine engineAddRemoveWatch = new Engine(ComponentSet.EMPTY,
+				new EntityAdder(1, 1){}, // Fires on the second round
 				new EntityAdder(),
 				new EntityWatcher(),
 				new EntityRemover(),
@@ -170,8 +175,8 @@ public class FamilyWatcherTest {
 		engineAddRemoveWatch.update();
 		assertEquals(1, watcher.added, "Added");
 		assertEquals(0, watcher.removed, "Removed");
-		engineAddRemoveWatch.update(); // Only watcher does something
-		assertEquals(1, watcher.added, "Added");
+		engineAddRemoveWatch.update();
+		assertEquals(2, watcher.added, "Added");
 		assertEquals(1, watcher.removed, "Removed");
 	}
 

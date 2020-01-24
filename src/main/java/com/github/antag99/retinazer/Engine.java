@@ -12,14 +12,24 @@ import java.util.List;
  * Engine is the core class of retinazer; it manages all active entities,
  * performs system processing and initialization.
  */
-@SuppressWarnings("unused")
 public final class Engine {
 
     private final EngineService[] services;
     private final ObjectMap<Class<? extends EngineService>, EngineService> servicesByType = new ObjectMap<>();
 
+    /** Entities that currently exist. */
     final Mask entities = new Mask();
+    /** Subset of {@link #entities} - entities that will be removed on next {@link #flush()}. */
     private final Mask entitiesScheduledForRemoval = new Mask();
+
+    /** Entities which exist currently or did in the last update cycle.
+     * Used to prevent reusing entity IDs too soon. */
+    private final Mask shadowEntities = new Mask();
+    /** Subset of {@link #shadowEntities} - entities that were removed (or were scheduled to be removed) this update cycle. */
+    private Mask entitiesRemovedThisUpdate = new Mask();
+    /** {@link #entitiesRemovedThisUpdate} from the last update cycle.
+     * These entity IDs will become available for allocation again after the end of this update cycle. */
+    private Mask entitiesRemovedLastUpdate = new Mask();
 
     public final ComponentSet componentDomain;
     final Mapper<?>[] componentMappers;
@@ -87,22 +97,15 @@ public final class Engine {
             flush();
         }
 
-        update = false;
-    }
-
-    /**
-     * Resets this engine; this removes all existing entities.
-     */
-    public void reset() {
-        if (update) {
-            throw new IllegalStateException("Cannot call reset() within update()");
-        }
-
-        update = true;
-
-        entitiesScheduledForRemoval.or(entities);
-        dirty = true;
-        flush();
+        // Update shadow entities
+        final Mask entitiesRemovedLastUpdate = this.entitiesRemovedLastUpdate;
+        final Mask entitiesRemovedThisUpdate = this.entitiesRemovedThisUpdate;
+        // Allow the entity IDs to be used again
+        shadowEntities.andNot(entitiesRemovedLastUpdate);
+        entitiesRemovedLastUpdate.clear();
+        // Swap the masks
+        this.entitiesRemovedLastUpdate = entitiesRemovedThisUpdate;
+        this.entitiesRemovedThisUpdate = entitiesRemovedLastUpdate;
 
         update = false;
     }
@@ -131,18 +134,22 @@ public final class Engine {
      */
     public int createEntity() {
         dirty = true;
-        int entity = entities.nextClearBit(0);
+        int entity = shadowEntities.nextClearBit(0);
         entities.set(entity);
+        shadowEntities.set(entity);
         return entity;
     }
 
     /**
      * Create a new entity with defined ID.
+     * Note that when an entity is removed, its ID is not available that update cycle, nor the one after,
+     * but only the one after that.
      *
      * @return true if entity was created, false if such entity already exists
      */
     public boolean createEntity(int entity) {
-        if (entities.setChanged(entity)) {
+        if (shadowEntities.setChanged(entity)) {
+            entities.set(entity);
             return dirty = true;
         }
         return false;
@@ -156,7 +163,10 @@ public final class Engine {
      *            the entity to destroy.
      */
     public void destroyEntity(int entity) {
-        dirty |= entitiesScheduledForRemoval.setChanged(entity);
+        if (entitiesScheduledForRemoval.setChanged(entity)) {
+            entitiesRemovedThisUpdate.set(entity);
+            dirty = true;
+        }
     }
 
     /**
