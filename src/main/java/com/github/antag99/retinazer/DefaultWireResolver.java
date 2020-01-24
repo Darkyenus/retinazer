@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
 
 /** Wires {@link Engine}, {@link EngineService}s and {@link Mapper}s (by the generic parameter)
  *  registered in the engine. */
@@ -30,6 +31,12 @@ final class DefaultWireResolver implements WireResolver {
             field.set(object, engine.getMapper(componentType));
         } else if (EngineService.class.isAssignableFrom(type)) {
             field.set(object, engine.getService((Class<? extends EngineService>) type));
+        } else if (List.class.isAssignableFrom(type)) {
+            final Class<? extends Component> componentType = getTypeArgument(field.getGenericType(), 0);
+            if (componentType == null) {
+                return false;
+            }
+            field.set(object, engine.getServices(componentType));
         } else {
             return false;
         }

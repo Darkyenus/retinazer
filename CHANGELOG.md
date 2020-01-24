@@ -4,6 +4,9 @@
 - Add `Engine.getServices` to retrieve service subclasses
 - Made `FamilyWatcherSystem` (renamed from `FamilyPresenceWatcherSystem`) more open for extensions
 - Lift `update` into `EngineService` - all services can now receive updates
+- Remove `float delta` parameter from `EngineService.update` method
+- `Family` introspection methods `requires` and `excludes`
+- Wired `List<T>`s are now resolved to the list of services that subclass `T`
 
 # Version 0.2.5 (released 2020-01-21)
 - `EngineService`s are now automatically wired and initialized

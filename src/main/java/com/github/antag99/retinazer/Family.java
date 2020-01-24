@@ -31,6 +31,22 @@ public final class Family {
         this.hashCode = result;
     }
 
+    /**
+     * @return whether this family requires the given component type
+     * @throws IllegalArgumentException when the component is not a part of the domain
+     */
+    public boolean requires(Class<? extends Component> componentType) {
+        return requiredComponents.get(domain.index(componentType));
+    }
+
+    /**
+     * @return whether this family excludes the given component type
+     * @throws IllegalArgumentException when the component is not a part of the domain
+     */
+    public boolean excludes(Class<? extends Component> componentType) {
+        return excludedComponents.get(domain.index(componentType));
+    }
+
     /** Derive a new {@link Family} which also requires given components. */
     @SafeVarargs
     public final Family with(Class<? extends Component>... components) {

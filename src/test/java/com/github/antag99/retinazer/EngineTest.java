@@ -1,8 +1,12 @@
 package com.github.antag99.retinazer;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import com.github.antag99.retinazer.systems.EntityProcessorSystem;
 import org.junit.jupiter.api.Test;
 
 import com.badlogic.gdx.utils.Array;
@@ -289,6 +293,8 @@ public class EngineTest {
         public @Wire Mapper<Components.FlagComponentA> mFlagA;
         public @Wire Mapper<Components.FlagComponentB> mFlagB;
         public @Wire Mapper<Components.FlagComponentC> mFlagC;
+
+        public @Wire List<EntityProcessorSystem> processorSystemsList;
     }
 
     @Test
@@ -305,5 +311,6 @@ public class EngineTest {
         assertSame(engine.getMapper(Components.FlagComponentA.class), system.mFlagA);
         assertSame(engine.getMapper(Components.FlagComponentB.class), system.mFlagB);
         assertSame(engine.getMapper(Components.FlagComponentC.class), system.mFlagC);
+        assertEquals(new HashSet<>(Arrays.asList(flagSystemA, flagSystemB, flagSystemC)), new HashSet<>(system.processorSystemsList));
     }
 }
