@@ -72,15 +72,15 @@ final class WireManager {
                             continue fields;
                         }
                     } catch (IllegalAccessException e) {
-                        throw new RuntimeException("Failed to wire field " +
-                                field.getName() + " of " +
-                                field.getDeclaringClass().getName() + " of type "+field.getType().getName(), e);
+                        throw new RuntimeException("Failed to wire field "
+                                + field.getDeclaringClass().getName() + "." + field.getName()
+                                + " of type " + field.getType().getName(), e);
                     }
                 }
 
-                throw new RuntimeException("Failed to wire field " +
-                        field.getName() + " of " +
-                        field.getDeclaringClass().getName() + " of type "+field.getType().getName()+" - no resolver");
+                throw new RuntimeException("Failed to wire field "
+                        + field.getDeclaringClass().getName() + "." + field.getName()
+                        + " of type " + field.getType().getName() + " - no resolver");
             }
         }
     }
