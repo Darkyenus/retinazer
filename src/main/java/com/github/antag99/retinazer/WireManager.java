@@ -71,7 +71,7 @@ final class WireManager {
                         if (wireResolver.wire(object, field)) {
                             continue fields;
                         }
-                    } catch (IllegalAccessException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException("Failed to wire field "
                                 + field.getDeclaringClass().getName() + "." + field.getName()
                                 + " of type " + field.getType().getName(), e);
