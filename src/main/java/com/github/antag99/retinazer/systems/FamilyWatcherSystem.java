@@ -1,5 +1,7 @@
 package com.github.antag99.retinazer.systems;
 
+import com.github.antag99.retinazer.EntitySet;
+import com.github.antag99.retinazer.EntitySetView;
 import com.github.antag99.retinazer.EntitySystem;
 import com.github.antag99.retinazer.Family;
 import com.github.antag99.retinazer.util.Mask;
@@ -9,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class FamilyWatcherSystem extends EntitySystem {
 
 	private final Mask lastEntities = new Mask();
-	private final Mask workingSet = new Mask();
+	private final EntitySet workingSet = new EntitySet();
 
 	protected FamilyWatcherSystem(@NotNull Family family) {
 		super(family);
@@ -17,24 +19,24 @@ public abstract class FamilyWatcherSystem extends EntitySystem {
 
 	@Override
 	public void update() {
-		final Mask workingSet = this.workingSet;
+		final EntitySet workingSet = this.workingSet;
 		final Mask lastEntities = this.lastEntities;
 		final Mask currentEntities = this.getEntities().getMask();
 		// Get added entities
-		workingSet.set(currentEntities).andNot(lastEntities);
+		workingSet.getMaskForModification().set(currentEntities).andNot(lastEntities);
 		insertedEntities(workingSet);
 		// Get removed entities
-		workingSet.set(lastEntities).andNot(currentEntities);
+		workingSet.getMaskForModification().set(lastEntities).andNot(currentEntities);
 		removedEntities(workingSet);
 
 		lastEntities.set(currentEntities);
 	}
 
 	/** Called on each update. {@code entities} contains all removed entities in this step, if any. */
-	protected abstract void removedEntities(@NotNull Mask entities);
+	protected abstract void removedEntities(@NotNull EntitySetView entities);
 
 	/** Called on each update. {@code entities} contains all added entities in this step, if any. */
-	protected abstract void insertedEntities(@NotNull Mask entities);
+	protected abstract void insertedEntities(@NotNull EntitySetView entities);
 
 	/** Simplified {@link FamilyWatcherSystem} which gets the notification per-entity, not in bulk. */
 	public static abstract class Single extends FamilyWatcherSystem {
@@ -44,15 +46,19 @@ public abstract class FamilyWatcherSystem extends EntitySystem {
 		}
 
 		@Override
-		protected final void insertedEntities(@NotNull Mask entities) {
-			for (int entity = entities.nextSetBit(0); entity != -1; entity = entities.nextSetBit(entity + 1)) {
+		protected final void insertedEntities(@NotNull EntitySetView entities) {
+			final Mask mask = entities.getMask();
+			// Using simple iteration without rebuilding indices, because it is unlikely that they will be needed again
+			for (int entity = mask.nextSetBit(0); entity != -1; entity = mask.nextSetBit(entity + 1)) {
 				insertedEntity(entity);
 			}
 		}
 
 		@Override
-		protected final void removedEntities(@NotNull Mask entities) {
-			for (int entity = entities.nextSetBit(0); entity != -1; entity = entities.nextSetBit(entity + 1)) {
+		protected final void removedEntities(@NotNull EntitySetView entities) {
+			final Mask mask = entities.getMask();
+			// Using simple iteration without rebuilding indices, because it is unlikely that they will be needed again
+			for (int entity = mask.nextSetBit(0); entity != -1; entity = mask.nextSetBit(entity + 1)) {
 				removedEntity(entity);
 			}
 		}

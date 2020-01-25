@@ -18,13 +18,13 @@ public class EntityListenerTest {
         }
 
         @Override
-        protected void insertedEntities(@NotNull Mask entities) {
+        protected void insertedEntities(@NotNull EntitySetView entities) {
             assertEquals(0, insertedEntities.size(), "Insertion without verification");
             insertedEntities.addEntities(entities);
         }
 
         @Override
-        protected void removedEntities(@NotNull Mask entities) {
+        protected void removedEntities(@NotNull EntitySetView entities) {
             assertEquals(0, removedEntities.size(), "Removal without verification");
             removedEntities.addEntities(entities);
         }

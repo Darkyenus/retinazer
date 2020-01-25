@@ -4,6 +4,8 @@ import com.badlogic.gdx.utils.IntArray;
 import com.github.antag99.retinazer.util.Mask;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.IntConsumer;
+
 public interface EntitySetView {
 
     /**
@@ -33,6 +35,9 @@ public interface EntitySetView {
      */
     @NotNull
     IntArray getIndices();
+
+    /** For each entity in this set, call the action consumer with the entity ID. */
+    void forEach(@NotNull IntConsumer action);
 
     int size();
 

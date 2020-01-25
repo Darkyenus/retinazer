@@ -1,5 +1,6 @@
 package com.github.antag99.retinazer;
 
+import com.github.antag99.retinazer.util.Mask;
 import org.junit.jupiter.api.Test;
 
 import static com.github.antag99.retinazer.Components.FULL_SET;
@@ -8,6 +9,95 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class EntitySetTest {
+
+    private static void assertContainsOnly(EntitySet set, int...entities) {
+        int[] next = { 0 };
+        set.forEach((entity) -> {
+            assertEquals(entities[next[0]++], entity);
+        });
+        assertEquals(entities.length, next[0], "Some entities are missing");
+    }
+
+    @Test
+    public void testAddingAndRemoval() {
+        EntitySet set = new EntitySet();
+        set.addEntity(5);
+        assertContainsOnly(set, 5);
+        set.addEntity(19);
+        assertContainsOnly(set, 5, 19);
+
+        {// Full overlap, subset
+            final Mask mask = new Mask();
+            mask.set(5);
+            mask.set(19);
+            set.addEntities(mask);
+            assertContainsOnly(set, 5, 19);
+        }
+
+        {// Partial overlap, subset
+            final Mask mask = new Mask();
+            mask.set(5);
+            set.addEntities(mask);
+            assertContainsOnly(set, 5, 19);
+        }
+
+        {// No overlap
+            final Mask mask = new Mask();
+            mask.set(23);
+            set.addEntities(mask);
+            assertContainsOnly(set, 5, 19, 23);
+        }
+
+        {// Full overlap, superset
+            final Mask mask = new Mask();
+            mask.set(5);
+            mask.set(19);
+            mask.set(23);
+            mask.set(24);
+            set.addEntities(mask);
+            assertContainsOnly(set, 5, 19, 23, 24);
+        }
+
+        {// Partial overlap, superset
+            final Mask mask = new Mask();
+            mask.set(19);
+            mask.set(23);
+            mask.set(24);
+            set.addEntities(mask);
+            assertContainsOnly(set, 5, 19, 23, 24);
+        }
+
+        // Removing
+        set.removeEntity(19);
+        assertContainsOnly(set, 5, 23, 24);
+
+        {// No overlap
+            final Mask mask = new Mask();
+            mask.set(1);
+            mask.set(8);
+            mask.set(15);
+            set.removeEntities(mask);
+            assertContainsOnly(set, 5, 23, 24);
+        }
+
+        {// Partial overlap
+            final Mask mask = new Mask();
+            mask.set(1);
+            mask.set(8);
+            mask.set(15);
+            mask.set(23);
+            set.removeEntities(mask);
+            assertContainsOnly(set, 5, 24);
+        }
+
+        {// Full overlap
+            final Mask mask = new Mask();
+            mask.set(5);
+            mask.set(24);
+            set.removeEntities(mask);
+            assertContainsOnly(set);
+        }
+    }
 
     @Test
     public void testIndices() {

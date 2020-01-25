@@ -5,6 +5,8 @@ import com.github.antag99.retinazer.util.Mask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.IntConsumer;
+
 public final class EntitySet implements EntitySetView {
 
     private final Mask entities = new Mask();
@@ -38,11 +40,19 @@ public final class EntitySet implements EntitySetView {
         indicesDirty |= entities.setChanged(entity);
     }
 
+    public void addEntities(@NotNull EntitySetView entities) {
+        addEntities(entities.getMask());
+    }
+
     public void addEntities(@NotNull Mask entities) {
         if (!this.entities.isSupersetOf(entities)) {
             this.indicesDirty = true;
             this.entities.or(entities);
         }
+    }
+
+    public void setEntities(@NotNull EntitySetView entities) {
+        setEntities(entities.getMask());
     }
 
     public void setEntities(@NotNull Mask entities) {
@@ -56,6 +66,10 @@ public final class EntitySet implements EntitySetView {
         if (entities.clearChanged(entity)) {
             this.indicesDirty = true;
         }
+    }
+
+    public void removeEntities(@NotNull EntitySetView entities) {
+        removeEntities(entities.getMask());
     }
 
     public void removeEntities(@NotNull Mask entities) {
@@ -83,6 +97,16 @@ public final class EntitySet implements EntitySetView {
     }
 
     /**
+     * Similar behavior to {@link #getMask()}, but the mask may be modified.
+     * After any other call to any of this instance's methods, the mask may no longer be modified.
+     */
+    @NotNull
+    public Mask getMaskForModification() {
+        this.indicesDirty = true;
+        return this.entities;
+    }
+
+    /**
      * Returns an array containing the indices of all entities in this set.
      * Note that whenever the entity set changes, this array must be
      * reconstructed. Do <b>not</b> modify this.
@@ -97,6 +121,31 @@ public final class EntitySet implements EntitySetView {
             indicesDirty = false;
         }
         return indices;
+    }
+
+    /** For each entity in this set, call the action consumer with the entity ID. */
+    @Override
+    public void forEach(@NotNull IntConsumer action) {
+        final IntArray indices = this.indices;
+        if (indicesDirty) {
+            // Build indices
+            // After some benchmarking, this seems to be pretty fast, even though it calls IntArray.add repeatedly
+            indices.clear();
+            final Mask entities = this.entities;
+            for (int entity = entities.nextSetBit(0); entity != -1; entity = entities.nextSetBit(entity + 1)) {
+                indices.add(entity);
+                action.accept(entity);
+            }
+            // Done at the end, because action may throw, which would leave us in a wrong state
+            indicesDirty = false;
+        } else {
+            // Use indices
+            final int[] items = indices.items;
+            final int size = indices.size;
+            for (int i = 0; i < size; i++) {
+                action.accept(items[i]);
+            }
+        }
     }
 
     public int size() {
