@@ -1,25 +1,32 @@
 package com.github.antag99.retinazer;
 
 import com.github.antag99.retinazer.util.Mask;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /** Specifies a set of entities defined by what {@link Component}s they have or don't have. Immutable. */
 public final class Family {
 
     /** Empty {@link Mask} instance. DO NOT MODIFY. */
+    @NotNull
     static final Mask EMPTY_MASK = new Mask();
     /** Family of all entities.
      * NOTE: It is impossible to derive anything from it, because it has an empty domain. */
+    @NotNull
     static final Family ALL = new Family(ComponentSet.EMPTY, EMPTY_MASK, EMPTY_MASK);
 
+    @NotNull
     final ComponentSet domain;
     /** Each family member must have all of these components. */
+    @NotNull
     final Mask requiredComponents;
     /** Each family member must not have any of these components. */
+    @NotNull
     final Mask excludedComponents;
 
     private final transient int hashCode;
 
-    Family(ComponentSet domain, Mask requiredComponents, Mask excludedComponents) {
+    Family(@NotNull ComponentSet domain, @NotNull Mask requiredComponents, @NotNull Mask excludedComponents) {
         this.domain = domain;
         this.requiredComponents = requiredComponents;
         this.excludedComponents = excludedComponents;
@@ -35,7 +42,7 @@ public final class Family {
      * @return whether this family requires the given component type
      * @throws IllegalArgumentException when the component is not a part of the domain
      */
-    public boolean requires(Class<? extends Component> componentType) {
+    public boolean requires(@NotNull Class<? extends Component> componentType) {
         return requiredComponents.get(domain.index(componentType));
     }
 
@@ -43,13 +50,14 @@ public final class Family {
      * @return whether this family excludes the given component type
      * @throws IllegalArgumentException when the component is not a part of the domain
      */
-    public boolean excludes(Class<? extends Component> componentType) {
+    public boolean excludes(@NotNull Class<? extends Component> componentType) {
         return excludedComponents.get(domain.index(componentType));
     }
 
     /** Derive a new {@link Family} which also requires given components. */
     @SafeVarargs
-    public final Family with(Class<? extends Component>... components) {
+    @NotNull
+    public final Family with(@NotNull Class<? extends Component>... components) {
         final ComponentSet domain = this.domain;
         final Mask requiredComponents = this.requiredComponents;
         final Mask excludedComponents = this.excludedComponents;
@@ -64,7 +72,8 @@ public final class Family {
 
     /** Derive a new {@link Family} which also excludes given components. */
     @SafeVarargs
-    public final Family without(Class<? extends Component>... components) {
+    @NotNull
+    public final Family without(@NotNull Class<? extends Component>... components) {
         final ComponentSet domain = this.domain;
         final Mask requiredComponents = this.requiredComponents;
         final Mask excludedComponents = this.excludedComponents;
@@ -77,7 +86,8 @@ public final class Family {
         return new Family(domain, requiredComponents, newExcludedComponents);
     }
 
-    static Mask maskOf(Mask parent, ComponentSet domain, Class<? extends Component>[] components) {
+    @NotNull
+    static Mask maskOf(@NotNull Mask parent, @NotNull ComponentSet domain, @NotNull Class<? extends Component>[] components) {
         if (components.length == 0) {
             return parent;
         }
@@ -94,7 +104,7 @@ public final class Family {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (!(o instanceof Family)) return false;
 

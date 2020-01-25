@@ -3,11 +3,12 @@ package com.github.antag99.retinazer.systems;
 import com.github.antag99.retinazer.EntitySystem;
 import com.github.antag99.retinazer.Family;
 import com.github.antag99.retinazer.util.Mask;
+import org.jetbrains.annotations.NotNull;
 
 /** An {@link EntitySystem} which processes a {@link Family} of entities. */
 public abstract class EntityProcessorSystem extends EntitySystem {
 
-    public EntityProcessorSystem(Family family) {
+    public EntityProcessorSystem(@NotNull Family family) {
         super(family);
     }
 

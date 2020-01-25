@@ -1,5 +1,7 @@
 package com.github.antag99.retinazer;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Field;
 
 /**
@@ -18,5 +20,5 @@ public interface WireResolver extends EngineService {
      * @param field The field of the object.
      * @return Whether this resolver handled the given field.
      */
-    boolean wire(Object object, Field field) throws IllegalAccessException;
+    boolean wire(@NotNull Object object, @NotNull Field field) throws IllegalAccessException;
 }

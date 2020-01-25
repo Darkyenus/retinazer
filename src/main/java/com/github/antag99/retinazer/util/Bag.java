@@ -1,6 +1,7 @@
 package com.github.antag99.retinazer.util;
 
 import com.badlogic.gdx.math.MathUtils;
+import org.jetbrains.annotations.NotNull;
 
 /** Generic dynamically sized container for objects.
  * Accessing negative indices always results in an exception.
@@ -34,6 +35,7 @@ public final class Bag<E> {
 
     /** Ensure that the internal buffer has at least the given capacity.
      * Returns internal buffer. */
+    @NotNull
     public Object[] ensureCapacity(int capacity) {
         final Object[] oldBuffer = this.buffer;
         final int oldLength = oldBuffer.length;

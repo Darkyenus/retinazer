@@ -1,5 +1,8 @@
 package com.github.antag99.retinazer;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
@@ -13,13 +16,13 @@ final class DefaultWireResolver implements WireResolver {
 
     private final Engine engine;
 
-    DefaultWireResolver(Engine engine) {
+    DefaultWireResolver(@NotNull Engine engine) {
         this.engine = engine;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean wire(Object object, Field field) throws IllegalAccessException {
+    public boolean wire(@NotNull Object object, @NotNull Field field) throws IllegalAccessException {
         Class<?> type = field.getType();
         if (type == Engine.class) {
             field.set(object, engine);
@@ -44,7 +47,8 @@ final class DefaultWireResolver implements WireResolver {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> Class<? extends T> getTypeArgument(Type genericType, @SuppressWarnings("SameParameterValue") int index) {
+    @Nullable
+    private static <T> Class<? extends T> getTypeArgument(@NotNull Type genericType, @SuppressWarnings("SameParameterValue") int index) {
         if (genericType instanceof ParameterizedType) {
             Type[] actualTypes = ((ParameterizedType)genericType).getActualTypeArguments();
             if (index < actualTypes.length) {

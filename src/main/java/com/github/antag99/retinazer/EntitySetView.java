@@ -2,6 +2,7 @@ package com.github.antag99.retinazer;
 
 import com.badlogic.gdx.utils.IntArray;
 import com.github.antag99.retinazer.util.Mask;
+import org.jetbrains.annotations.NotNull;
 
 public interface EntitySetView {
 
@@ -20,6 +21,7 @@ public interface EntitySetView {
      *
      * @return the entities contained in this set.
      */
+    @NotNull
     Mask getMask();
 
     /**
@@ -29,6 +31,7 @@ public interface EntitySetView {
      *
      * @return the indices of all entities in this set.
      */
+    @NotNull
     IntArray getIndices();
 
     int size();

@@ -1,5 +1,7 @@
 package com.github.antag99.retinazer.util;
 
+import org.jetbrains.annotations.NotNull;
+
 /** Generic dynamically sized container for floats. */
 public final class FloatBag {
     private float[] buffer = EMPTY;
@@ -7,6 +9,7 @@ public final class FloatBag {
 
     /** Ensure that the internal buffer has at least the given capacity.
      * Returns internal buffer. */
+    @NotNull
     public float[] ensureCapacity(int capacity) {
         final float[] buffer = this.buffer;
         final int oldLength = buffer.length;

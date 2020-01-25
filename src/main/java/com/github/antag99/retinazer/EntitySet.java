@@ -2,6 +2,8 @@ package com.github.antag99.retinazer;
 
 import com.badlogic.gdx.utils.IntArray;
 import com.github.antag99.retinazer.util.Mask;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class EntitySet implements EntitySetView {
 
@@ -11,12 +13,12 @@ public final class EntitySet implements EntitySetView {
 
     public EntitySet() {}
 
-    public EntitySet(EntitySet copyEntities) {
+    public EntitySet(@NotNull EntitySet copyEntities) {
         this.entities.set(copyEntities.entities);
         this.indicesDirty = true;
     }
 
-    public EntitySet(EntitySetView copyEntities) {
+    public EntitySet(@NotNull EntitySetView copyEntities) {
         this.entities.set(copyEntities.getMask());
         this.indicesDirty = true;
     }
@@ -36,14 +38,14 @@ public final class EntitySet implements EntitySetView {
         indicesDirty |= entities.setChanged(entity);
     }
 
-    public void addEntities(Mask entities) {
+    public void addEntities(@NotNull Mask entities) {
         if (!this.entities.isSupersetOf(entities)) {
             this.indicesDirty = true;
             this.entities.or(entities);
         }
     }
 
-    public void setEntities(Mask entities) {
+    public void setEntities(@NotNull Mask entities) {
         if (!this.entities.equals(entities)) {
             this.indicesDirty = true;
             this.entities.set(entities);
@@ -56,7 +58,7 @@ public final class EntitySet implements EntitySetView {
         }
     }
 
-    public void removeEntities(Mask entities) {
+    public void removeEntities(@NotNull Mask entities) {
         if (this.entities.intersects(entities)) {
             this.indicesDirty = true;
             this.entities.andNot(entities);
@@ -75,6 +77,7 @@ public final class EntitySet implements EntitySetView {
      *
      * @return the entities contained in this set.
      */
+    @NotNull
     public Mask getMask() {
         return this.entities;
     }
@@ -86,6 +89,7 @@ public final class EntitySet implements EntitySetView {
      *
      * @return the indices of all entities in this set.
      */
+    @NotNull
     public IntArray getIndices() {
         if (indicesDirty) {
             indices.clear();
@@ -104,7 +108,7 @@ public final class EntitySet implements EntitySetView {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return obj instanceof EntitySet && ((EntitySet) obj).entities.equals(entities);
     }
 
@@ -113,6 +117,7 @@ public final class EntitySet implements EntitySetView {
         return entities.hashCode();
     }
 
+    @NotNull
     @Override
     public String toString() {
         IntArray indices = getIndices();

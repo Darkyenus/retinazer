@@ -3,6 +3,7 @@ package com.github.antag99.retinazer;
 import com.badlogic.gdx.utils.ObjectIntMap;
 import com.github.antag99.retinazer.util.Bag;
 import com.github.antag99.retinazer.util.Mask;
+import org.jetbrains.annotations.NotNull;
 
 final class FamilyManager {
 
@@ -10,14 +11,15 @@ final class FamilyManager {
     private final Bag<FamilyHolder> families = new Bag<>();
     private final Engine engine;
 
-    FamilyManager(Engine engine) {
+    FamilyManager(@NotNull Engine engine) {
         this.engine = engine;
     }
 
     private transient final Mask _matchedEntities = new Mask();
 
     /** @return {@link EntitySet} conforming to the given configuration backed by the family */
-    public EntitySet getFamily(Family spec) {
+    @NotNull
+    public EntitySet getFamily(@NotNull Family spec) {
         assert spec.domain.isSubsetOf(engine.componentDomain);
         final ObjectIntMap<Family> familyIndices = this.familyIndices;
         final int index;
@@ -68,11 +70,13 @@ final class FamilyManager {
 
             matchedEntities.set(engine.entities);
 
-            for (int componentI = family.requiredComponents.nextSetBit(0); componentI != -1; componentI = family.requiredComponents.nextSetBit(componentI + 1)) {
+            final Mask requiredComponents = family.requiredComponents;
+            for (int componentI = requiredComponents.nextSetBit(0); componentI != -1; componentI = requiredComponents.nextSetBit(componentI + 1)) {
                 matchedEntities.and(mappers[componentI].componentsMask);
             }
 
-            for (int componentI = family.excludedComponents.nextSetBit(0); componentI != -1; componentI = family.excludedComponents.nextSetBit(componentI + 1)) {
+            final Mask excludedComponents = family.excludedComponents;
+            for (int componentI = excludedComponents.nextSetBit(0); componentI != -1; componentI = excludedComponents.nextSetBit(componentI + 1)) {
                 matchedEntities.andNot(mappers[componentI].componentsMask);
             }
 

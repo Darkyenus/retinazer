@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.github.antag99.retinazer.systems.FamilyWatcherSystem;
 import com.github.antag99.retinazer.util.Mask;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 public class EntityListenerTest {
@@ -17,13 +18,13 @@ public class EntityListenerTest {
         }
 
         @Override
-        protected void insertedEntities(Mask entities) {
+        protected void insertedEntities(@NotNull Mask entities) {
             assertEquals(0, insertedEntities.size(), "Insertion without verification");
             insertedEntities.addEntities(entities);
         }
 
         @Override
-        protected void removedEntities(Mask entities) {
+        protected void removedEntities(@NotNull Mask entities) {
             assertEquals(0, removedEntities.size(), "Removal without verification");
             removedEntities.addEntities(entities);
         }

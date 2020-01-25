@@ -1,5 +1,7 @@
 package com.github.antag99.retinazer.util;
 
+import org.jetbrains.annotations.NotNull;
+
 /** Generic dynamically sized container for bytes. */
 public final class ByteBag {
     private byte[] buffer = EMPTY;
@@ -7,6 +9,7 @@ public final class ByteBag {
 
     /** Ensure that the internal buffer has at least the given capacity.
      * Returns internal buffer. */
+    @NotNull
     public byte[] ensureCapacity(int capacity) {
         final byte[] buffer = this.buffer;
         final int oldLength = buffer.length;

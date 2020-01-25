@@ -2,6 +2,8 @@ package com.github.antag99.retinazer.util;
 
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
@@ -17,11 +19,13 @@ public final class Mask implements Poolable {
      * @param other The value to set.
      * @return {@code this} mask instance
      */
-    public Mask set(Mask other) {
+    @NotNull
+    public Mask set(@NotNull Mask other) {
         return set(other.words);
     }
 
-    public Mask set(long[] otherWords) {
+    @NotNull
+    public Mask set(@NotNull long[] otherWords) {
         final long[] words = this.words;
         if (words.length < otherWords.length) {
             this.words = Arrays.copyOf(otherWords, otherWords.length);
@@ -39,7 +43,7 @@ public final class Mask implements Poolable {
     }
 
     /** Sets all bits in this mask that are set in the other mask. */
-    public void or(Mask other) {
+    public void or(@NotNull Mask other) {
         long[] words = this.words;
         final long[] otherWords = other.words;
 
@@ -62,7 +66,7 @@ public final class Mask implements Poolable {
      *
      * @param other The other operand.
      */
-    public void xor(Mask other) {
+    public void xor(@NotNull Mask other) {
         long[] words = this.words;
         final long[] otherWords = other.words;
 
@@ -84,7 +88,7 @@ public final class Mask implements Poolable {
      *
      * @param other The other operand.
      */
-    public void and(Mask other) {
+    public void and(@NotNull Mask other) {
         final long[] words = this.words;
         final long[] otherWords = other.words;
         int commonWords = Math.min(words.length, otherWords.length);
@@ -102,7 +106,7 @@ public final class Mask implements Poolable {
      *
      * @param other The other operand.
      */
-    public void andNot(Mask other) {
+    public void andNot(@NotNull Mask other) {
         final long[] words = this.words;
         final long[] otherWords = other.words;
         final int commonWords = Math.min(words.length, otherWords.length);
@@ -248,7 +252,7 @@ public final class Mask implements Poolable {
      * @param other The other mask.
      * @return Whether this mask is a superset of the other mask.
      */
-    public boolean isSupersetOf(Mask other) {
+    public boolean isSupersetOf(@NotNull Mask other) {
         final long[] words = this.words;
         final long[] otherWords = other.words;
         final int commonWords = Math.min(words.length, otherWords.length);
@@ -267,7 +271,7 @@ public final class Mask implements Poolable {
      * @param other The other mask
      * @return Whether this mask is a subset of the other mask.
      */
-    public boolean isSubsetOf(Mask other) {
+    public boolean isSubsetOf(@NotNull Mask other) {
         return other.isSupersetOf(this);
     }
 
@@ -277,7 +281,7 @@ public final class Mask implements Poolable {
      * @param other The other mask.
      * @return Whether this mask intersects the other mask.
      */
-    public boolean intersects(Mask other) {
+    public boolean intersects(@NotNull Mask other) {
         final long[] words = this.words;
         final long[] otherWords = other.words;
         final int commonWords = Math.min(words.length, otherWords.length);
@@ -318,6 +322,7 @@ public final class Mask implements Poolable {
      *
      * @return The indices of the set bits in this mask.
      */
+    @NotNull
     public int[] getIndices() {
         int[] indices = new int[cardinality()];
         for (int i = 0, b = nextSetBit(0), n = indices.length; i < n; i++, b = nextSetBit(b + 1)) {
@@ -326,7 +331,7 @@ public final class Mask implements Poolable {
         return indices;
     }
 
-    public void getIndices(IntArray out) {
+    public void getIndices(@NotNull IntArray out) {
         final int offset = out.size;
         int count = cardinality();
         out.ensureCapacity(count);
@@ -364,6 +369,7 @@ public final class Mask implements Poolable {
     }
 
     /** Gets the backing buffer of this mask. Does not exclude trailing zero words. */
+    @NotNull
     public long[] getWords() {
         return words;
     }
@@ -377,6 +383,7 @@ public final class Mask implements Poolable {
         return true;
     }
 
+    @NotNull
     @Override
     public String toString() {
         char[] value = new char[length()];
@@ -387,7 +394,7 @@ public final class Mask implements Poolable {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (this == obj)
             return true;
         if (!(obj instanceof Mask))

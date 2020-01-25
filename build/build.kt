@@ -13,6 +13,7 @@ val retinazer by project(Archetypes.JavaProject) {
 
 	val gdxVersion = "1.9.10"
 	libraryDependencies add { dependency("com.badlogicgames.gdx" , "gdx", gdxVersion) }
+	libraryDependencies add { dependency("org.jetbrains", "annotations", "16.0.2", scope = ScopeProvided) }
 
 	libraryDependencies add { Dependency(JUnitAPI, ScopeTest) }
 	libraryDependencies add { Dependency(JUnitEngine, ScopeTest) }

@@ -2,6 +2,9 @@ package com.github.antag99.retinazer;
 
 import com.badlogic.gdx.utils.ObjectMap;
 import com.github.antag99.retinazer.util.Mask;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +21,7 @@ public final class Engine {
     private final ObjectMap<Class<? extends EngineService>, EngineService> servicesByType = new ObjectMap<>();
 
     /** Entities that currently exist. */
+    @NotNull
     final Mask entities = new Mask();
     /** Subset of {@link #entities} - entities that will be removed on next {@link #flush()}. */
     private final Mask entitiesScheduledForRemoval = new Mask();
@@ -32,6 +36,7 @@ public final class Engine {
     private Mask entitiesRemovedLastUpdate = new Mask();
 
     public final ComponentSet componentDomain;
+    @NotNull
     final Mapper<?>[] componentMappers;
     private final FamilyManager familyManager;
     private final WireManager wireManager;
@@ -48,7 +53,7 @@ public final class Engine {
      * @param services of this engine. Services implementing {@link WireResolver} will
      * be used as wire resolvers. Order is significant.
      */
-    public Engine(ComponentSet domain, EngineService...services) {
+    public Engine(@NotNull ComponentSet domain, @NotNull EngineService...services) {
         final ArrayList<WireResolver> wireResolvers = new ArrayList<>();
         wireResolvers.add(new DefaultWireResolver(this));
 
@@ -78,7 +83,7 @@ public final class Engine {
         flush();
     }
 
-    public void wire(Object object) {
+    public void wire(@NotNull Object object) {
         wireManager.wire(object);
     }
 
@@ -174,6 +179,7 @@ public final class Engine {
      *
      * @return {@link EntitySetView} containing all entities added to this engine
      */
+    @NotNull
     public EntitySetView getEntities() {
         return getEntities(Family.ALL);
     }
@@ -184,7 +190,8 @@ public final class Engine {
      *
      * @param family specification of the entity family
      */
-    public EntitySetView getEntities(Family family) {
+    @NotNull
+    public EntitySetView getEntities(@NotNull Family family) {
         return familyManager.getFamily(family);
     }
 
@@ -193,7 +200,8 @@ public final class Engine {
      * can exist in an engine configuration.
      * @throws IllegalArgumentException if the service does not exist
      */
-    public <T extends EngineService> T getService(Class<T> serviceType) {
+    @NotNull
+    public <@NotNull T extends EngineService> T getService(@NotNull Class<T> serviceType) {
         return getService(serviceType, false);
     }
 
@@ -204,7 +212,9 @@ public final class Engine {
      * @return the system, or {@code null} if {@code optional} is {@code true} and the system does not exist.
      * @throws IllegalArgumentException if {@code optional} is {@code false} and the system does not exist.
      */
-    public <T extends EngineService> T getService(Class<T> serviceType, boolean optional) {
+    @Contract("_, false -> !null")
+    @Nullable
+    public <@NotNull T extends EngineService> T getService(@NotNull Class<T> serviceType, boolean optional) {
         @SuppressWarnings("unchecked")
         final T service = (T) servicesByType.get(serviceType);
 
@@ -217,7 +227,8 @@ public final class Engine {
 
     /** Retrieve all services that are subclasses of given class */
     @SuppressWarnings("unchecked")
-    public <T> List<T> getServices(Class<T> type) {
+    @NotNull
+    public <@NotNull T> List<T> getServices(@NotNull Class<T> type) {
         if (type == EngineService.class) {
             return (List<T>) Arrays.asList(services);
         }
@@ -247,12 +258,14 @@ public final class Engine {
      * @return mapper for the specified type.
      */
     @SuppressWarnings("unchecked")
-    public <T extends Component> Mapper<T> getMapper(Class<T> componentType) {
+    @NotNull
+    public <@NotNull T extends Component> Mapper<T> getMapper(@NotNull Class<T> componentType) {
         return (Mapper<T>) componentMappers[componentDomain.index(componentType)];
     }
 
     /** @return array of all mappers - do not modify! */
-    public Mapper<?>[] getMappers(){
+    @NotNull
+    public Mapper<@NotNull ?>[] getMappers(){
         return componentMappers;
     }
 }

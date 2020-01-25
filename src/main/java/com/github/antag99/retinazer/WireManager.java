@@ -1,6 +1,7 @@
 package com.github.antag99.retinazer;
 
 import com.badlogic.gdx.utils.ObjectMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -8,19 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 final class WireManager {
+    @NotNull
     private final WireResolver[] wireResolvers;
+    @NotNull
     private final ObjectMap<Class<?>, WireCache> wireCaches = new ObjectMap<>();
 
-    WireManager(List<WireResolver> wireResolvers) {
+    WireManager(@NotNull List<@NotNull WireResolver> wireResolvers) {
         this.wireResolvers = wireResolvers.toArray(new WireResolver[0]);
     }
 
     /** Wire up given object. */
-    void wire(Object object) {
-        if (object == null) {
-            throw new NullPointerException("object must not be null");
-        }
-
+    void wire(@NotNull Object object) {
         final Class<?> type = object.getClass();
         WireCache cache = wireCaches.get(type);
         if (cache == null) {
@@ -36,11 +35,13 @@ final class WireManager {
     }
 
     private static final class WireCache {
+        @NotNull
         private static final Field[] NO_FIELDS = new Field[0];
 
+        @NotNull
         private final Field[] fields;
 
-        WireCache(Class<?> type) {
+        WireCache(@NotNull Class<?> type) {
             final List<Field> fields = new ArrayList<>();
 
             for (Class<?> current = type; current != Object.class; current = current.getSuperclass()){
@@ -62,7 +63,7 @@ final class WireManager {
             this.fields = fields.toArray(NO_FIELDS);
         }
 
-        public void wire(Object object, WireResolver[] wireResolvers) {
+        public void wire(@NotNull Object object, @NotNull WireResolver[] wireResolvers) {
             fields:
             for (final Field field : fields) {
                 for (WireResolver wireResolver : wireResolvers) {

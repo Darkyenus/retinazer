@@ -2,6 +2,7 @@ package com.github.antag99.retinazer;
 
 import com.github.antag99.retinazer.systems.FamilyWatcherSystem;
 import com.github.antag99.retinazer.util.Mask;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -79,12 +80,12 @@ public class FamilyWatcherTest {
 		}
 
 		@Override
-		protected void insertedEntities(Mask entities) {
+		protected void insertedEntities(@NotNull Mask entities) {
 			added += entities.cardinality();
 		}
 
 		@Override
-		protected void removedEntities(Mask entities) {
+		protected void removedEntities(@NotNull Mask entities) {
 			removed += entities.cardinality();
 		}
 	}

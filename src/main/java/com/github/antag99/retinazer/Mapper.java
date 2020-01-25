@@ -3,6 +3,8 @@ package com.github.antag99.retinazer;
 import com.badlogic.gdx.utils.Pool;
 import com.github.antag99.retinazer.util.Bag;
 import com.github.antag99.retinazer.util.Mask;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -15,24 +17,31 @@ import java.lang.reflect.InvocationTargetException;
  */
 public final class Mapper<T extends Component> {
     /** The engine instance this mapper is tied to */
+    @NotNull
     public final Engine engine;
     /** The component type */
+    @NotNull
     public final Class<T> type;
 
     /** Zero-arg constructor for the component */
+    @Nullable
     private final Constructor<T> constructor;
     /** Pool of components this mapper maps or null if my component type is not poolable. */
+    @Nullable
     private final Pool<T> componentPool;
 
     /** Stores components */
+    @NotNull
     private final Bag<T> components = new Bag<>();
     /** Mask of current components */
+    @NotNull
     final Mask componentsMask = new Mask();
 
     /** Mask of components to be removed on next flush */
+    @NotNull
     private final Mask scheduledForRemoval = new Mask();
 
-    Mapper(Engine engine, Class<T> type) {
+    Mapper(@NotNull Engine engine, @NotNull Class<T> type) {
         this.engine = engine;
         this.type = type;
         Constructor<T> constructor;
@@ -63,6 +72,7 @@ public final class Mapper<T extends Component> {
      * @param entity the index of the entity.
      * @return the component; may be {@code null}.
      */
+    @Nullable
     public T get(int entity) {
         return components.get(entity);
     }
@@ -85,6 +95,7 @@ public final class Mapper<T extends Component> {
      *            the index of the entity.
      * @return the created component.
      */
+    @NotNull
     public T create(int entity) {
         final T component = createComponent();
         add(entity, component);
@@ -106,8 +117,7 @@ public final class Mapper<T extends Component> {
      * @param instance
      *            the component instance.
      */
-    public void add(int entity, T instance) {
-        assert instance != null;
+    public void add(int entity, @NotNull T instance) {
         if (!componentsMask.setChanged(entity)) {
             throw new IllegalArgumentException("Cannot insert a component that "
                     + "already exists: " + instance.getClass().getName());
@@ -130,7 +140,7 @@ public final class Mapper<T extends Component> {
         }
     }
 
-    void removeScheduled(Mask globallyRemoved) {
+    void removeScheduled(@NotNull Mask globallyRemoved) {
         final Bag<T> components = this.components;
         final Mask componentsMask = this.componentsMask;
         final Mask scheduledForRemoval = this.scheduledForRemoval;
@@ -152,6 +162,7 @@ public final class Mapper<T extends Component> {
     /** Returns a component instance which is safe to keep around, outside of the entity system.
      * No guarantees are placed on which data does the component obtain.
      * Component must have no-arg constructor for this to work. */
+    @NotNull
     public T createComponent(){
         final Pool<T> pool = this.componentPool;
         if(pool != null){
@@ -167,8 +178,11 @@ public final class Mapper<T extends Component> {
 
     private static final Object[] NO_ARGS = new Object[0];
 
+    @NotNull
     private T newComponent() {
         try {
+            final Constructor<T> constructor = this.constructor;
+            assert constructor != null;
             return constructor.newInstance(NO_ARGS);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Could not create a new instance of "+this.type, e);
@@ -179,13 +193,14 @@ public final class Mapper<T extends Component> {
      * entity system and are no longer needed.
      * For pooled components, this returns them into the pool.
      * For non-pooled components this is a no-op, which can be safely omitted. */
-    public void destroyComponent(T component){
+    public void destroyComponent(@NotNull T component){
         final Pool<T> pool = this.componentPool;
         if(pool != null){
             pool.free(component);
         }
     }
 
+    @NotNull
     @Override
     public String toString() {
         return type.getSimpleName()+" Mapper";

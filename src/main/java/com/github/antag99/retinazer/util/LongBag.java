@@ -1,5 +1,7 @@
 package com.github.antag99.retinazer.util;
 
+import org.jetbrains.annotations.NotNull;
+
 /** Generic dynamically sized container for longs. */
 public final class LongBag {
     private long[] buffer = EMPTY;
@@ -7,6 +9,7 @@ public final class LongBag {
 
     /** Ensure that the internal buffer has at least the given capacity.
      * Returns internal buffer. */
+    @NotNull
     public long[] ensureCapacity(int capacity) {
         final long[] buffer = this.buffer;
         final int oldLength = buffer.length;

@@ -1,5 +1,7 @@
 package com.github.antag99.retinazer.util;
 
+import org.jetbrains.annotations.NotNull;
+
 /** Generic dynamically sized container for shorts. */
 public final class ShortBag {
     private short[] buffer = EMPTY;
@@ -7,6 +9,7 @@ public final class ShortBag {
 
     /** Ensure that the internal buffer has at least the given capacity.
      * Returns internal buffer. */
+    @NotNull
     public short[] ensureCapacity(int capacity) {
         final short[] buffer = this.buffer;
         final int oldLength = buffer.length;

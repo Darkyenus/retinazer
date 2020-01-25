@@ -1,6 +1,7 @@
 package com.github.antag99.retinazer.resolvers;
 
 import com.github.antag99.retinazer.WireResolver;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -18,7 +19,7 @@ public final class SimpleWireResolver implements WireResolver {
     }
 
     @Override
-    public boolean wire(Object object, Field field) throws IllegalAccessException {
+    public boolean wire(@NotNull Object object, @NotNull Field field) throws IllegalAccessException {
         if (field.getType().isInstance(value)) {
             field.set(object, value);
             return true;
