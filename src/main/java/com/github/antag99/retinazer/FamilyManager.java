@@ -44,8 +44,8 @@ final class FamilyManager {
                 matchedEntities.andNot(mappers[componentI].componentsMask);
             }
 
-            // No notifications to dispatch here
-            family.entities.addEntities(matchedEntities);
+            // Faster than addEntities, because we skip the modification check which almost always fails anyway
+            family.entities.getMaskForModification().set(matchedEntities);
         }
 
         final FamilyHolder familyHolder = families.get(index);
@@ -80,6 +80,7 @@ final class FamilyManager {
                 matchedEntities.andNot(mappers[componentI].componentsMask);
             }
 
+            // It is likely that no modification happened here
             family.entities.setEntities(matchedEntities);
         }
     }
