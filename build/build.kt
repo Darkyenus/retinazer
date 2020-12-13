@@ -2,7 +2,7 @@
 import wemi.compile.JavaCompilerFlags
 import wemi.dependency.Jitpack
 
-val retinazer by project(Archetypes.JavaProject) {
+val retinazer by project(Archetypes.JavaProject, Archetypes.JUnitLayer) {
 
 	projectGroup set { "com.darkyen" }
 	projectName set { "retinazer" }

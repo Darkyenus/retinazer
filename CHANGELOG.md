@@ -1,5 +1,9 @@
 ## Changelog
 
+# Version 0.3.0
+- Rename package from `com.github.antag99.retinazer` to `com.darkyen.retinazer`, since the two libraries have
+    diverged enough to not be substitutable any more
+
 # Version 0.2.6 (released 2020-12-13)
 - Add `Engine.getServices` to retrieve service subclasses
 - Made `FamilyWatcherSystem` (renamed from `FamilyPresenceWatcherSystem`) more open for extensions
