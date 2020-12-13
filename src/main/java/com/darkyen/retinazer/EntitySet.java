@@ -7,6 +7,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.IntConsumer;
 
+/**
+ * A mutable set of entities.
+ */
 public final class EntitySet implements EntitySetView {
 
 	private final Mask     entities     = new Mask();
@@ -16,11 +19,13 @@ public final class EntitySet implements EntitySetView {
 	public EntitySet() {
 	}
 
+	/** Create a new {@link EntitySet} and add all entities from the other set into it. */
 	public EntitySet(@NotNull EntitySet copyEntities) {
 		this.entities.set(copyEntities.entities);
 		this.indicesDirty = true;
 	}
 
+	/** Create a new {@link EntitySet} and add all entities from the other set into it. */
 	public EntitySet(@NotNull EntitySetView copyEntities) {
 		this.entities.set(copyEntities.getMask());
 		this.indicesDirty = true;
@@ -36,14 +41,18 @@ public final class EntitySet implements EntitySetView {
 		return this.entities.get(entity);
 	}
 
+	/** Add a new entity into the set. Does nothing if the entity already exists. */
 	public void addEntity(int entity) {
 		indicesDirty |= entities.setChanged(entity);
 	}
 
+	/** Add all entities from the set into this one, equivalent to adding
+	 * them one-by-one through {@link #addEntity(int)}, but much more efficient. */
 	public void addEntities(@NotNull EntitySetView entities) {
 		addEntities(entities.getMask());
 	}
 
+	/** Add all indices of the set bits of the mask to this set as entity IDs. */
 	public void addEntities(@NotNull Mask entities) {
 		if (!this.entities.isSupersetOf(entities)) {
 			this.indicesDirty = true;
@@ -51,10 +60,12 @@ public final class EntitySet implements EntitySetView {
 		}
 	}
 
+	/** Remove all entities of this set and replace them with the entities of the other set. */
 	public void setEntities(@NotNull EntitySetView entities) {
 		setEntities(entities.getMask());
 	}
 
+	/** Remove all entities of this set and replace them with indices of the set mask bits, treated as entity IDs. */
 	public void setEntities(@NotNull Mask entities) {
 		if (!this.entities.equals(entities)) {
 			this.indicesDirty = true;
@@ -62,16 +73,20 @@ public final class EntitySet implements EntitySetView {
 		}
 	}
 
+	/** Remove the specified entity from the set. Does nothing if the entity does not exist. */
 	public void removeEntity(int entity) {
 		if (entities.clearChanged(entity)) {
 			this.indicesDirty = true;
 		}
 	}
 
+	/** Remove all entities of the given set from this one, equivalent to removing
+	 * them one-by-one through {@link #removeEntity(int)}, but much more efficient. */
 	public void removeEntities(@NotNull EntitySetView entities) {
 		removeEntities(entities.getMask());
 	}
 
+	/** Remove all indices of the set bits of the mask from this set as if they were entity IDs. */
 	public void removeEntities(@NotNull Mask entities) {
 		if (this.entities.intersects(entities)) {
 			this.indicesDirty = true;
@@ -79,6 +94,7 @@ public final class EntitySet implements EntitySetView {
 		}
 	}
 
+	/** Remove all entities from this set. */
 	public void clear() {
 		this.entities.clear();
 		this.indices.clear();

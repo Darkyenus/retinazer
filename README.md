@@ -17,6 +17,7 @@ All basic building blocks of an [ECS](https://en.wikipedia.org/wiki/Entity_compo
 - Entity is represented by a single `int` - and entity ID
     - Entity IDs are managed by [`Engine`](src/main/java/com/darkyen/retinazer/Engine.java)
     - Entity IDs are given out sequentially, but you can specify ID to use explicitly, for example for multiplayer synchronization
+    - Entity IDs are always non-negative (zero is allowed) - passing negative IDs has undefined behavior
 - Components are instances of classes implementing the [`Component`](src/main/java/com/darkyen/retinazer/Component.java) marker (empty) interface
     - Component type is the class implementing the `Component` interface, so component inheritance is not allowed
     - The most typical way of working with components is to create a new instance per entity, however you can also share single instance among multiple entities

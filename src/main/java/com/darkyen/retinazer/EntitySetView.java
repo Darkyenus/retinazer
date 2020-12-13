@@ -6,6 +6,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.IntConsumer;
 
+/**
+ * An immutable view of an entity set.
+ * Note that the content of the set can change, but not through this view.
+ */
 public interface EntitySetView {
 
 	/**
@@ -38,7 +42,9 @@ public interface EntitySetView {
 	/** For each entity in this set, call the action consumer with the entity ID. */
 	void forEach(@NotNull IntConsumer action);
 
+	/** @return the amount of entities in this set. */
 	int size();
 
+	/** @return whether there are no entities in this set */
 	boolean isEmpty();
 }

@@ -11,8 +11,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.NoSuchElementException;
 
 /**
- * {@code Mapper} is used for accessing the components of a specific type. This
- * offers better performance than looking up the type of a component on the fly.
+ * {@link Mapper} stores and manages components of a specific type for an {@link Engine}.
+ * This is the primary access point for component retrieval and modification.
+ * <p>
+ * It also handles component pooling.
  *
  * @param <T> the component type.
  */
