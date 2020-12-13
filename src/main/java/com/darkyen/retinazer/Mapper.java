@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.NoSuchElementException;
 
 /**
  * {@code Mapper} is used for accessing the components of a specific type. This
@@ -73,8 +74,23 @@ public final class Mapper<T extends Component> {
 	 * @return the component; may be {@code null}.
 	 */
 	@Nullable
-	public T get(int entity) {
+	public T getOrNull(int entity) {
 		return components.get(entity);
+	}
+
+	/**
+	 * Retrieves a component of the type handled by this mapper.
+	 * @param entity the index of the entity.
+	 * @return the component
+	 * @throws java.util.NoSuchElementException when the entity does not have that component
+	 */
+	@NotNull
+	public T get(int entity) {
+		final T component = components.get(entity);
+		if (component == null) {
+			throw new NoSuchElementException("Entity "+entity+" does not have a component of type "+type.getName());
+		}
+		return component;
 	}
 
 	/**

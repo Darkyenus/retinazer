@@ -297,11 +297,7 @@ public final class Mask implements Poolable {
 		return false;
 	}
 
-	/**
-	 * Returns the number of set bits in this mask.
-	 *
-	 * @return The number of set bits in this mask.
-	 */
+	/** @return The number of set bits in this mask. */
 	public int cardinality() {
 		int cardinality = 0;
 		for (long word : this.words) cardinality += Long.bitCount(word);
@@ -337,6 +333,7 @@ public final class Mask implements Poolable {
 		return indices;
 	}
 
+	/** Add the indices of the set bits into the given {@link IntArray}. */
 	public void getIndices(@NotNull IntArray out) {
 		final int offset = out.size;
 		int count = cardinality();
@@ -380,6 +377,7 @@ public final class Mask implements Poolable {
 		return words;
 	}
 
+	/** Return true iff all all bits of the mask are zero. */
 	public boolean isEmpty() {
 		for (long word : this.words) {
 			if (word != 0L) {
