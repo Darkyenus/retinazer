@@ -11,20 +11,20 @@ import java.util.Objects;
  */
 public final class SimpleWireResolver implements WireResolver {
 
-    private final Object value;
+	private final Object value;
 
-    public SimpleWireResolver(Object value) {
-        Objects.requireNonNull(value, "value must not be null");
-        this.value = value;
-    }
+	public SimpleWireResolver(Object value) {
+		Objects.requireNonNull(value, "value must not be null");
+		this.value = value;
+	}
 
-    @Override
-    public boolean wire(@NotNull Object object, @NotNull Field field) throws IllegalAccessException {
-        if (field.getType().isInstance(value)) {
-            field.set(object, value);
-            return true;
-        } else {
-            return false;
-        }
-    }
+	@Override
+	public boolean wire(@NotNull Object object, @NotNull Field field) throws IllegalAccessException {
+		if (field.getType().isInstance(value)) {
+			field.set(object, value);
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

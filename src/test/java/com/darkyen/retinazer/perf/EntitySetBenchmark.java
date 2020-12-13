@@ -9,14 +9,14 @@ import org.openjdk.jmh.annotations.Warmup;
 
 /**
  * Tests performance aspects of {@link EntitySet}.
- *
+ * <p>
  * Individual benchmarks are commented out, because they take a long time to run and are not usually needed.
  * (And no better way to disable them was found.)
  * Uncomment the @Benchmark annotations when you want to run them.
  */
 @Microbenchmark
-@Measurement(iterations=2)
-@Warmup(iterations=2)
+@Measurement(iterations = 2)
+@Warmup(iterations = 2)
 @Fork(2)
 public class EntitySetBenchmark {
 

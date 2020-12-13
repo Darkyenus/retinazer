@@ -11,14 +11,14 @@ import java.lang.reflect.Field;
  */
 public interface WireResolver extends EngineService {
 
-    /**
-     * Wires the field of the given object.
-     * Note that this will be called before {@link EngineService#initialize()}, because
-     * wiring is done before initialization.
-     *
-     * @param object The object to wire.
-     * @param field The field of the object.
-     * @return Whether this resolver handled the given field.
-     */
-    boolean wire(@NotNull Object object, @NotNull Field field) throws IllegalAccessException;
+	/**
+	 * Wires the field of the given object.
+	 * Note that this will be called before {@link EngineService#initialize()}, because
+	 * wiring is done before initialization.
+	 *
+	 * @param object The object to wire.
+	 * @param field The field of the object.
+	 * @return Whether this resolver handled the given field.
+	 */
+	boolean wire(@NotNull Object object, @NotNull Field field) throws IllegalAccessException;
 }

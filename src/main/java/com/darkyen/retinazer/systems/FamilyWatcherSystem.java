@@ -1,9 +1,9 @@
 package com.darkyen.retinazer.systems;
 
 import com.darkyen.retinazer.EntitySet;
+import com.darkyen.retinazer.EntitySetView;
 import com.darkyen.retinazer.EntitySystem;
 import com.darkyen.retinazer.Family;
-import com.darkyen.retinazer.EntitySetView;
 import com.darkyen.retinazer.util.Mask;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,6 +65,7 @@ public abstract class FamilyWatcherSystem extends EntitySystem {
 
 		/** Called for each added entity. */
 		protected abstract void insertedEntity(int entity);
+
 		/** Called for each removed entity. */
 		protected abstract void removedEntity(int entity);
 	}

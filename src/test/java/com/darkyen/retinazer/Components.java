@@ -19,32 +19,32 @@ public final class Components {
 	}
 
 	public static class FlagSystemA extends EntityProcessorSystem {
-	    public FlagSystemA() {
-	        super(FULL_SET.familyWith(FlagComponentA.class));
-	    }
+		public FlagSystemA() {
+			super(FULL_SET.familyWith(FlagComponentA.class));
+		}
 
-	    @Override
-	    public void process(int entity) {
-	    }
+		@Override
+		public void process(int entity) {
+		}
 	}
 
 	public static class FlagSystemB extends EntityProcessorSystem {
-	    public FlagSystemB() {
-	        super(FULL_SET.familyWith(FlagComponentB.class));
-	    }
+		public FlagSystemB() {
+			super(FULL_SET.familyWith(FlagComponentB.class));
+		}
 
-	    @Override
-	    public void process(int entity) {
-	    }
+		@Override
+		public void process(int entity) {
+		}
 	}
 
 	public static class FlagSystemC extends EntityProcessorSystem {
-	    public FlagSystemC() {
-	        super(FULL_SET.familyWith(FlagComponentC.class));
-	    }
+		public FlagSystemC() {
+			super(FULL_SET.familyWith(FlagComponentC.class));
+		}
 
-	    @Override
-	    public void process(int entity) {
-	    }
+		@Override
+		public void process(int entity) {
+		}
 	}
 }

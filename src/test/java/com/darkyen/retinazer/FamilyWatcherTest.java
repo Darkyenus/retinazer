@@ -68,7 +68,7 @@ public class FamilyWatcherTest {
 			super(ComponentSet.EMPTY.family());
 		}
 
-		public int added = 0;
+		public int added   = 0;
 		public int removed = 0;
 
 		@Override
@@ -165,12 +165,14 @@ public class FamilyWatcherTest {
 	public void familyWatcherAliasing() {
 		// This used to trigger an ABA problem for watchers
 		Engine engineAddRemoveWatch = new Engine(ComponentSet.EMPTY,
-				new EntityAdder(1, 1){}, // Fires on the second round
+				new EntityAdder(1, 1) {
+				}, // Fires on the second round
 				new EntityAdder(),
 				new EntityWatcher(),
 				new EntityRemover(),
-				new EntityAdder() {}// Second adder, which fills the hole after the removal. Watcher should detect this.
-				);
+				new EntityAdder() {
+				}// Second adder, which fills the hole after the removal. Watcher should detect this.
+		);
 		final EntityWatcher watcher = engineAddRemoveWatch.getService(EntityWatcher.class);
 		engineAddRemoveWatch.update();
 		assertEquals(1, watcher.added, "Added");
