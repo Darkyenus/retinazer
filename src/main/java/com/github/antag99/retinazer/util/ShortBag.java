@@ -8,7 +8,7 @@ public final class ShortBag {
     private static final short[] EMPTY = new short[0];
 
     /** Ensure that the internal buffer has at least the given capacity.
-     * Returns internal buffer. */
+     * Returns internal buffer. */
     @NotNull
     public short[] ensureCapacity(int capacity) {
         final short[] buffer = this.buffer;
@@ -30,12 +30,12 @@ public final class ShortBag {
         return buffer[index];
     }
 
-    /** Set the value at given index. */
+    /** Set the value at given index. */
     public void set(int index, short value) {
         ensureCapacity(index + 1)[index] = value;
     }
 
-    /** Set all values to zero. */
+    /** Set all values to zero. */
     public void clear() {
         final short[] buffer = this.buffer;
         for (int i = buffer.length - 1; i >= 0; i--) {

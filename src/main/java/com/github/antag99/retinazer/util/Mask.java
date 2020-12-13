@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-/** Bit mask of an arbitrary size. */
+/** Bit mask of an arbitrary size. */
 @SuppressWarnings("unused")
 public final class Mask implements Poolable {
     private long[] words = EMPTY;

@@ -8,7 +8,7 @@ public final class IntBag {
     private static final int[] EMPTY = new int[0];
 
     /** Ensure that the internal buffer has at least the given capacity.
-     * Returns internal buffer. */
+     * Returns internal buffer. */
     @NotNull
     public int[] ensureCapacity(int capacity) {
         final int[] buffer = this.buffer;
@@ -30,12 +30,12 @@ public final class IntBag {
         return buffer[index];
     }
 
-    /** Set the value at given index. */
+    /** Set the value at given index. */
     public void set(int index, int value) {
         ensureCapacity(index + 1)[index] = value;
     }
 
-    /** Set all values to zero. */
+    /** Set all values to zero. */
     public void clear() {
         final int[] buffer = this.buffer;
         for (int i = buffer.length - 1; i >= 0; i--) {

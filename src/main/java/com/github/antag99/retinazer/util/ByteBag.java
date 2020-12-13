@@ -8,7 +8,7 @@ public final class ByteBag {
     private static final byte[] EMPTY = new byte[0];
 
     /** Ensure that the internal buffer has at least the given capacity.
-     * Returns internal buffer. */
+     * Returns internal buffer. */
     @NotNull
     public byte[] ensureCapacity(int capacity) {
         final byte[] buffer = this.buffer;
@@ -30,12 +30,12 @@ public final class ByteBag {
         return buffer[index];
     }
 
-    /** Set the value at given index. */
+    /** Set the value at given index. */
     public void set(int index, byte value) {
         ensureCapacity(index + 1)[index] = value;
     }
 
-    /** Set all values to zero. */
+    /** Set all values to zero. */
     public void clear() {
         final byte[] buffer = this.buffer;
         for (int i = buffer.length - 1; i >= 0; i--) {

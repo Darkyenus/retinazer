@@ -9,6 +9,7 @@
 - Wired `List<T>`s are now resolved to the list of services that subclass `T`
 - Added optimized `EntitySetView.forEach(IntConsumer)` method and a few convenience methods
 - Change `FamilyWatcherSystem` to return `EntitySetView` instead of `Mask`
+- Update libGDX to 1.9.12
 
 # Version 0.2.5 (released 2020-01-21)
 - `EngineService`s are now automatically wired and initialized

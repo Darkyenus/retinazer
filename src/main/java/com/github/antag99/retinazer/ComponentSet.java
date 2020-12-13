@@ -18,7 +18,7 @@ import java.util.Arrays;
  */
 public final class ComponentSet {
 
-	/** Set of no components. */
+	/** Set of no components. */
 	@NotNull
 	public static final ComponentSet EMPTY = new ComponentSet();
 
@@ -82,7 +82,7 @@ public final class ComponentSet {
 		return true;
 	}
 
-	/** Create a new {@link Family} which contains all entities. */
+	/** Create a new {@link Family} which contains all entities. */
 	@NotNull
 	public final Family family() {
 		return new Family(this, Family.EMPTY_MASK, Family.EMPTY_MASK);

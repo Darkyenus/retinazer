@@ -1,8 +1,6 @@
 @file:Suppress("unused")
 import wemi.compile.JavaCompilerFlags
 import wemi.dependency.Jitpack
-import wemi.dependency.NoClassifier
-import wemi.publish.artifacts
 
 val retinazer by project(Archetypes.JavaProject) {
 
@@ -12,17 +10,14 @@ val retinazer by project(Archetypes.JavaProject) {
 
 	compilerOptions[JavaCompilerFlags.customFlags] = { it + "-encoding" + "UTF-8" }
 
-	val gdxVersion = "1.9.10"
+	val gdxVersion = "1.9.12"
 	libraryDependencies add { dependency("com.badlogicgames.gdx" , "gdx", gdxVersion) }
 	libraryDependencies add { dependency("org.jetbrains", "annotations", "16.0.2", scope = ScopeProvided) }
 
 	repositories add { Jitpack }
 	libraryDependencies add { dependency("com.github.mp911de.microbenchmark-runner", "microbenchmark-runner-junit5", "0.2.0.RELEASE", scope = ScopeTest) }
-	libraryDependencies add { dependency("org.openjdk.jmh:jmh-generator-annprocess:1.21") }
+	libraryDependencies add { dependency("org.openjdk.jmh", "jmh-generator-annprocess", "1.21", scope = ScopeTest) }
 
 	libraryDependencies add { Dependency(JUnitAPI, ScopeTest) }
 	libraryDependencies add { Dependency(JUnitEngine, ScopeTest) }
-
-	// Workaround for Wemi 0.11 which broke this
-	publishArtifacts set { artifacts(NoClassifier, includeSources = false, includeDocumentation = false) }
 }

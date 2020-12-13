@@ -8,7 +8,7 @@ public final class LongBag {
     private static final long[] EMPTY = new long[0];
 
     /** Ensure that the internal buffer has at least the given capacity.
-     * Returns internal buffer. */
+     * Returns internal buffer. */
     @NotNull
     public long[] ensureCapacity(int capacity) {
         final long[] buffer = this.buffer;
@@ -30,12 +30,12 @@ public final class LongBag {
         return buffer[index];
     }
 
-    /** Set the value at given index. */
+    /** Set the value at given index. */
     public void set(int index, long value) {
         ensureCapacity(index + 1)[index] = value;
     }
 
-    /** Set all values to zero. */
+    /** Set all values to zero. */
     public void clear() {
         final long[] buffer = this.buffer;
         for (int i = buffer.length - 1; i >= 0; i--) {

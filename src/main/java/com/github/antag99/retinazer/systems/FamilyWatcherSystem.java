@@ -32,10 +32,10 @@ public abstract class FamilyWatcherSystem extends EntitySystem {
 		lastEntities.set(currentEntities);
 	}
 
-	/** Called on each update. {@code entities} contains all removed entities in this step, if any. */
+	/** Called on each update. {@code entities} contains all removed entities in this step, if any. */
 	protected abstract void removedEntities(@NotNull EntitySetView entities);
 
-	/** Called on each update. {@code entities} contains all added entities in this step, if any. */
+	/** Called on each update. {@code entities} contains all added entities in this step, if any. */
 	protected abstract void insertedEntities(@NotNull EntitySetView entities);
 
 	/** Simplified {@link FamilyWatcherSystem} which gets the notification per-entity, not in bulk. */

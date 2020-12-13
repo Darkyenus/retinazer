@@ -54,7 +54,7 @@ public final class Family {
         return excludedComponents.get(domain.index(componentType));
     }
 
-    /** Derive a new {@link Family} which also requires given components. */
+    /** Derive a new {@link Family} which also requires given components. */
     @SafeVarargs
     @NotNull
     public final Family with(@NotNull Class<? extends Component>... components) {
@@ -70,7 +70,7 @@ public final class Family {
         return new Family(domain, newRequiredComponents, excludedComponents);
     }
 
-    /** Derive a new {@link Family} which also excludes given components. */
+    /** Derive a new {@link Family} which also excludes given components. */
     @SafeVarargs
     @NotNull
     public final Family without(@NotNull Class<? extends Component>... components) {

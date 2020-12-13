@@ -10,7 +10,7 @@ public final class Bag<E> {
     private Object[] buffer = EMPTY;
     private static final Object[] EMPTY = new Object[0];
 
-    /** Arrays of smaller size will never be generated. */
+    /** Arrays of smaller size will never be generated. */
     private static final int MIN_SIZE = 16;
     private static final int INCREMENT_THRESHOLD_POWER = 10;
     /** Sizes larger than this will no longer jump by powers of two, but by adding this increment. */
@@ -34,7 +34,7 @@ public final class Bag<E> {
     }
 
     /** Ensure that the internal buffer has at least the given capacity.
-     * Returns internal buffer. */
+     * Returns internal buffer. */
     @NotNull
     public Object[] ensureCapacity(int capacity) {
         final Object[] oldBuffer = this.buffer;
@@ -57,7 +57,7 @@ public final class Bag<E> {
         return (E) buffer[index];
     }
 
-    /** Set the value at given index. */
+    /** Set the value at given index. */
     public void set(int index, E value) {
         ensureCapacity(index + 1)[index] = value;
     }
@@ -76,7 +76,7 @@ public final class Bag<E> {
         return result;
     }
 
-    /** Set all values to null. */
+    /** Set all values to null. */
     public void clear() {
         final Object[] buffer = this.buffer;
         for (int i = buffer.length - 1; i >= 0; i--) {

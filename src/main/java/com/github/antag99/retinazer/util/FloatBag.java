@@ -8,7 +8,7 @@ public final class FloatBag {
     private static final float[] EMPTY = new float[0];
 
     /** Ensure that the internal buffer has at least the given capacity.
-     * Returns internal buffer. */
+     * Returns internal buffer. */
     @NotNull
     public float[] ensureCapacity(int capacity) {
         final float[] buffer = this.buffer;
@@ -30,12 +30,12 @@ public final class FloatBag {
         return buffer[index];
     }
 
-    /** Set the value at given index. */
+    /** Set the value at given index. */
     public void set(int index, float value) {
         ensureCapacity(index + 1)[index] = value;
     }
 
-    /** Set all values to zero. */
+    /** Set all values to zero. */
     public void clear() {
         final float[] buffer = this.buffer;
         for (int i = buffer.length - 1; i >= 0; i--) {

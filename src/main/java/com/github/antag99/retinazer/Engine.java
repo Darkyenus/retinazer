@@ -20,18 +20,18 @@ public final class Engine {
     private final EngineService[] services;
     private final ObjectMap<Class<? extends EngineService>, EngineService> servicesByType = new ObjectMap<>();
 
-    /** Entities that currently exist. */
+    /** Entities that currently exist. */
     @NotNull
     final Mask entities = new Mask();
-    /** Subset of {@link #entities} - entities that will be removed on next {@link #flush()}. */
+    /** Subset of {@link #entities} - entities that will be removed on next {@link #flush()}. */
     private final Mask entitiesScheduledForRemoval = new Mask();
 
     /** Entities which exist currently or did in the last update cycle.
      * Used to prevent reusing entity IDs too soon. */
     private final Mask shadowEntities = new Mask();
-    /** Subset of {@link #shadowEntities} - entities that were removed (or were scheduled to be removed) this update cycle. */
+    /** Subset of {@link #shadowEntities} - entities that were removed (or were scheduled to be removed) this update cycle. */
     private Mask entitiesRemovedThisUpdate = new Mask();
-    /** {@link #entitiesRemovedThisUpdate} from the last update cycle.
+    /** {@link #entitiesRemovedThisUpdate} from the last update cycle.
      * These entity IDs will become available for allocation again after the end of this update cycle. */
     private Mask entitiesRemovedLastUpdate = new Mask();
 
