@@ -1,6 +1,6 @@
 ## Changelog
 
-# Version 0.2.6
+# Version 0.2.6 (released 2020-12-13)
 - Add `Engine.getServices` to retrieve service subclasses
 - Made `FamilyWatcherSystem` (renamed from `FamilyPresenceWatcherSystem`) more open for extensions
 - Lift `update` into `EngineService` - all services can now receive updates
